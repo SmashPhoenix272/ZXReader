@@ -1,0 +1,3 @@
+watchdog==3.0.0
+opencc-python-reimplemented==0.1.7
+# Existing dependencies can be added here

@@ -1,0 +1,2848 @@
+Project Structure Overview:
+ZXReader/
+    Combine.py
+    data/
+    fonts/
+        Montserrat/
+            static/
+        Noto_Sans_SC/
+            static/
+        Noto_Sans_TC/
+            static/
+        Open_Sans/
+            static/
+        Roboto/
+    QTEngine/
+        config.py
+        QTEngine.py
+        setup.py
+        __init__.py
+        .git/
+            hooks/
+            info/
+            logs/
+                refs/
+                    heads/
+                    remotes/
+                        origin/
+            objects/
+                00/
+                08/
+                09/
+                18/
+                1b/
+                1e/
+                2d/
+                32/
+                38/
+                3e/
+                4c/
+                63/
+                6a/
+                7f/
+                88/
+                8d/
+                94/
+                ba/
+                c6/
+                c8/
+                d2/
+                d3/
+                d6/
+                e8/
+                ec/
+                ee/
+                f8/
+                fd/
+                info/
+                pack/
+            refs/
+                heads/
+                remotes/
+                    origin/
+                tags/
+        data/
+        models/
+            chinese_converter.py
+            trie.py
+        src/
+            character_utils.py
+            data_loader.py
+            data_watcher.py
+            performance.py
+            ReplaceChar.py
+            text_processing.py
+            translation_engine.py
+            __init__.py
+        tests/
+            test_traditional.py
+            test_translation.py
+    src/
+        chapter_detector.py
+        detect_chapters_methods.py
+        dictionary_manager.py
+        file_handler.py
+        main.py
+        theme_manager.py
+        QTEngine/
+            __init__.py
+            models/
+                trie.py
+                __init__.py
+    WSDev_docs/
+
+
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\Combine.py
+# ========================================
+
+import os
+import re
+
+# Directories to exclude
+EXCLUDE_DIRS = {'.venv', '__pycache__', 'build', 'caches'}
+
+# File extensions to include
+INCLUDE_EXTENSIONS = {'.py','yaml'}
+
+# Patterns to sanitize sensitive data
+SENSITIVE_PATTERNS = [
+    re.compile(r'(?i)(password\s*=\s*["\'])([^"\']+)(["\'])'),
+    re.compile(r'(?i)(api_key\s*=\s*["\'])([^"\']+)(["\'])'),
+    re.compile(r'(?i)(secret\s*=\s*["\'])([^"\']+)(["\'])')
+]
+
+def sanitize_content(content):
+    """Sanitize sensitive data in the content."""
+    for pattern in SENSITIVE_PATTERNS:
+        content = pattern.sub(r'\1<REDACTED>\3', content)
+    return content
+
+def is_excluded_dir(dir_name):
+    """Check if a directory should be excluded."""
+    return dir_name in EXCLUDE_DIRS
+
+def combine_source_code(project_dir, output_file):
+    """Combine source code into a single file."""
+    with open(output_file, 'w', encoding='utf-8') as outfile:
+        # Write project structure overview
+        outfile.write("Project Structure Overview:\n")
+        for root, dirs, files in os.walk(project_dir):
+            # Filter out excluded directories
+            dirs[:] = [d for d in dirs if not is_excluded_dir(d)]
+            # Write directory structure
+            level = root.replace(project_dir, '').count(os.sep)
+            indent = ' ' * 4 * level
+            outfile.write(f"{indent}{os.path.basename(root)}/\n")
+            sub_indent = ' ' * 4 * (level + 1)
+            for f in files:
+                if any(f.endswith(ext) for ext in INCLUDE_EXTENSIONS):
+                    outfile.write(f"{sub_indent}{f}\n")
+        outfile.write("\n\n")
+
+        # Combine files
+        for root, dirs, files in os.walk(project_dir):
+            # Filter out excluded directories
+            dirs[:] = [d for d in dirs if not is_excluded_dir(d)]
+            for file in files:
+                if any(file.endswith(ext) for ext in INCLUDE_EXTENSIONS):
+                    file_path = os.path.join(root, file)
+                    with open(file_path, 'r', encoding='utf-8') as infile:
+                        # Write file separator
+                        outfile.write(f"\n\n# {'=' * 40}\n")
+                        outfile.write(f"# File: {file_path}\n")
+                        outfile.write(f"# {'=' * 40}\n\n")
+                        # Read and sanitize content
+                        content = infile.read()
+                        sanitized_content = sanitize_content(content)
+                        outfile.write(sanitized_content)
+
+if __name__ == '__main__':
+    project_directory = r'C:\Users\Zhu Xian\source\repos\ZXReader'# Replace with your project directory
+    output_filename = 'combined_code.txt'
+    combine_source_code(project_directory, output_filename)
+    print(f"Combined source code saved to {output_filename}")
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\config.py
+# ========================================
+
+"""
+Configuration constants for QTEngine.
+
+This module centralizes configuration parameters to make them easily 
+modifiable without changing core implementation code.
+"""
+
+import os
+from typing import Dict, Any
+
+# Project Paths
+PROJECT_PATHS = {
+    'root': os.path.dirname(os.path.abspath(__file__)),
+    'src': os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src'),
+    'data': os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data'),
+    'models': os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models')
+}
+
+# Data Loader Configuration
+DATA_LOADER_CONFIG = {
+    'data_directory': PROJECT_PATHS['data'],
+    'required_files': [
+        'Names2.txt', 
+        'Names.txt', 
+        'VietPhrase.txt'
+    ],
+    'encoding': 'utf-8',
+    'min_entries': 10,  # Minimum entries required for a valid translation file
+    'cache_enabled': True,
+    'cache_duration_minutes': 60
+}
+
+# Translation Configuration
+TRANSLATION_CONFIG = {
+    'default_strategy': 'trie_based',
+    'fallback_strategy': 'character_conversion',
+    'performance_logging': True,
+    'quality_threshold': 0.7,
+    'parallel_processing': True,
+    'use_rust_trie': True  # New configuration for Rust Trie
+}
+
+# Logging Configuration
+LOGGING_CONFIG = {
+    'level': 'INFO',
+    'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    'file': os.path.join(PROJECT_PATHS['root'], 'qtengine.log')
+}
+
+def get_config(config_type: str = 'default') -> Dict[str, Any]:
+    """
+    Retrieve configuration dictionary based on type.
+    
+    :param config_type: Type of configuration to retrieve
+    :return: Configuration dictionary
+    """
+    config_map = {
+        'data_loader': DATA_LOADER_CONFIG,
+        'translation': TRANSLATION_CONFIG,
+        'logging': LOGGING_CONFIG,
+        'default': {**DATA_LOADER_CONFIG, **TRANSLATION_CONFIG, **LOGGING_CONFIG}
+    }
+    
+    return config_map.get(config_type, config_map['default'])
+
+# Optional: Validate configuration on import
+def validate_config():
+    """
+    Validate configuration settings.
+    """
+    assert os.path.exists(PROJECT_PATHS['data']), f"Data directory not found: {PROJECT_PATHS['data']}"
+    assert len(DATA_LOADER_CONFIG['required_files']) > 0, "No required files specified"
+    assert DATA_LOADER_CONFIG['min_entries'] >= 0, "Minimum entries must be non-negative"
+
+validate_config()
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\QTEngine.py
+# ========================================
+
+import re
+import logging
+from typing import Dict, List, Tuple, Optional, Any, Callable
+
+from models.trie import Trie
+from models.chinese_converter import ChineseConverter
+
+# Import the new modularized functions
+from src.character_utils import LATIN_CHARS, replace_special_chars
+from src.text_processing import (
+    convert_to_sino_vietnamese, 
+    rephrase, 
+    process_paragraph
+)
+from src.performance import profile_function
+from src.data_loader import load_data, DataLoader
+from src.translation_engine import TranslationEngine
+
+class QTEngine(TranslationEngine):
+    """
+    A translation engine for converting Chinese text to Sino-Vietnamese.
+    
+    Attributes:
+        names2 (Trie): Trie for Names2 data
+        names (Trie): Trie for Names data
+        viet_phrase (Trie): Trie for VietPhrase data
+        chinese_phien_am (Dict[str, str]): Dictionary of Chinese Phien Am words
+        loading_info (Dict[str, Any]): Information about data loading
+        chinese_converter (ChineseConverter): Converter for Traditional to Simplified Chinese
+    """
+    
+    def __init__(self, 
+                 data_loader: Optional[DataLoader] = None, 
+                 config: Optional[Dict[str, Any]] = None):
+        """
+        Initialize the QTEngine with optional data loader and configuration.
+        
+        Args:
+            data_loader (Optional[DataLoader]): Custom data loader
+            config (Optional[Dict[str, Any]]): Configuration dictionary
+        """
+        super().__init__(data_loader, config)
+        
+        # Use provided data loader or create a default one
+        self.data_loader = data_loader or DataLoader()
+        
+        # Load translation data
+        self.names2, self.names, self.viet_phrase, self.chinese_phien_am, self.loading_info = self.data_loader.load_data()
+        
+        # Store configuration
+        self.config = config or {}
+        
+        # Initialize Chinese converter
+        self.chinese_converter = ChineseConverter()
+        
+        # Configure logging
+        self.logger = logging.getLogger(__name__)
+    
+    def translate(self, text: str) -> str:
+        """
+        Translate Chinese text to Sino-Vietnamese.
+        
+        Args:
+            text (str): Input Chinese text
+        
+        Returns:
+            str: Translated Sino-Vietnamese text
+        """
+        try:
+            return process_paragraph(
+                text, 
+                self.names2, 
+                self.names, 
+                self.viet_phrase, 
+                self.chinese_phien_am
+            )
+        except Exception as e:
+            self.logger.error(f"Translation failed: {e}")
+            raise
+    
+    def validate_translation(self, original: str, translated: str) -> bool:
+        """
+        Validate the quality of translation.
+        
+        Args:
+            original (str): Original Chinese text
+            translated (str): Translated Sino-Vietnamese text
+        
+        Returns:
+            bool: Whether the translation meets quality standards
+        """
+        # Basic validation checks
+        if not original or not translated:
+            return False
+        
+        # Check if translation length is reasonable
+        length_ratio = len(translated) / len(original)
+        if length_ratio < 0.5 or length_ratio > 2.0:
+            self.logger.warning("Translation length is significantly different from original")
+            return False
+        
+        return True
+    
+    def refresh_data(self):
+        """
+        Refresh translation data using the data loader.
+        """
+        try:
+            (
+                self.names2, 
+                self.names, 
+                self.viet_phrase, 
+                self.chinese_phien_am, 
+                self.loading_info
+            ) = self.data_loader.load_data()
+            self.logger.info("Translation data refreshed successfully")
+        except Exception as e:
+            self.logger.error(f"Data refresh failed: {e}")
+            raise
+    
+    def get_translation_metadata(self) -> Dict[str, Any]:
+        """
+        Retrieve metadata about the translation process.
+        
+        Returns:
+            Dict[str, Any]: Translation metadata
+        """
+        return {
+            'loading_info': self.loading_info,
+            'data_sources': {
+                'names2_size': len(self.names2.keys()),
+                'names_size': len(self.names.keys()),
+                'viet_phrase_size': len(self.viet_phrase.keys()),
+                'chinese_phien_am_size': len(self.chinese_phien_am)
+            }
+        }
+    
+    def rephrase_tokens(self, tokens: List[str]) -> str:
+        """
+        Rephrase tokens to form a properly formatted sentence.
+        
+        Args:
+            tokens (List[str]): List of tokens to rephrase
+        
+        Returns:
+            str: Rephrased sentence
+        """
+        return rephrase(tokens)
+    
+    def process_text(self, text: str, additional_processing: Optional[Callable[[str], str]] = None) -> str:
+        """
+        Process text with optional additional processing.
+        
+        Args:
+            text (str): Input text
+            additional_processing (Optional[Callable]): Optional additional processing function
+        
+        Returns:
+            str: Processed text
+        """
+        # Translate the text
+        translated = self.translate(text)
+        
+        # Apply additional processing if provided
+        if additional_processing:
+            translated = additional_processing(translated)
+        
+        return translated
+    
+    def translate_paragraph(self, paragraph: str) -> str:
+        """
+        Backward-compatible method for translating a single paragraph.
+        
+        Args:
+            paragraph (str): The input paragraph in Chinese.
+        
+        Returns:
+            str: The translated paragraph in Sino-Vietnamese.
+        """
+        # First convert Traditional to Simplified if necessary
+        simplified_text = self.chinese_converter.auto_convert_to_simplified(paragraph)
+        if simplified_text is None:
+            simplified_text = paragraph
+            
+        return process_paragraph(
+            simplified_text, 
+            self.names2, 
+            self.names, 
+            self.viet_phrase, 
+            self.chinese_phien_am
+        )
+    
+    def get_loading_info(self) -> Dict[str, Any]:
+        """
+        Backward-compatible method to get loading information.
+        
+        Returns:
+            Dict[str, Any]: Dictionary containing loading information.
+        """
+        return self.loading_info
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\setup.py
+# ========================================
+
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\__init__.py
+# ========================================
+
+from .QTEngine import QTEngine
+from .src.translation_engine import TranslationEngine
+from .src.data_loader import DataLoader
+
+__all__ = ['QTEngine', 'TranslationEngine', 'DataLoader']
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\models\chinese_converter.py
+# ========================================
+
+from typing import Optional
+import opencc
+import re
+
+class ChineseConverter:
+    def __init__(self):
+        # Initialize converters
+        self.t2s = opencc.OpenCC('t2s')  # Traditional to Simplified
+        self.s2t = opencc.OpenCC('s2t')  # Simplified to Traditional
+        
+        # Common Traditional-only characters
+        self.traditional_chars = set('繁體國說壽麗華實現觀點愛爾蘭寫藝術')
+    
+    def has_chinese(self, text: str) -> bool:
+        """Check if the text contains Chinese characters."""
+        chinese_pattern = re.compile(r'[\u4e00-\u9fff]')
+        return bool(chinese_pattern.search(text))
+    
+    def is_traditional(self, text: str) -> bool:
+        """
+        Detect if the Chinese text is Traditional Chinese by checking for
+        the presence of Traditional-specific characters.
+        """
+        if not self.has_chinese(text):
+            return False
+            
+        # Convert text to simplified
+        simplified = self.t2s.convert(text)
+        
+        # If the conversion changes the text, it's likely Traditional
+        if simplified != text:
+            # Double check by looking for Traditional-specific characters
+            for char in text:
+                if char in self.traditional_chars:
+                    return True
+            
+            # If no specific Traditional chars found but text changed, still likely Traditional
+            return True
+            
+        return False
+    
+    def convert_to_simplified(self, text: str) -> str:
+        """Convert Chinese text to Simplified Chinese."""
+        if not self.has_chinese(text):
+            return text
+        return self.t2s.convert(text)
+    
+    def convert_to_traditional(self, text: str) -> str:
+        """Convert Chinese text to Traditional Chinese."""
+        if not self.has_chinese(text):
+            return text
+        return self.s2t.convert(text)
+    
+    def auto_convert_to_simplified(self, text: str) -> Optional[str]:
+        """
+        Automatically detect if the text is Traditional Chinese and convert to Simplified if it is.
+        Returns None if no Chinese characters are found.
+        """
+        if not self.has_chinese(text):
+            return None
+            
+        # Always convert to simplified to ensure consistency
+        simplified = self.convert_to_simplified(text)
+        return simplified if simplified != text else text
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\models\trie.py
+# ========================================
+
+from typing import Dict, List, Tuple, Optional, Union
+import sys
+
+class TrieNode:
+    __slots__ = ['children', 'is_end_of_word', 'value']
+    def __init__(self):
+        self.children: Dict[str, 'TrieNode'] = {}
+        self.is_end_of_word: bool = False
+        self.value: Optional[str] = None
+
+class Trie:
+    def __init__(self, memory_optimize: bool = False):
+        """
+        Initialize a Trie data structure.
+        
+        Args:
+            memory_optimize (bool): If True, uses more memory-efficient strategies.
+        """
+        self.root: TrieNode = TrieNode()
+        self.word_count: int = 0
+        self._memory_optimize = memory_optimize
+
+    def insert(self, word: str, value: str) -> None:
+        """
+        Insert a word and its associated value into the Trie.
+        
+        Args:
+            word (str): The key to insert
+            value (str): The value associated with the key
+        """
+        current = self.root
+        for char in word:
+            if char not in current.children:
+                current.children[char] = TrieNode()
+            current = current.children[char]
+        current.is_end_of_word = True
+        current.value = value
+        self.word_count += 1
+
+        # Optional memory optimization
+        if self._memory_optimize and sys.getsizeof(current.children) > 1024:
+            current.children = dict(list(current.children.items())[:10])  # Keep only 10 most recent
+
+    def batch_insert(self, words: List[Tuple[str, str]]) -> None:
+        """
+        Insert multiple words at once.
+        
+        Args:
+            words (List[Tuple[str, str]]): List of (word, value) tuples
+        """
+        for word, value in words:
+            self.insert(word, value)
+
+    def contains(self, word: str) -> bool:
+        """
+        Check if a word exists in the Trie.
+        
+        Args:
+            word (str): Word to check
+        
+        Returns:
+            bool: True if word exists, False otherwise
+        """
+        current = self.root
+        for char in word:
+            if char not in current.children:
+                return False
+            current = current.children[char]
+        return current.is_end_of_word
+
+    def count(self) -> int:
+        """
+        Get the total number of words in the Trie.
+        
+        Returns:
+            int: Number of words
+        """
+        return self.word_count
+
+    def find_longest_prefix(self, text: str) -> Tuple[str, Optional[str]]:
+        """
+        Find the longest prefix match in the Trie.
+        
+        Args:
+            text (str): Text to find prefix in
+        
+        Returns:
+            Tuple[str, Optional[str]]: Longest prefix and its associated value
+        """
+        current = self.root
+        longest_prefix = ""
+        longest_value = None
+        prefix = []
+        for char in text:
+            if char not in current.children:
+                break
+            current = current.children[char]
+            prefix.append(char)
+            if current.is_end_of_word:
+                longest_prefix = ''.join(prefix)
+                longest_value = current.value
+        return longest_prefix, longest_value
+
+    def get_all_words(self) -> List[Tuple[str, str]]:
+        """
+        Retrieve all words and their values from the Trie.
+        
+        Returns:
+            List[Tuple[str, str]]: List of (word, value) tuples
+        """
+        words = []
+        def dfs(node: TrieNode, current_word: str):
+            if node.is_end_of_word:
+                words.append((current_word, node.value))
+            for char, child_node in node.children.items():
+                dfs(child_node, current_word + char)
+        
+        dfs(self.root, "")
+        return words
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\src\character_utils.py
+# ========================================
+
+from typing import Set, Dict
+from src.ReplaceChar import SPECIAL_CHARS
+
+# Comprehensive set of Latin characters including various language variants
+LATIN_CHARS: Set[str] = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+                  'àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ'  # Vietnamese
+                  'ÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ'
+                  'áéíóúýàèìòùâêîôûãõñäëïöüÿçß'  # French, German, Spanish, Portuguese
+                  'ÁÉÍÓÚÝÀÈÌÒÙÂÊÎÔÛÃÕÑÄËÏÖÜŸÇSS')  # Uppercase variants
+
+def replace_special_chars(text: str) -> str:
+    """
+    Replace special characters in the text with their Vietnamese equivalents.
+
+    Args:
+        text (str): The input text containing special characters.
+
+    Returns:
+        str: The text with special characters replaced.
+    """
+    for han, viet in SPECIAL_CHARS.items():
+        text = text.replace(han, viet)
+    return text
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\src\data_loader.py
+# ========================================
+
+import os
+import time
+import logging
+import hashlib
+from typing import Tuple, Dict, Any, Optional, List, Union
+from functools import lru_cache, wraps
+from datetime import datetime, timedelta
+
+from models.trie import Trie
+import config
+
+# Configure logging based on config
+logging.basicConfig(
+    level=getattr(logging, config.LOGGING_CONFIG['level']),
+    format=config.LOGGING_CONFIG['format']
+)
+logger = logging.getLogger(__name__)
+
+class DataLoadError(Exception):
+    """Custom exception for data loading errors."""
+    pass
+
+class DataValidator:
+    """Utility class for validating loaded data."""
+    
+    @staticmethod
+    def validate_trie(trie: Trie, min_entries: int = 10) -> bool:
+        """
+        Validate a Trie data structure.
+        
+        Args:
+            trie (Trie): Trie to validate
+            min_entries (int): Minimum number of expected entries
+        
+        Returns:
+            bool: Whether the Trie is valid
+        """
+        if not isinstance(trie, Trie):
+            logger.error("Invalid Trie type")
+            return False
+        
+        trie_size = trie.count()
+        if trie_size < min_entries:
+            logger.warning(f"Trie has fewer entries than expected: {trie_size}")
+            return False
+        
+        return True
+    
+    @staticmethod
+    def validate_dictionary(data: Dict[str, str], min_entries: int = 10) -> bool:
+        """
+        Validate a dictionary data structure.
+        
+        Args:
+            data (Dict[str, str]): Dictionary to validate
+            min_entries (int): Minimum number of expected entries
+        
+        Returns:
+            bool: Whether the dictionary is valid
+        """
+        if not isinstance(data, dict):
+            logger.error("Invalid dictionary type")
+            return False
+        
+        if len(data) < min_entries:
+            logger.warning(f"Dictionary has fewer entries than expected: {len(data)}")
+            return False
+        
+        return all(isinstance(k, str) and isinstance(v, str) for k, v in data.items())
+
+def retry_on_failure(max_retries: int = 3, delay: int = 1):
+    """
+    Decorator to retry a function on failure.
+    
+    Args:
+        max_retries (int): Maximum number of retries
+        delay (int): Delay between retries in seconds
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            for attempt in range(max_retries):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    logger.warning(f"Attempt {attempt + 1} failed: {e}")
+                    if attempt == max_retries - 1:
+                        raise
+                    time.sleep(delay * (attempt + 1))
+        return wrapper
+    return decorator
+
+@lru_cache(maxsize=config.DATA_LOADER_CONFIG['cache_enabled'] and 32 or 0)
+def load_file_cached(file_path: str) -> Dict[str, Any]:
+    """
+    Cached version of file loading with optional memoization.
+    
+    Args:
+        file_path (str): Full path to the file
+    
+    Returns:
+        Dict[str, Any]: Loaded data
+    """
+    entries = {}
+    try:
+        with open(file_path, 'r', encoding=config.DATA_LOADER_CONFIG['encoding']) as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith('#'):
+                    continue
+
+                parts = line.split('=') if '=' in line else line.split('\t')
+                if len(parts) >= 2:
+                    key, value = parts[0], parts[1]
+                    entries[key] = value
+
+    except FileNotFoundError:
+        logger.error(f"File not found: {file_path}")
+        raise DataLoadError(f"File not found: {file_path}")
+    except Exception as e:
+        logger.error(f"Error loading {file_path}: {e}")
+        raise DataLoadError(f"Error loading {file_path}: {e}")
+
+    return entries
+
+class DataLoader:
+    """
+    Advanced data loader with caching, validation, and refresh mechanisms.
+    """
+    
+    def __init__(self, 
+                 data_dir: Optional[str] = None, 
+                 required_files: Optional[List[str]] = None,
+                 refresh_interval: timedelta = timedelta(hours=24)):
+        """
+        Initialize the DataLoader.
+        
+        Args:
+            data_dir (Optional[str]): Custom data directory
+            required_files (Optional[List[str]]): Custom list of required files
+            refresh_interval (timedelta): Interval for automatic data refresh
+        """
+        self.data_dir = data_dir or config.DATA_LOADER_CONFIG.get('data_dir', 'data')
+        self.required_files = required_files or [
+            'Names2.txt', 'Names.txt', 'VietPhrase.txt', 'ChinesePhienAmWords.txt'
+        ]
+        self.refresh_interval = refresh_interval
+        self.last_load_time = None
+        self.loaded_data = None
+    
+    @retry_on_failure()
+    def load_data(self) -> Tuple[Trie, Trie, Trie, Dict[str, str], Dict[str, Any]]:
+        """
+        Load data from various files into Trie structures and dictionaries.
+        
+        Returns:
+            Tuple containing loaded data structures and loading information
+        """
+        # Check if data needs refreshing
+        if (self.loaded_data is not None and 
+            self.last_load_time is not None and 
+            datetime.now() - self.last_load_time < self.refresh_interval):
+            return self.loaded_data
+        
+        loading_info: Dict[str, Any] = {'files_loaded': [], 'load_timestamp': datetime.now()}
+        
+        try:
+            # Construct full file paths
+            file_paths = {
+                'names2': os.path.join(self.data_dir, 'Names2.txt'),
+                'names': os.path.join(self.data_dir, 'Names.txt'),
+                'viet_phrase': os.path.join(self.data_dir, 'VietPhrase.txt'),
+                'chinese_phien_am': os.path.join(self.data_dir, 'ChinesePhienAmWords.txt')
+            }
+            
+            # Load data with validation, making Names2.txt optional
+            names2_data = {}
+            names2_trie = Trie()
+            if os.path.exists(file_paths['names2']):
+                names2_data = load_file_cached(file_paths['names2'])
+                if DataValidator.validate_dictionary(names2_data):
+                    for key in names2_data:
+                        names2_trie.insert(key, names2_data[key])
+                    if not DataValidator.validate_trie(names2_trie):
+                        logger.warning("Names2.txt Trie validation failed, ignoring the file")
+                        names2_data = {}
+                        names2_trie = Trie()
+                else:
+                    logger.warning("Names2.txt data validation failed, ignoring the file")
+                    names2_data = {}
+            
+            names_data = load_file_cached(file_paths['names'])
+            viet_phrase_data = load_file_cached(file_paths['viet_phrase'])
+            chinese_phien_am_data = load_file_cached(file_paths['chinese_phien_am'])
+            
+            # Validate loaded data
+            if not all([
+                DataValidator.validate_dictionary(names_data),
+                DataValidator.validate_dictionary(viet_phrase_data),
+                DataValidator.validate_dictionary(chinese_phien_am_data)
+            ]):
+                raise DataLoadError("Data validation failed")
+            
+            # Create Trie structures
+            names_trie = Trie()
+            viet_phrase_trie = Trie()
+            
+            for key in names_data:
+                names_trie.insert(key, names_data[key])
+            for key in viet_phrase_data:
+                viet_phrase_trie.insert(key, viet_phrase_data[key])
+            
+            # Validate Trie structures
+            if not all([
+                DataValidator.validate_trie(names_trie),
+                DataValidator.validate_trie(viet_phrase_trie)
+            ]):
+                raise DataLoadError("Trie validation failed")
+            
+            # Update loading information
+            loading_info['files_loaded'] = [name for name, path in file_paths.items() if os.path.exists(path)]
+            loading_info['file_sizes'] = {
+                name: os.path.getsize(path) for name, path in file_paths.items() if os.path.exists(path)
+            }
+            
+            # Cache the results
+            self.loaded_data = (
+                names2_trie, 
+                names_trie, 
+                viet_phrase_trie, 
+                chinese_phien_am_data, 
+                loading_info
+            )
+            self.last_load_time = datetime.now()
+            
+            return self.loaded_data
+        
+        except Exception as e:
+            logger.error(f"Data loading failed: {e}")
+            raise DataLoadError(f"Comprehensive data loading failed: {e}")
+
+# Maintain backward compatibility with existing code
+def load_data(
+    data_dir: Optional[str] = None, 
+    required_files: Optional[List[str]] = None
+) -> Tuple[Trie, Trie, Trie, Dict[str, str], Dict[str, Any]]:
+    """
+    Backward-compatible load_data function.
+    
+    Args:
+        data_dir (Optional[str]): Custom data directory
+        required_files (Optional[List[str]]): Custom list of required files
+    
+    Returns:
+        Tuple containing loaded data structures and loading information
+    """
+    loader = DataLoader(data_dir, required_files)
+    return loader.load_data()
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\src\data_watcher.py
+# ========================================
+
+import os
+import time
+import logging
+from typing import Dict, Callable, Optional, Any
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+
+from src.data_loader import DataLoader, DataLoadError
+
+logger = logging.getLogger(__name__)
+
+class DataFileWatcher:
+    """
+    A sophisticated file watcher for data files with intelligent reloading.
+    
+    This class monitors specified data files and provides an efficient mechanism
+    to reload data when files are modified, with minimal overhead.
+    """
+    
+    def __init__(self, 
+                 data_dir: str, 
+                 reload_callback: Optional[Callable] = None,
+                 check_interval: float = 1.0):
+        """
+        Initialize the DataFileWatcher.
+        
+        Args:
+            data_dir (str): Directory containing data files to watch
+            reload_callback (Optional[Callable]): Function to call when data is reloaded
+            check_interval (float): Interval to check for file changes in seconds
+        """
+        self.data_dir = data_dir
+        self.reload_callback = reload_callback
+        self.check_interval = check_interval
+        self.data_loader = DataLoader(data_dir=data_dir)
+        
+        # Track file modification times
+        self.file_mtimes: Dict[str, float] = {}
+        self._initialize_file_mtimes()
+    
+    def _initialize_file_mtimes(self):
+        """
+        Initialize modification times for all watched files.
+        """
+        for filename in self.data_loader.required_files:
+            filepath = os.path.join(self.data_dir, filename)
+            if os.path.exists(filepath):
+                self.file_mtimes[filename] = os.path.getmtime(filepath)
+    
+    def check_and_reload(self) -> bool:
+        """
+        Check if any data files have been modified and reload if necessary.
+        
+        Returns:
+            bool: True if data was reloaded, False otherwise
+        """
+        files_modified = False
+        
+        for filename in self.data_loader.required_files:
+            filepath = os.path.join(self.data_dir, filename)
+            
+            if not os.path.exists(filepath):
+                continue
+            
+            current_mtime = os.path.getmtime(filepath)
+            
+            # Check if file has been modified
+            if filename not in self.file_mtimes or current_mtime != self.file_mtimes[filename]:
+                logger.info(f"Detected changes in {filename}")
+                self.file_mtimes[filename] = current_mtime
+                files_modified = True
+        
+        # If any files were modified, reload data
+        if files_modified:
+            try:
+                # Reload data
+                reloaded_data = self.data_loader.load_data()
+                
+                # Call reload callback if provided
+                if self.reload_callback:
+                    self.reload_callback(reloaded_data)
+                
+                logger.info("Data successfully reloaded")
+                return True
+            except DataLoadError as e:
+                logger.error(f"Failed to reload data: {e}")
+                return False
+        
+        return False
+    
+    def start_watching(self, blocking: bool = False):
+        """
+        Start watching data files for changes.
+        
+        Args:
+            blocking (bool): Whether to block the main thread
+        """
+        class DataFileHandler(FileSystemEventHandler):
+            def __init__(self, watcher):
+                self.watcher = watcher
+            
+            def on_modified(self, event):
+                if event.is_directory:
+                    return
+                
+                filename = os.path.basename(event.src_path)
+                if filename in self.watcher.data_loader.required_files:
+                    logger.info(f"File modified: {filename}")
+                    self.watcher.check_and_reload()
+        
+        # Setup file system observer
+        event_handler = DataFileHandler(self)
+        observer = Observer()
+        observer.schedule(event_handler, self.data_dir, recursive=False)
+        observer.start()
+        
+        if blocking:
+            try:
+                while True:
+                    time.sleep(self.check_interval)
+                    self.check_and_reload()
+            except KeyboardInterrupt:
+                observer.stop()
+            observer.join()
+        
+        return observer
+
+def create_data_watcher(data_dir: str, 
+                        reload_callback: Optional[Callable] = None) -> DataFileWatcher:
+    """
+    Convenience function to create and start a DataFileWatcher.
+    
+    Args:
+        data_dir (str): Directory containing data files
+        reload_callback (Optional[Callable]): Function to call on data reload
+    
+    Returns:
+        DataFileWatcher: Configured and started file watcher
+    """
+    watcher = DataFileWatcher(data_dir, reload_callback)
+    watcher.start_watching()
+    return watcher
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\src\performance.py
+# ========================================
+
+import cProfile
+import logging
+from typing import Callable
+
+def profile_function(func: Callable) -> Callable:
+    """
+    Decorator to profile a function's performance.
+
+    Args:
+        func (Callable): The function to be profiled.
+
+    Returns:
+        Callable: The wrapped function with profiling.
+    """
+    def wrapper(*args, **kwargs):
+        pr = cProfile.Profile()
+        pr.enable()
+        result = func(*args, **kwargs)
+        pr.disable()
+        
+        stats = pr.getstats()
+        total_calls = sum(stat.callcount for stat in stats)
+        total_time = sum(stat.totaltime for stat in stats)
+        
+        logging.info(f"Performance profile for {func.__name__}:")
+        logging.info(f"Total function calls: {total_calls}")
+        logging.info(f"Total time: {total_time:.6f} seconds")
+        
+        return result
+    return wrapper
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\src\ReplaceChar.py
+# ========================================
+
+﻿SPECIAL_CHARS = {
+"""        "０": "0",
+        "１": "1",
+        "２": "2",
+        "３": "3",
+        "４": "4",
+        "５": "5",
+        "６": "6",
+        "７": "7",
+        "８": "8",
+        "９": "9",
+        "Ｚ": "Z",
+        "Ｙ": "Y",
+        "Ｘ": "X",
+        "Ｗ": "W",
+        "Ｖ": "V",
+        "Ｕ": "U",
+        "Ｔ": "T",
+        "Ｓ": "S",
+        "Ｒ": "R",
+        "Ｑ": "Q",
+        "Ｐ": "P",
+        "Ｏ": "O",
+        "Ｎ": "N",
+        "Ｍ": "M",
+        "Ｌ": "L",
+        "Ｋ": "K",
+        "Ｊ": "J",
+        "Ｉ": "I",
+        "Ｈ": "H",
+        "Ｇ": "G",
+        "Ｆ": "F",
+        "Ｅ": "E",
+        "Ｄ": "D",
+        "Ｃ": "C",
+        "Ｂ": "B",
+        "Ａ": "A",
+        "ｚ": "z",
+        "ｙ": "y",
+        "ｘ": "x",
+        "ｗ": "w",
+        "ｖ": "v",
+        "ｕ": "u",
+        "ｔ": "t",
+        "ｓ": "s",
+        "ｒ": "r",
+        "ｑ": "q",
+        "ｐ": "p",
+        "ｏ": "o",
+        "ｎ": "n",
+        "ｍ": "m",
+        "ｌ": "l",
+        "ｋ": "k",
+        "ｊ": "j",
+        "ｉ": "i",
+        "ｈ": "h",
+        "ｇ": "g",
+        "ｆ": "f",
+        "ｅ": "e",
+        "ｄ": "d",
+        "ｃ": "c",
+        "ｂ": "b",
+        "ａ": "a","""
+        "＿": "_",
+        "╴": "_",
+        "’": "’",
+        "》": "»",
+        "｝": "}",
+        "﹜": "}",
+        "】": "]",
+        "］": "]",
+        "﹞": "]",
+        "）": ")",
+        "｠": ")",
+        "〈": "<",
+        "《": "«",
+        "｛": "{",
+        "﹛": "{",
+        "【": "[",
+        "［": "[",
+        "﹝": "[",
+        "（": "(",
+        "｟": "(",
+        "“": "“",
+        "”": "”",
+        "』": "”",
+        "‘": "‘",
+        "「": "‘",
+        "℃": "℃",
+        "°": "°",
+        "￡": "￡",
+        "＄": "$",
+        "﹩": "$",
+        "￥": "￥",
+        "·": "·",
+        "•": "·",
+        "‧": "·",
+        "・": "·",
+        "﹖": "?",
+        "？": "?",
+        "﹗": "!",
+        "！": "!",
+        "～": "~",
+        "﹀": "∨",
+        "︿": "∧",
+        "︳": "|",
+        "｜": "|",
+        "︱": "|",
+        "≧": "≥",
+        "≦": "≤",
+        "≒": "≈",
+        "＝": "=",
+        "﹦": "=",
+        "＞": ">",
+        "﹥": ">",
+        "＜": "<",
+        "﹤": "<",
+        "﹣": "-",
+        "﹟": "#",
+        "＾": "^",
+        "‵": "`",
+        "¨": "¨",
+        "‥": "¨",
+        "ˉ": "-",
+        "。": ".",
+        "，": ",",
+        "､ ": ",",
+        "、": ",",
+        "」": "’",
+        "『": "“",
+        "：": ":",
+        "；": ";",
+        "､": ",",
+        "┅": "...",
+        "…": "...",
+        "∶": ":",
+}
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\src\text_processing.py
+# ========================================
+
+from typing import List, Tuple, Dict, Optional
+from models.trie import Trie
+from .character_utils import replace_special_chars, LATIN_CHARS
+import re
+import logging
+
+def convert_to_sino_vietnamese(
+    text: str, 
+    names2: Trie, 
+    names: Trie, 
+    viet_phrase: Trie, 
+    chinese_phien_am: Dict[str, str]
+) -> str:
+    """
+    Convert Chinese text to Sino-Vietnamese.
+
+    Args:
+        text (str): The input Chinese text.
+        names2 (Trie): Trie containing Names2.txt data.
+        names (Trie): Trie containing Names.txt data.
+        viet_phrase (Trie): Trie containing VietPhrase.txt data.
+        chinese_phien_am (Dict[str, str]): Dictionary containing ChinesePhienAmWords.txt data.
+
+    Returns:
+        str: The converted Sino-Vietnamese text.
+
+    Raises:
+        ValueError: If input parameters are invalid.
+    """
+    # Input validation
+    if not isinstance(text, str):
+        raise ValueError(f"Input text must be a string, got {type(text)}")
+    
+    if not text:
+        logging.warning("Empty input text provided")
+        return ""
+    
+    # Validate Trie and dictionary inputs
+    for name, obj in [('names2', names2), ('names', names), ('viet_phrase', viet_phrase)]:
+        if not isinstance(obj, Trie):
+            raise ValueError(f"{name} must be a Trie object")
+    
+    if not isinstance(chinese_phien_am, dict):
+        raise ValueError("chinese_phien_am must be a dictionary")
+
+    text = replace_special_chars(text)
+    
+    tokens = []
+    i = 0
+    chunk_size = 1000  # Process text in chunks of 1000 characters internally
+    
+    while i < len(text):
+        chunk = text[i:i+chunk_size]
+        j = 0
+        
+        while j < len(chunk):
+            # Check for a sequence of Latin characters
+            latin_start = j
+            while j < len(chunk) and chunk[j] in LATIN_CHARS:
+                j += 1
+            if j > latin_start:
+                latin_text = chunk[latin_start:j]
+                tokens.append(latin_text)
+                continue
+            
+            # Check Names2 first (with value splitting)
+            name2_match, value = names2.find_longest_prefix(chunk[j:])
+            if name2_match:
+                tokens.append(split_value(value))
+                j += len(name2_match)
+                continue
+            
+            # Check Names (with value splitting)
+            name_match, value = names.find_longest_prefix(chunk[j:])
+            if name_match:
+                tokens.append(split_value(value))
+                j += len(name_match)
+                continue
+            
+            # Check VietPhrase
+            viet_phrase_match, value = viet_phrase.find_longest_prefix(chunk[j:])
+            if viet_phrase_match:
+                tokens.append(split_value(value))
+                j += len(viet_phrase_match)
+                continue
+            
+            # Check Chinese Phien Am Words
+            if chunk[j:j+1] in chinese_phien_am:
+                tokens.append(chinese_phien_am[chunk[j:j+1]])
+                j += 1
+                continue
+            
+            # If no match found, add the character as is
+            tokens.append(chunk[j])
+            j += 1
+        
+        i += chunk_size
+
+    # Rephrase the tokens
+    result = rephrase(tokens)
+
+    # Apply regex transformations directly to the result
+    # Remove spaces after left quotation marks and capitalize first word
+    result = re.sub(r'([\[\“\‘])\s*(\w)', lambda m: m.group(1) + m.group(2).upper(), result)
+    # Remove spaces before right quotation marks
+    result = re.sub(r'\s+([”\’\]])', r'\1', result)
+    # Capitalize first word after ? and ! marks
+    result = re.sub(r'([?!⟨:«])\s+(\w)', lambda m: m.group(1) + ' ' + m.group(2).upper(), result)
+    # Remove spaces before colon and semicolon
+    result = re.sub(r'\s+([;:?!.])', r'\1', result)
+    # Capitalize first word after a single dot, but not after triple dots
+    result = re.sub(r'(?<!\.)\.(?!\.)\s+(\w)', lambda m: '. ' + m.group(1).upper(), result)
+    return result
+
+
+def split_value(value: str) -> str:
+    """
+    Split a value with multiple definitions and return the first non-empty definition.
+    
+    Args:
+        value (str): Input value potentially containing multiple definitions.
+    
+    Returns:
+        str: First non-empty definition of the value, or a space if empty.
+    """
+    # Check for '=' first to handle special cases like "的=/như thế/đích"
+    if '=' in value:
+        parts = value.split('=', 1)
+        value = parts[1]
+    
+    # Split by '/' or '|' and return the first non-empty part
+    split_parts = value.replace("|", "/").split("/")
+    
+    # If the first part is an empty string, return a space
+    if not split_parts[0].strip():
+        return ' '
+    
+    # Find the first non-empty part
+    for part in split_parts:
+        stripped_part = part.strip()
+        if stripped_part:
+            return stripped_part
+    
+    # If no non-empty part found, return the original value
+    return value
+
+
+def rephrase(tokens: List[str]) -> str:
+    """
+    Rephrase the tokens to form a properly formatted sentence.
+
+    Args:
+        tokens (List[str]): A list of tokens to be rephrased.
+
+    Returns:
+        str: The rephrased text.
+    """
+    non_word = set('"[{ ,!?;\'.')
+    result = []
+    upper = False
+    last_token_empty = False
+
+    for i, token in enumerate(tokens):
+        if token.strip():  # Non-empty token
+            if i == 0 or (not upper and token not in non_word):
+                if result and not last_token_empty:
+                    result.append(' ')
+                if not token[0].isupper():  # Only capitalize if not already capitalized
+                    token = token.capitalize()
+                upper = True
+            elif token not in non_word and not last_token_empty:
+                result.append(' ')
+            result.append(token)
+            last_token_empty = False
+        else:  # Empty or whitespace token
+            result.append(token)  # Preserve the original whitespace
+            last_token_empty = True
+
+    text = ''.join(result)
+    return text
+
+
+def process_paragraph(
+    paragraph: str, 
+    names2: Trie, 
+    names: Trie, 
+    viet_phrase: Trie, 
+    chinese_phien_am: Dict[str, str]
+) -> str:
+    """
+    Process a single paragraph by converting it to Sino-Vietnamese.
+
+    Args:
+        paragraph (str): The input paragraph in Chinese.
+        names2 (Trie): Trie containing Names2.txt data.
+        names (Trie): Trie containing Names.txt data.
+        viet_phrase (Trie): Trie containing VietPhrase.txt data.
+        chinese_phien_am (Dict[str, str]): Dictionary containing ChinesePhienAmWords.txt data.
+
+    Returns:
+        str: The processed paragraph in Sino-Vietnamese.
+    """
+    # Split the paragraph into lines while preserving empty lines
+    lines = paragraph.splitlines(keepends=True)
+    result_lines = []
+    
+    for line in lines:
+        # Preserve leading whitespace
+        leading_space = ''
+        for char in line:
+            if char.isspace():
+                leading_space += char
+            else:
+                break
+                
+        # Convert the actual content
+        content = line.lstrip()
+        if content:  # Only convert non-empty content
+            converted = convert_to_sino_vietnamese(content, names2, names, viet_phrase, chinese_phien_am)
+            result_lines.append(leading_space + converted)
+        else:  # Preserve empty lines
+            result_lines.append(line)
+    
+    return ''.join(result_lines)
+
+
+def preprocess_text(text: str) -> str:
+    """
+    Preprocess input text for translation.
+    
+    :param text: Input text to preprocess
+    :return: Preprocessed text
+    """
+    # Remove extra whitespaces
+    text = re.sub(r'\s+', ' ', text).strip()
+    
+    # Convert to lowercase (optional, depends on translation strategy)
+    text = text.lower()
+    
+    # Remove punctuation (optional)
+    text = re.sub(r'[^\w\s]', '', text)
+    
+    return text
+
+
+def process_paragraph_new(
+    paragraph: str, 
+    names2_trie: Dict[str, str], 
+    names_trie: Dict[str, str], 
+    viet_phrase_trie: Dict[str, str], 
+    chinese_phien_am_data: Dict[str, str]
+) -> str:
+    """
+    Process and translate a paragraph.
+    
+    :param paragraph: Input paragraph
+    :param names2_trie: Names2 translation dictionary
+    :param names_trie: Names translation dictionary
+    :param viet_phrase_trie: VietPhrase translation dictionary
+    :param chinese_phien_am_data: Chinese Phien Am translation dictionary
+    :return: Translated paragraph
+    """
+    # Placeholder for backward compatibility
+    preprocessed_text = preprocess_text(paragraph)
+    
+    # Implement basic translation logic
+    translated_segments = []
+    for segment in preprocessed_text.split():
+        # Attempt translations in order of priority
+        translation = (
+            viet_phrase_trie.get(segment) or
+            names_trie.get(segment) or
+            names2_trie.get(segment) or
+            segment
+        )
+        translated_segments.append(translation)
+    
+    return ' '.join(translated_segments)
+
+
+def convert_to_sino_vietnamese_new(text: str) -> str:
+    """
+    Fallback method to convert text to Sino-Vietnamese.
+    
+    :param text: Input text
+    :return: Converted text
+    """
+    # Placeholder implementation
+    return text
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\src\translation_engine.py
+# ========================================
+
+from abc import ABC, abstractmethod
+from typing import Dict, Optional, Any, Tuple
+import logging
+import os
+
+from src.data_loader import DataLoader
+from src.data_watcher import DataFileWatcher, create_data_watcher
+
+logger = logging.getLogger(__name__)
+
+class TranslationEngine(ABC):
+    """
+    Abstract base class for translation engines with dynamic data watching.
+    Defines the core interface for translation functionality.
+    """
+    
+    def __init__(self, 
+                 data_loader: Optional[DataLoader] = None, 
+                 config: Optional[Dict[str, Any]] = None,
+                 data_dir: Optional[str] = None,
+                 auto_watch: bool = True):
+        """
+        Initialize the translation engine with optional data watching.
+        
+        Args:
+            data_loader: Optional custom data loader
+            config: Optional configuration dictionary
+            data_dir: Optional directory for data files
+            auto_watch: Whether to automatically start file watching
+        """
+        self.config = config or {}
+        self.data_loader = data_loader or DataLoader(data_dir=data_dir)
+        self.data_dir = data_dir or self.data_loader.data_dir
+        
+        # Initial data load
+        self.data = self.data_loader.load_data()
+        
+        # Setup file watcher
+        self.data_watcher = None
+        if auto_watch:
+            self.start_data_watching()
+    
+    def start_data_watching(self):
+        """
+        Start watching data files for changes.
+        """
+        try:
+            self.data_watcher = create_data_watcher(
+                data_dir=self.data_dir, 
+                reload_callback=self._on_data_reload
+            )
+            logger.info(f"Started watching data files in {self.data_dir}")
+        except Exception as e:
+            logger.error(f"Failed to start data watching: {e}")
+    
+    def _on_data_reload(self, new_data: Tuple):
+        """
+        Internal method to handle data reloading.
+        
+        Args:
+            new_data: Newly loaded data tuple
+        """
+        try:
+            logger.info("Reloading translation data")
+            self.data = new_data
+            self.refresh_data()
+        except Exception as e:
+            logger.error(f"Error during data reload: {e}")
+    
+    @abstractmethod
+    def translate(self, text: str) -> str:
+        """
+        Translate the input text.
+        
+        Args:
+            text (str): Input text to translate
+        
+        Returns:
+            str: Translated text
+        """
+        raise NotImplementedError("Subclasses must implement translation method")
+    
+    @abstractmethod
+    def validate_translation(self, original: str, translated: str) -> bool:
+        """
+        Validate the quality of translation.
+        
+        Args:
+            original (str): Original text
+            translated (str): Translated text
+        
+        Returns:
+            bool: Whether the translation meets quality standards
+        """
+        raise NotImplementedError("Subclasses must implement translation validation")
+    
+    def refresh_data(self):
+        """
+        Optional method to refresh translation data.
+        Can be overridden by subclasses to perform custom actions on data reload.
+        """
+        pass
+    
+    def get_translation_metadata(self) -> Dict[str, Any]:
+        """
+        Retrieve metadata about the translation process.
+        
+        Returns:
+            Dict[str, Any]: Translation metadata
+        """
+        return {
+            'data_dir': self.data_dir,
+            'watching_enabled': self.data_watcher is not None
+        }
+    
+    def stop_data_watching(self):
+        """
+        Stop watching data files.
+        """
+        if self.data_watcher:
+            self.data_watcher.stop()
+            logger.info("Stopped data file watching")
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\src\__init__.py
+# ========================================
+
+# QTEngine source package
+from .character_utils import replace_special_chars, LATIN_CHARS
+from .text_processing import (
+    convert_to_sino_vietnamese, 
+    rephrase, 
+    process_paragraph
+)
+from .performance import profile_function
+from .data_loader import load_data
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\tests\test_traditional.py
+# ========================================
+
+import unittest
+import logging
+import os
+from QTEngine import QTEngine
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+class TestTraditionalChineseTranslation(unittest.TestCase):
+    def setUp(self):
+        """Set up QTEngine instance before each test."""
+        self.engine = QTEngine()
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        self.test_file = os.path.join(current_dir, 'Tradional.txt')
+        
+    def test_traditional_file_translation(self):
+        """Test translation of Traditional Chinese text from file."""
+        try:
+            with open(self.test_file, 'r', encoding='utf-8') as f:
+                traditional_text = f.read()
+                
+            # Log the input text
+            logger.info("="*50)
+            logger.info("Testing Traditional.txt content:")
+            logger.info(f"Input text (first 100 chars): {traditional_text[:100]}")
+                
+            # First check if text is detected as Traditional
+            is_traditional = self.engine.chinese_converter.is_traditional(traditional_text)
+            logger.info(f"\nText detected as Traditional Chinese: {is_traditional}")
+            
+            # Get simplified version
+            simplified = self.engine.chinese_converter.auto_convert_to_simplified(traditional_text)
+            if simplified and simplified != traditional_text:
+                logger.info("\nConversion Results:")
+                logger.info(f"Original  : {traditional_text[:100]}")
+                logger.info(f"Simplified: {simplified[:100]}")
+            else:
+                logger.info("\nNo conversion needed or no Chinese characters found")
+            
+            # Translate the text
+            translated = self.engine.translate_paragraph(traditional_text)
+            logger.info("\nTranslation Results:")
+            logger.info(f"Original   : {traditional_text[:100]}")
+            logger.info(f"Translated : {translated[:100]}")
+            
+            # Basic assertions
+            self.assertIsNotNone(translated)
+            self.assertNotEqual(translated.strip(), "")
+            self.assertNotEqual(translated, traditional_text)
+            
+            # Save translation result
+            output_file = os.path.join(os.path.dirname(self.test_file), 'traditional_translation_result.txt')
+            with open(output_file, 'w', encoding='utf-8') as f:
+                f.write(f"Original Text:\n{traditional_text}\n\n")
+                f.write(f"Simplified Text:\n{simplified}\n\n")
+                f.write(f"Translated Text:\n{translated}")
+            logger.info(f"\nFull translation saved to: {output_file}")
+            
+        except FileNotFoundError:
+            logger.error(f"Test file not found: {self.test_file}")
+            raise
+        except Exception as e:
+            logger.error(f"Error during translation: {str(e)}")
+            raise
+
+    def test_sample_traditional_texts(self):
+        """Test translation of sample Traditional Chinese texts."""
+        test_cases = [
+            "這是繁體中文的例子",  # Traditional
+            "这是简体中文的例子",  # Simplified (for comparison)
+            "這個故事非常有趣",    # Traditional
+            "這些是我們的傳統文化",  # Traditional
+            "Hello World!"         # Non-Chinese (for testing handling)
+        ]
+        
+        logger.info("\n" + "="*50)
+        logger.info("Testing sample Traditional texts:")
+        
+        for text in test_cases:
+            logger.info("\n" + "-"*30)
+            logger.info(f"Testing text: {text}")
+            
+            # Check if Traditional
+            is_traditional = self.engine.chinese_converter.is_traditional(text)
+            logger.info(f"Detected as Traditional: {is_traditional}")
+            
+            # Convert if needed
+            simplified = self.engine.chinese_converter.auto_convert_to_simplified(text)
+            if simplified and simplified != text:
+                logger.info(f"Converted to Simplified: {simplified}")
+            else:
+                logger.info("No conversion needed")
+            
+            # Translate
+            translated = self.engine.translate_paragraph(text)
+            logger.info(f"Translation result: {translated}")
+            
+            # Assertions
+            self.assertIsNotNone(translated)
+            if self.engine.chinese_converter.has_chinese(text):
+                self.assertNotEqual(translated.strip(), "")
+                self.assertNotEqual(translated, text)
+
+if __name__ == '__main__':
+    unittest.main()
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\tests\test_translation.py
+# ========================================
+
+import unittest
+import os
+import time
+from QTEngine import QTEngine
+
+class TestQTEngineTranslation(unittest.TestCase):
+    def setUp(self):
+        start_setup = time.time()
+        # Create QTEngine instance
+        self.engine = QTEngine()
+        self.test_file = os.path.join(os.path.dirname(__file__), 'Test.txt')
+        self.output_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'translated_result')
+        end_setup = time.time()
+        print(f"\nSetUp duration: {end_setup - start_setup:.4f} seconds")
+
+    def test_translation(self):
+        start_time = time.time()
+        
+        # Measure file reading time
+        start_read = time.time()
+        with open(self.test_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+        end_read = time.time()
+        print(f"File reading duration: {end_read - start_read:.4f} seconds")
+
+        # Measure paragraph splitting time
+        start_split = time.time()
+        paragraphs = [p.strip() for p in content.split('\n\n') if p.strip()]
+        end_split = time.time()
+        print(f"Paragraph splitting duration: {end_split - start_split:.4f} seconds")
+
+        # Measure translation time
+        start_translate = time.time()
+        with open(self.output_file, 'w', encoding='utf-8') as f:
+            f.write("Translation Results:\n\n")
+            
+            for i, paragraph in enumerate(paragraphs, 1):
+                if paragraph.strip():
+                    translated = self.engine.translate_paragraph(paragraph)
+                    f.write(f"Paragraph {i}:\n")
+                    f.write("Original:\n")
+                    f.write(paragraph + "\n\n")
+                    f.write("Translated:\n")
+                    f.write(translated + "\n")
+                    f.write("-" * 50 + "\n\n")
+                    
+                    self.assertIsNotNone(translated)
+                    self.assertNotEqual(translated.strip(), "")
+        end_translate = time.time()
+        print(f"Translation and writing duration: {end_translate - start_translate:.4f} seconds")
+        
+        end_time = time.time()
+        print(f"test_translation total duration: {end_time - start_time:.4f} seconds")
+
+    def test_single_text_translation(self):
+        start_time = time.time()
+        test_text = "你好，世界！"
+        
+        # Measure translation time
+        start_translate = time.time()
+        translated = self.engine.translate(test_text)
+        end_translate = time.time()
+        print(f"Single text translation duration: {end_translate - start_translate:.4f} seconds")
+        
+        self.assertIsNotNone(translated)
+        self.assertNotEqual(translated.strip(), "")
+        
+        end_time = time.time()
+        print(f"test_single_text_translation total duration: {end_time - start_time:.4f} seconds")
+
+    def test_loading_info(self):
+        start_time = time.time()
+        
+        # Measure loading info retrieval time
+        start_load = time.time()
+        loading_info = self.engine.get_loading_info()
+        end_load = time.time()
+        print(f"Loading info retrieval duration: {end_load - start_load:.4f} seconds")
+        
+        self.assertIsNotNone(loading_info)
+        
+        end_time = time.time()
+        print(f"test_loading_info total duration: {end_time - start_time:.4f} seconds")
+
+if __name__ == '__main__':
+    unittest.main()
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\chapter_detector.py
+# ========================================
+
+import re
+import importlib.util
+import os
+
+class ChapterDetector:
+    """Handles chapter detection using various regex methods."""
+    
+    def __init__(self):
+        self.methods = self._load_detection_methods()
+        
+    def _load_detection_methods(self):
+        """Load chapter detection methods from detect_chapters_methods.py."""
+        try:
+            # Get the path to detect_chapters_methods.py
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            methods_file = os.path.join(current_dir, 'detect_chapters_methods.py')
+            
+            # Load the module
+            spec = importlib.util.spec_from_file_location("detect_chapters_methods", methods_file)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            
+            # Return the methods dictionary
+            return module.CHAPTER_DETECTION_METHODS
+        except Exception as e:
+            print(f"Error loading chapter detection methods: {str(e)}")
+            return {}
+
+    def get_available_methods(self):
+        """Return list of available detection method names."""
+        return list(self.methods.keys())
+
+    def detect_chapters(self, text, method_name):
+        """
+        Detect chapters in the text using the specified method.
+        
+        Args:
+            text (str): The text content to analyze
+            method_name (str): Name of the detection method to use
+            
+        Returns:
+            list: List of dictionaries containing chapter information
+                  Each dict has 'title' and 'start_pos' keys
+        """
+        if method_name not in self.methods:
+            raise ValueError(f"Unknown chapter detection method: {method_name}")
+            
+        try:
+            pattern = self.methods[method_name]
+            chapters = []
+            
+            # Find all matches
+            for match in re.finditer(pattern, text):
+                chapter_info = {
+                    'title': match.group(0).strip(),
+                    'start_pos': match.start()
+                }
+                chapters.append(chapter_info)
+            
+            # Add chapter content by finding text between chapter starts
+            for i in range(len(chapters)):
+                start = chapters[i]['start_pos']
+                if i < len(chapters) - 1:
+                    end = chapters[i + 1]['start_pos']
+                else:
+                    end = len(text)
+                    
+                # Get chapter content (excluding the title)
+                title_end = start + len(chapters[i]['title'])
+                chapters[i]['content'] = text[title_end:end].strip()
+            
+            return chapters
+            
+        except Exception as e:
+            raise Exception(f"Error detecting chapters: {str(e)}")
+
+    def extract_chapter_content(self, text, chapter_info):
+        """Extract the content for a specific chapter."""
+        try:
+            start_pos = chapter_info['start_pos'] + len(chapter_info['title'])
+            return text[start_pos:].strip()
+        except Exception as e:
+            raise Exception(f"Error extracting chapter content: {str(e)}")
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\detect_chapters_methods.py
+# ========================================
+
+import regex as re
+
+CHAPTER_MATCHERS = {
+    "Mục lục ( Đi trống không )": r"(?<=[　\s])(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|集(?![合和]))).{0,30}$",
+    "Mục lục": r"^[ 　\t]{0,4}(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|集(?![合和])|部(?![分赛游])|篇(?!张))).{0,30}$",
+    "Mục lục ( Phối hợp giới thiệu vắn tắt )": r"(?<=[　\s])(?:(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|集(?![合和])|部(?![分赛游])|回(?![合来事去])|场(?![和合比电是])|篇(?!张))).{0,30}$",
+    "Mục lục ( Cổ điển, light novel dự bị )": r"^[ 　\t]{0,4}(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|集(?![合和])|部(?![分赛游])|回(?![合来事去])|场(?![和合比电是])|话|篇(?!张))).{0,30}$",
+    "Con số ( Thuần con số tiêu đề )": r"(?<=[　\s])\d+\.?[ 　\t]{0,4}$",
+    "Viết kép con số ( Thuần con số tiêu đề )": r"(?<=[　\s])[零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,12}[ 　\t]{0,4}$",
+    "Con số phối hợp ( Thuần con số tiêu đề )": r"(?<=[　\s])[零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟\d]{1,12}[ 　\t]{0,4}$",
+    "Con số Ngăn cách phù Tiêu đề tên": r"^[ 　\t]{0,4}\d{1,5}[:：,.， 、_—\-].{1,30}$",
+    "Viết kép con số Ngăn cách phù Tiêu đề tên": r"^[ 　\t]{0,4}(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|[零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章?)[ 、_—\-].{1,30}$",
+    "Con số phối hợp Ngăn cách phù Tiêu đề tên": r"^[ 　\t]{0,4}(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|[零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章?[ 、_—\-]|\d{1,5}章?[:：,.， 、_—\-]).{0,30}$",
+    "Tiêu đề / số thứ tự": r"^[ 　\t]{0,4}正文[ 　]{1,4}.{0,20}$",
+    "Chapter/Section/Part/Episode số thứ tự Tiêu đề": r"^[ 　\t]{0,4}(?:[Cc]hapter|[Ss]ection|[Pp]art|ＰＡＲＴ|[Nn][oO][.、]|[Ee]pisode|(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外)\s{0,4}\d{1,4}.{0,30}$",
+    "Chapter( Đi giới thiệu vắn tắt )": r"^[ 　\t]{0,4}(?:[Cc]hapter|[Ss]ection|[Pp]art|ＰＡＲＴ|[Nn][Oo]\.|[Ee]pisode)\s{0,4}\d{1,4}.{0,30}$",
+    "Ký hiệu đặc thù Số thứ tự Tiêu đề": r"(?<=[\s　])[【〔〖「『〈［\[](?:第|[Cc]hapter)[\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,10}[章节].{0,20}$",
+    "Ký hiệu đặc thù Tiêu đề ( Thành đôi )": r"(?<=[\s　]{0,4})(?:[\[〈「『〖〔《（【\(].{1,30}[\)】）》〕〗』」〉\]]?|(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外)[ 　]{0,4}$",
+    "Ký hiệu đặc thù Tiêu đề ( Một cái )": r"(?<=[\s　]{0,4})(?:[☆★✦✧].{1,30}|(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外)[ 　]{0,4}$",
+    "Chương / cuốn Số thứ tự Tiêu đề": r"^[ \t　]{0,4}(?:(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|[卷章][\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8})[ 　]{0,4}.{0,30}$",
+    "Trên cùng tiêu đề": r"^\S.{1,20}$",
+    "Song tiêu đề ( Phía trước hướng )": r"(?m)(?<=[ \t　]{0,4})第[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章.{0,30}$(?=[\s　]{0,8}第[\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章)",
+    "Song tiêu đề ( Sau hướng )": r"(?m)(?<=[ \t　]{0,4}第[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章.{0,30}$[\s　]{0,8})第[\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章.{0,30}$",
+    "Tên sách Dấu móc Số thứ tự": r"^.{1,20}[(（][\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}[)）][ 　\t]{0,4}$",
+    "Tên sách Số thứ tự": r"^.{1,20}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}[ 　\t]{0,4}$",
+    "Đặc biệt ký tự Tiêu đề Đặc biệt ký hiệu": r"(?<=\={3,6}).{1,40}?(?=\=)",
+    "Số lượng từ chia cắt Phân khúc đọc": r"(?<=[ 　\t]{0,4})(?:.{0,15}分[页节章段]阅读[-_ ]|第\s{0,4}[\d零一二两三四五六七八九十百千万]{1,6}\s{0,4}[页节]).{0,30}$",
+    "Thông dụng quy tắc": r"(?im)^.{0,6}(?:[引楔]子|正文(?!完|结)|[引序前]言|[序终]章|扉页|[上中下][部篇卷]|卷首语|后记|尾声|番外|={2,4}|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|页[、 　]|集(?![合和])|部(?![分是门落])|篇(?!张))).{0,40}$|^.{0,6}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟a-z]{1,8}[、. 　].{0,20}$",
+}
+
+# Make sure this function is defined
+def create_pattern_matcher(pattern):
+    compiled_pattern = re.compile(pattern, re.MULTILINE | re.VERSION1)
+    def matcher(text):
+        return [(m.start(), m.group()) for m in compiled_pattern.finditer(text)]
+    return matcher
+
+# Create the CHAPTER_MATCHERS dictionary with compiled patterns
+CHAPTER_MATCHERS = {name: create_pattern_matcher(pattern) for name, pattern in CHAPTER_MATCHERS.items()}
+
+def detect_chapters(text):
+    chapters = []
+    for name, matcher in CHAPTER_MATCHERS.items():
+        chapters.extend(matcher(text))
+    
+    # Sort chapters by their position in the text
+    chapters.sort(key=lambda x: x[0])
+    
+    return chapters
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\dictionary_manager.py
+# ========================================
+
+import os
+import sys
+
+# Add QTEngine to Python path
+current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+qt_engine_path = os.path.join(current_dir, 'QTEngine')
+if qt_engine_path not in sys.path:
+    sys.path.append(qt_engine_path)
+
+from QTEngine.models.trie import Trie
+
+class DictionaryManager:
+    """Manages multiple dictionary sources and lookups."""
+    
+    def __init__(self):
+        self.dictionaries = {}
+        self.qt_engine = None  # Will be set when QTEngine is initialized
+        
+    def load_dictionaries(self):
+        """Load all available dictionaries."""
+        try:
+            # Get the data directory path
+            current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            data_dir = os.path.join(current_dir, 'data')
+            
+            # Load each dictionary file
+            dictionary_files = {
+                'babylon': 'Babylon.txt',
+                'lacviet': 'LacViet.txt',
+                'thieuchuu': 'ThieuChuu.txt'
+            }
+            
+            for dict_name, filename in dictionary_files.items():
+                file_path = os.path.join(data_dir, filename)
+                if os.path.exists(file_path):
+                    self.dictionaries[dict_name] = self._load_dictionary(file_path)
+                    
+        except Exception as e:
+            raise Exception(f"Error loading dictionaries: {str(e)}")
+
+    def _load_dictionary(self, file_path):
+        """Load a single dictionary file into a Trie structure."""
+        trie = Trie()
+        try:
+            with open(file_path, 'r', encoding='utf-8-sig') as file:
+                for line in file:
+                    # Handle different dictionary formats
+                    if '=' in line:  # ThieuChuu and LacViet format
+                        key, value = line.strip().split('=', 1)
+                        trie.insert(key, value)
+                    else:  # Babylon format
+                        # Assuming tab-separated format
+                        parts = line.strip().split('\t')
+                        if len(parts) >= 2:
+                            trie.insert(parts[0], parts[1])
+            return trie
+        except Exception as e:
+            raise Exception(f"Error loading dictionary {file_path}: {str(e)}")
+
+    def lookup(self, text):
+        """
+        Look up text in all available dictionaries.
+        
+        Args:
+            text (str): Text to look up
+            
+        Returns:
+            dict: Dictionary name -> definition mapping
+        """
+        results = {}
+        
+        # Look up in QTEngine dictionaries if available
+        if self.qt_engine:
+            try:
+                qt_result = self.qt_engine.translate(text)
+                if qt_result:
+                    results['QTEngine'] = qt_result
+            except Exception as e:
+                print(f"QTEngine lookup error: {str(e)}")
+
+        # Look up in other dictionaries
+        for dict_name, dictionary in self.dictionaries.items():
+            try:
+                result = dictionary.search(text)
+                if result:
+                    results[dict_name] = result
+            except Exception as e:
+                print(f"Dictionary lookup error in {dict_name}: {str(e)}")
+
+        return results
+
+    def set_qt_engine(self, engine):
+        """Set the QTEngine instance for translation lookups."""
+        self.qt_engine = engine
+
+    def sync_custom_names(self, custom_names_path):
+        """
+        Sync custom Names2.txt with QTEngine's Names2.txt.
+        
+        Args:
+            custom_names_path (str): Path to custom Names2.txt file
+        """
+        try:
+            if not self.qt_engine:
+                raise Exception("QTEngine not initialized")
+                
+            # Implementation will depend on QTEngine's API for dictionary updates
+            # This is a placeholder for the actual implementation
+            pass
+            
+        except Exception as e:
+            raise Exception(f"Error syncing custom names: {str(e)}")
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\file_handler.py
+# ========================================
+
+import os
+import chardet
+
+class FileHandler:
+    """Handles file operations including loading, encoding detection, and metadata extraction."""
+    
+    @staticmethod
+    def detect_encoding(file_path):
+        """Detect the encoding of a file."""
+        with open(file_path, 'rb') as file:
+            raw_data = file.read()
+            result = chardet.detect(raw_data)
+            return result['encoding']
+
+    @staticmethod
+    def load_file(file_path):
+        """Load a file with automatic encoding detection."""
+        try:
+            encoding = FileHandler.detect_encoding(file_path)
+            with open(file_path, 'r', encoding=encoding) as file:
+                content = file.read()
+                return {
+                    'content': content,
+                    'encoding': encoding,
+                    'size': os.path.getsize(file_path),
+                    'name': os.path.basename(file_path)
+                }
+        except Exception as e:
+            raise Exception(f"Error loading file: {str(e)}")
+
+    @staticmethod
+    def get_file_info(file_path):
+        """Get file metadata without loading content."""
+        try:
+            return {
+                'name': os.path.basename(file_path),
+                'size': os.path.getsize(file_path),
+                'encoding': FileHandler.detect_encoding(file_path),
+                'path': file_path
+            }
+        except Exception as e:
+            raise Exception(f"Error getting file info: {str(e)}")
+
+    @staticmethod
+    def format_file_size(size_in_bytes):
+        """Convert file size to human-readable format."""
+        for unit in ['B', 'KB', 'MB', 'GB']:
+            if size_in_bytes < 1024:
+                return f"{size_in_bytes:.2f} {unit}"
+            size_in_bytes /= 1024
+        return f"{size_in_bytes:.2f} TB"
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\main.py
+# ========================================
+
+import sys
+import os
+
+# Add QTEngine to Python path
+current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+qt_engine_path = os.path.join(current_dir, 'QTEngine')
+if qt_engine_path not in sys.path:
+    sys.path.append(qt_engine_path)
+    os.chdir(qt_engine_path)  # Change working directory for QTEngine initialization
+
+import qtawesome as qta
+from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
+                            QHBoxLayout, QLabel, QComboBox, QTextEdit, QSplitter,
+                            QMenuBar, QMenu, QFileDialog, QStatusBar, QMessageBox,
+                            QListWidget, QListWidgetItem, QPushButton)
+from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtGui import QTextCursor
+from theme_manager import ThemeManager
+from file_handler import FileHandler
+from chapter_detector import ChapterDetector
+from dictionary_manager import DictionaryManager
+from QTEngine.QTEngine import QTEngine
+
+class FileInfoPanel(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        layout = QVBoxLayout()
+        
+        # Header with icon
+        header_layout = QHBoxLayout()
+        icon_label = QLabel()
+        icon_label.setPixmap(qta.icon('fa5s.file-alt').pixmap(24, 24))
+        header_layout.addWidget(icon_label)
+        header_layout.addWidget(QLabel("File Information"))
+        header_layout.addStretch()
+        layout.addLayout(header_layout)
+        
+        # File info labels
+        self.file_name_label = QLabel("File: No file opened")
+        self.file_size_label = QLabel("Size: -")
+        self.file_encoding_label = QLabel("Encoding: -")
+        
+        layout.addWidget(self.file_name_label)
+        layout.addWidget(self.file_size_label)
+        layout.addWidget(self.file_encoding_label)
+        layout.addStretch()
+        self.setLayout(layout)
+    
+    def update_info(self, file_info):
+        """Update the panel with file information."""
+        self.file_name_label.setText(f"File: {file_info['name']}")
+        self.file_size_label.setText(f"Size: {FileHandler.format_file_size(file_info['size'])}")
+        self.file_encoding_label.setText(f"Encoding: {file_info['encoding']}")
+
+class ChapterPanel(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.chapter_detector = ChapterDetector()
+        self.chapters = []
+        self.init_ui()
+        
+    def init_ui(self):
+        layout = QVBoxLayout()
+        
+        # Header with icon
+        header_layout = QHBoxLayout()
+        icon_label = QLabel()
+        icon_label.setPixmap(qta.icon('fa5s.list-ol').pixmap(24, 24))
+        header_layout.addWidget(icon_label)
+        header_layout.addWidget(QLabel("Chapters"))
+        header_layout.addStretch()
+        layout.addLayout(header_layout)
+        
+        # Chapter detection method selector
+        method_layout = QHBoxLayout()
+        method_layout.addWidget(QLabel("Detection Method:"))
+        self.method_selector = QComboBox()
+        self.method_selector.addItems(self.chapter_detector.get_available_methods())
+        self.method_selector.currentTextChanged.connect(self.on_method_changed)
+        method_layout.addWidget(self.method_selector)
+        layout.addLayout(method_layout)
+        
+        # Chapter list
+        self.chapter_list = QListWidget()
+        self.chapter_list.itemClicked.connect(self.on_chapter_selected)
+        layout.addWidget(self.chapter_list)
+        
+        self.setLayout(layout)
+    
+    def detect_chapters(self, text):
+        """Detect chapters in the text using current method."""
+        try:
+            method = self.method_selector.currentText()
+            self.chapters = self.chapter_detector.detect_chapters(text, method)
+            self.update_chapter_list()
+            return True
+        except Exception as e:
+            QMessageBox.warning(None, "Chapter Detection Error", str(e))
+            return False
+    
+    def update_chapter_list(self):
+        """Update the chapter list widget with detected chapters."""
+        self.chapter_list.clear()
+        for chapter in self.chapters:
+            item = QListWidgetItem(chapter['title'])
+            self.chapter_list.addItem(item)
+    
+    def on_method_changed(self, method):
+        """Handle chapter detection method change."""
+        if hasattr(self, 'current_text'):
+            self.detect_chapters(self.current_text)
+    
+    def on_chapter_selected(self, item):
+        """Handle chapter selection."""
+        index = self.chapter_list.row(item)
+        if 0 <= index < len(self.chapters):
+            chapter = self.chapters[index]
+            # Emit signal to update main translation panel
+            if hasattr(self, 'chapter_selected_callback'):
+                self.chapter_selected_callback(chapter)
+
+class MainTranslationPanel(QWidget):
+    text_selected = pyqtSignal(str)
+    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        layout = QVBoxLayout()
+        
+        # Header with icon
+        header_layout = QHBoxLayout()
+        icon_label = QLabel()
+        icon_label.setPixmap(qta.icon('fa5s.language').pixmap(24, 24))
+        header_layout.addWidget(icon_label)
+        header_layout.addWidget(QLabel("Translation"))
+        header_layout.addStretch()
+        layout.addLayout(header_layout)
+        
+        # Text display area
+        self.text_area = QTextEdit()
+        self.text_area.selectionChanged.connect(self.on_text_selected)
+        layout.addWidget(self.text_area)
+        
+        self.setLayout(layout)
+    
+    def set_content(self, content):
+        """Set the content of the text area."""
+        self.text_area.setText(content)
+        
+    def set_chapter_content(self, chapter):
+        """Set the content to the selected chapter."""
+        if chapter and 'content' in chapter:
+            self.text_area.setText(chapter['content'])
+    
+    def on_text_selected(self):
+        """Handle text selection."""
+        cursor = self.text_area.textCursor()
+        if cursor.hasSelection():
+            selected_text = cursor.selectedText()
+            self.text_selected.emit(selected_text)
+
+class DictionaryPanel(QWidget):
+    def __init__(self, dictionary_manager, parent=None):
+        super().__init__(parent)
+        self.dictionary_manager = dictionary_manager
+        self.init_ui()
+        
+    def init_ui(self):
+        layout = QVBoxLayout()
+        
+        # Header with icon
+        header_layout = QHBoxLayout()
+        icon_label = QLabel()
+        icon_label.setPixmap(qta.icon('fa5s.book').pixmap(24, 24))
+        header_layout.addWidget(icon_label)
+        header_layout.addWidget(QLabel("Dictionary"))
+        header_layout.addStretch()
+        layout.addLayout(header_layout)
+        
+        # Search box and button
+        search_layout = QHBoxLayout()
+        self.search_box = QTextEdit()
+        self.search_box.setMaximumHeight(30)
+        self.search_box.setPlaceholderText("Enter text to look up...")
+        search_layout.addWidget(self.search_box)
+        
+        lookup_button = QPushButton(qta.icon('fa5s.search'), "")
+        lookup_button.setToolTip("Look up")
+        lookup_button.clicked.connect(self.perform_lookup)
+        search_layout.addWidget(lookup_button)
+        
+        layout.addLayout(search_layout)
+        
+        # Results area
+        self.results_area = QTextEdit()
+        self.results_area.setReadOnly(True)
+        layout.addWidget(self.results_area)
+        
+        self.setLayout(layout)
+    
+    def perform_lookup(self):
+        """Perform dictionary lookup for the text in search box."""
+        text = self.search_box.toPlainText().strip()
+        if text:
+            self.lookup_text(text)
+    
+    def lookup_text(self, text):
+        """Look up text in dictionaries and display results."""
+        try:
+            results = self.dictionary_manager.lookup(text)
+            
+            # Format and display results
+            formatted_results = []
+            for dict_name, result in results.items():
+                formatted_results.append(f"=== {dict_name} ===\n{result}\n")
+            
+            if formatted_results:
+                self.results_area.setText("\n".join(formatted_results))
+            else:
+                self.results_area.setText("No results found.")
+                
+        except Exception as e:
+            self.results_area.setText(f"Error during lookup: {str(e)}")
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.theme_manager = ThemeManager()
+        self.current_file = None
+        self.current_text = None
+        
+        # Initialize QTEngine and DictionaryManager
+        self.qt_engine = QTEngine()
+        self.dictionary_manager = DictionaryManager()
+        self.dictionary_manager.set_qt_engine(self.qt_engine)
+        self.dictionary_manager.load_dictionaries()
+        
+        self.init_ui()
+        
+    def init_ui(self):
+        """Initialize the user interface."""
+        self.setWindowTitle("ZXReader")
+        self.setMinimumSize(800, 600)
+        
+        # Create menu bar
+        self.create_menu_bar()
+        
+        # Create status bar
+        self.statusBar = QStatusBar()
+        self.setStatusBar(self.statusBar)
+        self.statusBar.showMessage("Ready")
+        
+        # Create main widget and layout
+        main_widget = QWidget()
+        self.setCentralWidget(main_widget)
+        main_layout = QHBoxLayout(main_widget)
+        
+        # Create splitter for resizable panels
+        splitter = QSplitter(Qt.Orientation.Horizontal)
+        
+        # Left side (File Info and Chapter panels)
+        left_widget = QWidget()
+        left_layout = QVBoxLayout(left_widget)
+        self.file_info_panel = FileInfoPanel()
+        self.chapter_panel = ChapterPanel()
+        left_layout.addWidget(self.file_info_panel)
+        left_layout.addWidget(self.chapter_panel)
+        left_widget.setLayout(left_layout)
+        
+        # Center (Translation panel)
+        self.translation_panel = MainTranslationPanel()
+        
+        # Right side (Dictionary panel)
+        self.dictionary_panel = DictionaryPanel(self.dictionary_manager)
+        
+        # Add widgets to splitter
+        splitter.addWidget(left_widget)
+        splitter.addWidget(self.translation_panel)
+        splitter.addWidget(self.dictionary_panel)
+        
+        # Set initial sizes (20% - 60% - 20%)
+        splitter.setSizes([200, 600, 200])
+        
+        # Add splitter to main layout
+        main_layout.addWidget(splitter)
+        
+        # Connect signals
+        self.chapter_panel.chapter_selected_callback = self.translation_panel.set_chapter_content
+        self.translation_panel.text_selected.connect(self.dictionary_panel.lookup_text)
+        
+        # Apply initial theme
+        self.apply_theme('light')
+    
+    def create_menu_bar(self):
+        """Create the application menu bar."""
+        menubar = QMenuBar()
+        self.setMenuBar(menubar)
+        
+        # File menu
+        file_menu = QMenu("&File", self)
+        menubar.addMenu(file_menu)
+        
+        # File menu actions
+        open_action = file_menu.addAction(qta.icon('fa5s.folder-open'), "Open")
+        open_action.setShortcut("Ctrl+O")
+        open_action.triggered.connect(self.open_file)
+        
+        file_menu.addSeparator()
+        
+        exit_action = file_menu.addAction(qta.icon('fa5s.door-open'), "Exit")
+        exit_action.setShortcut("Ctrl+Q")
+        exit_action.triggered.connect(self.close)
+        
+        # View menu
+        view_menu = QMenu("&View", self)
+        menubar.addMenu(view_menu)
+        
+        # Theme submenu
+        theme_menu = QMenu("Theme", self)
+        theme_menu.setIcon(qta.icon('fa5s.paint-brush'))
+        view_menu.addMenu(theme_menu)
+        
+        # Theme actions
+        for theme in ['light', 'dark', 'book', 'wood']:
+            theme_action = theme_menu.addAction(theme.capitalize())
+            theme_action.triggered.connect(lambda checked, t=theme: self.apply_theme(t))
+    
+    def open_file(self):
+        """Open a file dialog to select a text file."""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Open Text File",
+            "",
+            "Text Files (*.txt);;All Files (*)"
+        )
+        if file_path:
+            try:
+                self.statusBar.showMessage(f"Opening file: {file_path}")
+                
+                # Load file and update UI
+                file_data = FileHandler.load_file(file_path)
+                self.current_file = file_path
+                self.current_text = file_data['content']
+                
+                # Update file info panel
+                self.file_info_panel.update_info(file_data)
+                
+                # Update translation panel with full content
+                self.translation_panel.set_content(self.current_text)
+                
+                # Detect chapters
+                self.chapter_panel.current_text = self.current_text
+                if self.chapter_panel.detect_chapters(self.current_text):
+                    self.statusBar.showMessage(f"File loaded successfully: {file_data['name']}")
+                else:
+                    self.statusBar.showMessage(f"File loaded but chapter detection failed: {file_data['name']}")
+                
+            except Exception as e:
+                self.statusBar.showMessage("Error loading file")
+                QMessageBox.critical(self, "Error", f"Failed to load file: {str(e)}")
+    
+    def apply_theme(self, theme_name):
+        """Apply the selected theme to the application."""
+        try:
+            stylesheet = self.theme_manager.apply_theme(QApplication.instance(), theme_name)
+            self.setStyleSheet(stylesheet)
+            self.statusBar.showMessage(f"Theme changed to {theme_name}")
+        except Exception as e:
+            self.statusBar.showMessage(f"Error applying theme: {str(e)}")
+            QMessageBox.warning(self, "Theme Error", f"Failed to apply theme: {str(e)}")
+
+def main():
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())
+
+if __name__ == '__main__':
+    main()
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\theme_manager.py
+# ========================================
+
+from PyQt6.QtGui import QPalette, QColor, QFont
+from PyQt6.QtCore import Qt
+import os
+
+class ThemeManager:
+    """Manages application themes and font settings."""
+    
+    THEMES = {
+        'light': {
+            'window': '#FFFFFF',
+            'text': '#000000',
+            'panel_bg': '#F5F5F5',
+            'border': '#E0E0E0',
+            'highlight': '#007AFF',
+            'highlight_text': '#FFFFFF'
+        },
+        'dark': {
+            'window': '#1E1E1E',
+            'text': '#FFFFFF',
+            'panel_bg': '#252526',
+            'border': '#3E3E42',
+            'highlight': '#0078D4',
+            'highlight_text': '#FFFFFF'
+        },
+        'book': {
+            'window': '#F5E6D3',
+            'text': '#2C1810',
+            'panel_bg': '#FFF9F0',
+            'border': '#D4C4B7',
+            'highlight': '#8B4513',
+            'highlight_text': '#FFFFFF'
+        },
+        'wood': {
+            'window': '#3B2507',
+            'text': '#F5E6D3',
+            'panel_bg': '#2C1810',
+            'border': '#8B4513',
+            'highlight': '#D2691E',
+            'highlight_text': '#FFFFFF'
+        }
+    }
+
+    def __init__(self):
+        self.current_theme = 'light'
+        self.fonts = self._load_fonts()
+        
+    def _load_fonts(self):
+        """Load custom fonts from the fonts directory."""
+        fonts = {}
+        try:
+            current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            fonts_dir = os.path.join(current_dir, 'fonts')
+            
+            # Load Noto Sans SC for Chinese text
+            noto_sc_path = os.path.join(fonts_dir, 'Noto_Sans_SC', 'NotoSansSC-Regular.ttf')
+            if os.path.exists(noto_sc_path):
+                chinese_font = QFont('Noto Sans SC')
+                chinese_font.setPointSize(12)
+                fonts['chinese'] = chinese_font
+            
+            # Load Open Sans for UI text
+            open_sans_path = os.path.join(fonts_dir, 'Open_Sans', 'static', 'OpenSans-Regular.ttf')
+            if os.path.exists(open_sans_path):
+                ui_font = QFont('Open Sans')
+                ui_font.setPointSize(10)
+                fonts['ui'] = ui_font
+            
+        except Exception as e:
+            print(f"Error loading fonts: {str(e)}")
+            # Fallback to system fonts
+            fonts['chinese'] = QFont('SimSun', 12)
+            fonts['ui'] = QFont('Arial', 10)
+            
+        return fonts
+
+    def apply_theme(self, app, theme_name):
+        """Apply the specified theme to the application."""
+        if theme_name not in self.THEMES:
+            raise ValueError(f"Unknown theme: {theme_name}")
+            
+        self.current_theme = theme_name
+        theme = self.THEMES[theme_name]
+        
+        # Create and configure palette
+        palette = QPalette()
+        
+        # Set colors for various UI elements
+        palette.setColor(QPalette.ColorRole.Window, QColor(theme['window']))
+        palette.setColor(QPalette.ColorRole.WindowText, QColor(theme['text']))
+        palette.setColor(QPalette.ColorRole.Base, QColor(theme['panel_bg']))
+        palette.setColor(QPalette.ColorRole.Text, QColor(theme['text']))
+        palette.setColor(QPalette.ColorRole.Button, QColor(theme['panel_bg']))
+        palette.setColor(QPalette.ColorRole.ButtonText, QColor(theme['text']))
+        palette.setColor(QPalette.ColorRole.Highlight, QColor(theme['highlight']))
+        palette.setColor(QPalette.ColorRole.HighlightedText, QColor(theme['highlight_text']))
+        
+        # Apply palette to application
+        app.setPalette(palette)
+        
+        # Apply default fonts
+        app.setFont(self.fonts['ui'])
+        
+        # Return stylesheet for additional styling
+        return self._get_stylesheet(theme)
+        
+    def _get_stylesheet(self, theme):
+        """Generate stylesheet for the current theme."""
+        return f"""
+            QMainWindow {{
+                background-color: {theme['window']};
+            }}
+            
+            QWidget {{
+                background-color: {theme['panel_bg']};
+                color: {theme['text']};
+                border: 1px solid {theme['border']};
+            }}
+            
+            QTextEdit {{
+                background-color: {theme['window']};
+                color: {theme['text']};
+                border: 1px solid {theme['border']};
+                padding: 5px;
+            }}
+            
+            QComboBox {{
+                background-color: {theme['panel_bg']};
+                color: {theme['text']};
+                border: 1px solid {theme['border']};
+                padding: 5px;
+            }}
+            
+            QLabel {{
+                border: none;
+                background-color: transparent;
+            }}
+            
+            QSplitter::handle {{
+                background-color: {theme['border']};
+            }}
+            
+            QSplitter::handle:horizontal {{
+                width: 1px;
+            }}
+            
+            QSplitter::handle:vertical {{
+                height: 1px;
+            }}
+        """
+
+    def get_chinese_font(self):
+        """Get the font for Chinese text."""
+        return self.fonts['chinese']
+
+    def get_ui_font(self):
+        """Get the font for UI elements."""
+        return self.fonts['ui']
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\__init__.py
+# ========================================
+
+"""
+QTEngine - Translation Engine Package for ZXReader
+"""
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\models\trie.py
+# ========================================
+
+"""
+Trie data structure for efficient dictionary lookups
+"""
+
+class Trie:
+    def __init__(self):
+        self.root = {}
+        self.end_symbol = '*'
+
+    def insert(self, word: str, value=None):
+        """Insert a word into the trie"""
+        node = self.root
+        for char in word:
+            node = node.setdefault(char, {})
+        node[self.end_symbol] = value if value is not None else True
+
+    def search(self, word: str) -> bool:
+        """Search for a word in the trie"""
+        node = self._traverse(word)
+        return node is not None and self.end_symbol in node
+
+    def starts_with(self, prefix: str) -> bool:
+        """Check if any word starts with the given prefix"""
+        return self._traverse(prefix) is not None
+
+    def _traverse(self, chars: str):
+        """Helper method to traverse the trie"""
+        node = self.root
+        for char in chars:
+            if char not in node:
+                return None
+            node = node[char]
+        return node
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\models\__init__.py
+# ========================================
+
+"""
+Models module for QTEngine
+"""
