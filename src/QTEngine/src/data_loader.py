@@ -6,8 +6,8 @@ from typing import Tuple, Dict, Any, Optional, List, Union
 from functools import lru_cache, wraps
 from datetime import datetime, timedelta
 
-from models.trie import Trie
-import config
+from src.QTEngine.models.trie import Trie
+import src.QTEngine.config as config
 
 # Configure logging based on config
 logging.basicConfig(

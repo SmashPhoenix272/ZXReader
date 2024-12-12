@@ -29,3 +29,22 @@ class TranslationManager:
         
         translated_text = self.qt_engine.translate(text)
         return translated_text
+    
+    def get_translated_file_path(self, file_path):
+        """
+        Generates the translated file path based on the original file path.
+
+        Args:
+            file_path (str): The path to the original file.
+
+        Returns:
+            str: The translated file path.
+        """
+        if not file_path:
+            return ""
+        
+        file_name = os.path.basename(file_path)
+        file_name_without_extension, file_extension = os.path.splitext(file_name)
+        translated_file_name = self.translate_text(file_name_without_extension)
+        translated_file_path = os.path.join(os.path.dirname(file_path), f"{translated_file_name}{file_extension}")
+        return translated_file_path

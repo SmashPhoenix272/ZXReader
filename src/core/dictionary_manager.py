@@ -1,5 +1,7 @@
 import os
 from src.QTEngine.models.trie import Trie
+from PyQt5.QtWidgets import QFileDialog, QApplication
+import sys
 
 class DictionaryManager:
     def __init__(self):
@@ -64,3 +66,28 @@ class DictionaryManager:
             if definition:
                 results[name] = definition
         return results
+    
+    def sync_custom_names(self):
+        """
+        Allows users to load a custom Names2.txt file and sync it with QTEngine's Names2.txt.
+        """
+        app = QApplication(sys.argv)
+        file_path, _ = QFileDialog.getOpenFileName(None, 'Open Custom Names2 File', '', 'Text Files (*.txt);;All Files (*)')
+        if file_path:
+            try:
+                with open(file_path, 'r', encoding='utf-8-sig') as custom_file:
+                    custom_names = custom_file.read()
+                
+                # Get the project root directory (2 levels up from current file)
+                current_dir = os.path.dirname(os.path.abspath(__file__))
+                project_root = os.path.dirname(os.path.dirname(current_dir))
+                qt_engine_names2_path = os.path.join(project_root, 'src', 'QTEngine', 'data', 'Names2.txt')
+
+                with open(qt_engine_names2_path, 'w', encoding='utf-8') as qt_engine_file:
+                    qt_engine_file.write(custom_names)
+                
+                print(f"Successfully synced custom Names2.txt with QTEngine's Names2.txt")
+                # Reload the QTEngine's Names2 dictionary
+                self.load_dictionaries()
+            except Exception as e:
+                print(f"Error syncing custom Names2.txt: {e}")

@@ -2,8 +2,8 @@ import re
 import logging
 from typing import Dict, List, Tuple, Optional, Any, Callable
 
-from models.trie import Trie
-from models.chinese_converter import ChineseConverter
+from src.QTEngine.models.trie import Trie
+from src.QTEngine.models.chinese_converter import ChineseConverter
 
 # Import the new modularized functions
 from src.QTEngine.src.character_utils import LATIN_CHARS, replace_special_chars

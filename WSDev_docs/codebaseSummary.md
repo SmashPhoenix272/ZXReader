@@ -17,16 +17,17 @@
 
 ## Data Flow
 
-1. User selects a file via the File Dialog.
-2. File Handler reads the file, detects encoding, and passes data to the Chapter Manager.
-3. Chapter Manager detects chapters using the selected method and sends the chapter list to the Chapter Panel.
-4. User selects a chapter in the Chapter Panel.
-5. Chapter Manager retrieves the selected chapter's content and sends it to the Main Translation Panel.
-6. Main Translation Panel displays the content and sends it to the Translation Manager for translation.
-7. Translation Manager interacts with QTEngine to translate the text.
-8. User selects text in the Main Translation Panel, triggering a dictionary lookup.
-9. Dictionary Lookup Panel sends the selected text to the Dictionary Manager.
-10. Dictionary Manager searches the dictionaries and returns definitions to the Dictionary Lookup Panel.
+1.  User selects a file via the File Dialog.
+2.  File Handler reads the file, detects encoding, and passes data to the Chapter Manager.
+3.  Chapter Manager detects chapters using the selected method and sends the chapter list to the Chapter Panel.
+4.  If chapters are detected, the first chapter is automatically selected and its content is sent to the Main Translation Panel.
+5.  User selects a chapter in the Chapter Panel.
+6.  Chapter Manager retrieves the selected chapter's content and sends it to the Main Translation Panel.
+7.  Main Translation Panel displays the content and sends it to the Translation Manager for translation.
+8.  Translation Manager interacts with QTEngine to translate the text.
+9.  User selects text in the Main Translation Panel, triggering a dictionary lookup.
+10. Dictionary Lookup Panel sends the selected text to the Dictionary Manager.
+11. Dictionary Manager searches the dictionaries and returns definitions to the Dictionary Lookup Panel.
 
 ## External Dependencies
 
@@ -36,10 +37,16 @@
 
 ## Recent Significant Changes
 
--   Created initial project structure and documentation.
--   Implemented basic file handling and chapter detection.
--   Integrated QTEngine for translation.
--   Passed `file_handler` and `translation_manager` to `MainWindow` constructor.
+-   Implemented core framework components: FileHandler, ChapterManager, TranslationManager, DictionaryManager, MainWindow, FileInfoPanel, MainTranslationPanel, DictionaryPanel, and ChapterPanel.
+-   Integrated ChapterPanel with ChapterManager to display the list of chapters.
+-   Implemented chapter selection and display in the MainTranslationPanel.
+-   Implemented a dropdown menu for chapter detection methods in the ChapterPanel.
+-   Implemented chapter navigation using next/previous buttons in the ChapterPanel.
+-   Added "Hiển thị toàn bộ" option to chapter selection dropdown.
+-   Modified `ChapterManager` to handle "Hiển thị toàn bộ" option.
+-   Added `get_translated_file_path` method to `TranslationManager` to generate translated file paths.
+-   Implemented auto selection of the first chapter when chapters are detected.
+-   The project has been inspected and the data loading warnings have been addressed (keeping the warnings as they are).
 
 ## User Feedback Integration and Its Impact on Development
 

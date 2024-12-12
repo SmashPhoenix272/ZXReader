@@ -1,5 +1,5 @@
 from typing import List, Tuple, Dict, Optional
-from models.trie import Trie
+from src.QTEngine.models.trie import Trie
 from .character_utils import replace_special_chars, LATIN_CHARS
 import re
 import logging

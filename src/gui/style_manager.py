@@ -1,8 +1,12 @@
+from PyQt5.QtWidgets import QWidget
+from typing import Optional
+from PyQt5.QtGui import QFont
+
 class StyleManager:
-    def __init__(self):
+    def __init__(self) -> None:
         self.current_theme = "light"
 
-    def get_style(self):
+    def get_style(self) -> str:
         if self.current_theme == "light":
             return """
                 QMainWindow {
@@ -189,5 +193,17 @@ class StyleManager:
             """
         return ""
 
-    def set_theme(self, theme):
+    def apply_style(self, widget: QWidget) -> None:
+        style = self.get_style()
+        widget.setStyleSheet(style)
+
+    def load_fonts(self) -> None:
+        # Load custom fonts if needed
+        pass
+
+    def set_font(self, widget: QWidget, font_name: str = "Arial", size: int = 10) -> None:
+        font = QFont(font_name, size)
+        widget.setFont(font)
+
+    def set_theme(self, theme: str) -> None:
         self.current_theme = theme
