@@ -10,7 +10,8 @@ from src.QTEngine.src.character_utils import LATIN_CHARS, replace_special_chars
 from src.QTEngine.src.text_processing import (
     convert_to_sino_vietnamese, 
     rephrase, 
-    process_paragraph
+    process_paragraph,
+    TranslationMapping
 )
 from src.QTEngine.src.performance import profile_function
 from src.QTEngine.src.data_loader import load_data, DataLoader
@@ -67,15 +68,43 @@ class QTEngine(TranslationEngine):
             str: Translated Sino-Vietnamese text
         """
         try:
-            return process_paragraph(
+            translated_text, _ = process_paragraph(
                 text, 
                 self.names2, 
                 self.names, 
                 self.viet_phrase, 
                 self.chinese_phien_am
             )
+            return translated_text
         except Exception as e:
             self.logger.error(f"Translation failed: {e}")
+            raise
+
+    def translate_with_mapping(self, text: str) -> Tuple[str, TranslationMapping]:
+        """
+        Translate Chinese text to Sino-Vietnamese and return mapping information.
+        
+        Args:
+            text (str): Input Chinese text
+        
+        Returns:
+            Tuple[str, TranslationMapping]: Translated text and mapping information
+        """
+        try:
+            # First convert Traditional to Simplified if necessary
+            simplified_text = self.chinese_converter.auto_convert_to_simplified(text)
+            if simplified_text is None:
+                simplified_text = text
+
+            return process_paragraph(
+                simplified_text,
+                self.names2,
+                self.names,
+                self.viet_phrase,
+                self.chinese_phien_am
+            )
+        except Exception as e:
+            self.logger.error(f"Translation with mapping failed: {e}")
             raise
     
     def validate_translation(self, original: str, translated: str) -> bool:
@@ -182,13 +211,14 @@ class QTEngine(TranslationEngine):
         if simplified_text is None:
             simplified_text = paragraph
             
-        return process_paragraph(
+        translated_text, _ = process_paragraph(
             simplified_text, 
             self.names2, 
             self.names, 
             self.viet_phrase, 
             self.chinese_phien_am
         )
+        return translated_text
     
     def get_loading_info(self) -> Dict[str, Any]:
         """

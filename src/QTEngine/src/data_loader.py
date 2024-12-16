@@ -185,10 +185,10 @@ class DataLoader:
             names2_trie = Trie()
             if os.path.exists(file_paths['names2']):
                 names2_data = load_file_cached(file_paths['names2'])
-                if DataValidator.validate_dictionary(names2_data):
+                if DataValidator.validate_dictionary(names2_data, min_entries=0):
                     for key in names2_data:
                         names2_trie.insert(key, names2_data[key])
-                    if not DataValidator.validate_trie(names2_trie):
+                    if not DataValidator.validate_trie(names2_trie, min_entries=0):
                         logger.warning("Names2.txt Trie validation failed, ignoring the file")
                         names2_data = {}
                         names2_trie = Trie()

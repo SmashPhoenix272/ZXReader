@@ -87,52 +87,105 @@ This document outlines the requirements for developing ZXReader, a software appl
 #### 3.4. Dictionary Lookup
 
 -   **3.4.1. Overview**
-    -   **Description:** This feature allows users to look up definitions of selected Chinese characters, words, or phrases. It integrates with QTEngine dictionaries (Names, Names2, VietPhrase) and external dictionaries located in the `dictionaries` folder. The lookup process utilizes Trie data structure and longest prefix matching, that's why when translating, should temporary save the mapping for dictionary lookup.
-    -   **Behavior:** When a user interacts with text in the Main Translation Panel (single-click or double-click), the system will identify the corresponding translated or original text and highlight it. It will then perform a dictionary lookup to find and display the definition.
+    -   **Description:** The Dictionary Lookup feature enables users to find definitions of selected Chinese text. It uses QTEngine dictionaries (Names, Names2, VietPhrase) and external dictionaries in the `dictionaries` folder. The lookup employs a Trie data structure and longest prefix matching, leveraging a mapping created during translation by QTEngine ( in text_processing.py).
+    -   **Behavior:** A single-click, double-click, or text selection in the Main Translation Panel triggers a lookup, highlighting the corresponding text and displaying the definition.
 
 -   **3.4.2. User Interaction**
-    -   **Single-Click:** Highlights the matched prefix (word or phrase) in the Main Translation Panel based on the longest prefix match in both the original and translated text.
-    -   **Double-Click:** Selects the entire word or phrase under the cursor in the Main Translation Panel. This action triggers a dictionary lookup.
-    -   **Text Selection:** Users can also manually select a range of text to trigger a dictionary lookup.
+    -   **Single-Click:** Highlights the longest matching prefix in both original and translated text.
+    -   **Double-Click:** Selects the word/phrase under the cursor, triggering a lookup.
+    -   **Text Selection:** Allows manual selection of text for lookup.
 
 -   **3.4.3. Lookup Process**
-    -   **Identification:** The system identifies the selected text (character, word, or phrase) in either the original or translated text displayed in the Main Translation Panel.
-    -   **Highlighting:**
-        -   Upon identifying the selected text, the system highlights the corresponding text in the other panel. For example, if the user selects "千叶" in the original text, the system will highlight "Thiên Diệp" in the translated text, and vice versa.
-        -   The highlighting is based on the translation mapping stored during the initial text translation by QTEngine.
+    -   **Identification:** The system identifies the selected text in either the original or translated text.
+    -   **Highlighting:** The corresponding text in the other panel is highlighted using the translation mapping. Check **3.4.8. Translation Mapping Details**
     -   **Definition Retrieval:**
-        -   The system uses the identified text as a key for dictionary lookup.
-        -   It searches for the key in the QTEngine dictionaries (Names, Names2, VietPhrase) and external dictionaries (Babylon, ThieuChuu, LacViet) using Trie and longest prefix match.
-        -   If a definition is found, it is displayed in the Dictionary Lookup Panel.
+        -   For translated text, the system retrieves the original Chinese text using the stored mapping.
+        -   The original Chinese text is used as the key for dictionary lookup.
+        -   The system searches QTEngine dictionaries and external dictionaries (Babylon, ThieuChuu, LacViet) using Trie and longest prefix match.
+        -   If found, the definition is displayed in the Dictionary Lookup Panel.
 
 -   **3.4.4. Dictionary Lookup Panel**
-    -   **Display:** Shows the definitions found from the various dictionaries. Show in the following order Names, Names2, VietPhrase, LacViet, ThieuChuu, Babylon.
-    -   **Formatting:**
-        -   Handles line breaks in entries from ThieuChuu and LacViet dictionaries (e.g., "龢=hòa [huo2]\n\t1. Ðiều hòa, hợp.").
-        -   Presents definitions in a clear and readable format.
-    -   **Search Functionality:** Allows users to perform searches within the Dictionary Lookup Panel for specific words or phrases.
+    -   **Display:** Definitions are shown in the order: Names, Names2, VietPhrase, LacViet, ThieuChuu, Babylon.
+    -   **Formatting:** Line breaks in ThieuChuu and LacViet entries are handled (e.g., "龢=hòa [huo2]\n\t1. Ðiều hòa, hợp."). Definitions are presented clearly.
+    -   **Search:** Users can search for specific words/phrases within the panel.
 
 -   **3.4.5. Custom Dictionary Syncing**
-    -   **User-Defined Dictionaries:** Users can add their own `Names2.txt` file to customize the dictionary.
-    -   **Synchronization:** The system synchronizes the user-provided `Names2.txt` with QTEngine's internal `Names2.txt` to incorporate user-defined translations.
+    -   Users can add a `Names2.txt` file to customize the dictionary. The system syncs this file with QTEngine's internal `Names2.txt`.
 
 -   **3.4.6. Error Handling**
-    -   **Not Found:** If no definition is found for the selected character/word/phrase, a message is displayed to the user in the Dictionary Lookup Panel.
+    -   **Not Found:** A message is displayed if no definition is found.
 
--   **3.4.7. Example**
-    -   **Scenario:** The user is reading a chapter where the original text "千叶市公立小学" is translated to "Thiên Diệp thị công lập tiểu học".
-    -   **Action:** The user single-clicks on "千叶" in the original text.
-    -   **Result:**
-        -   The system highlights "Thiên Diệp" in the translated text.
-        -   The Dictionary Lookup Panel displays the definition of "千叶" retrieved from the dictionaries.
-    -   **Action:** The user double-clicks on "Thiên Diệp" in the translated text.
-    -   **Result:**
-        -   The system highlights "千叶" in the original text.
-        -   The Dictionary Lookup Panel displays the definition of "千叶" (or "Thiên Diệp", as they share the same definition in this context).
-    -   **Action:** The user manually selects "公立小学" in the original text.
-    -   **Result:**
-        -   The system highlights "công lập tiểu học" in the translated text.
-        -   The Dictionary Lookup Panel displays the definition of "公立小学" based on the longest prefix match and Trie search.
+-   **3.4.7. Handling Duplicate Paragraphs**
+    -   When dealing with multiple duplicate paragraphs like:
+    
+        千叶市公立小学，一年级a班。
+        千叶市公立小学，一年级a班。
+        千叶市公立小学，一年级a班。
+        It’s crucial to ensure that highlighting is precise to avoid confusion across duplicates:
+    -   **Highlighting Mechanism:**
+        -   Implement a system that distinguishes between instances of highlighted words/phrases across different paragraphs.
+        -   Use unique identifiers or context-based logic to ensure that when a user clicks on a word/phrase in one line, only that instance is highlighted without affecting duplicates in other lines.
+    -   **User Feedback:**
+        -   Provide visual cues such as distinct colors or styles for highlighted terms based on their context to enhance clarity.
+        -   Ensure that users receive immediate feedback about which specific instance they are interacting with.
+
+-   **3.4.8. Translation Mapping Details**
+    -   **Description:** The translation mapping is created during the translation process by QTEngine. It establishes a relationship between the original Chinese text and its Sino-Vietnamese translation, facilitating user interaction across panels.
+    -   **Data Structure:** The mapping is stored as a dictionary where:
+        -   **Keys:** Original Chinese text segments.
+        -   **Values:** Corresponding translated Sino-Vietnamese text segments, including their start and end positions in both the original and translated texts.
+    -   **Mapping Creation:** During translation, QTEngine records:
+        -   Original text segments.
+        -   Corresponding translations.
+        -   Their positions within the text.
+    -   **Mapping Usage:** When a user:
+        -   Clicks or selects text in the original panel, the corresponding translated text is highlighted in the translated panel.
+        -   Example: Check **3.4.9. Example**
+    -   **User Interaction:** This feature enhances user experience by allowing seamless navigation between original and translated texts, making it easier to understand context and meaning.
+
+-   **3.4.9. Example**
+    -   **Scenario:** User reads "千叶市公立小学" (original) which translates to "Thiên Diệp thị công lập tiểu học".
+    -   **Single-Click "千叶":** Highlights "Thiên Diệp", displays definition of "千叶".
+    -   **Single-Click "Thiên Diệp":** Highlights "千叶", displays definition of "千叶".
+    -   **Double-Click "千叶":** Selects "Thiên Diệp", displays definition of "千叶".
+    -   **Double-Click "Thiên Diệp":** Selects "千叶", displays definition of "千叶".
+    -   And so on for "市", "公立", "小学", etc.
+    
+-   **3.4.10. Text Segmentation and Mapping**
+    -   The original text is segmented into blocks, each with a specific starting position. The translation also follows this structure. Here's how it works:
+        -   **Character Positions:** These are the indices of characters in the original text. They help track where each character starts.
+        -   **Block Mapping:** This treats groups of characters as a single unit, which can be useful for handling translations that span multiple characters or words.
+    -   **ASCII Representation**
+        -   Below is an ASCII representation that aligns with your debug output:
+        
+        ```
+        text
+        Original Text:    [野][比][大雄][装作][没听到][吹着口哨][抱着][后脑勺][抬头][望天]
+                           |   |    |     |     |       |         |     |       |     |
+                           v   v    v     v     v       v         v     v       v     v
+        Character Positions: 0   1    2     4     6       10        14    16      19    21
+                           |           |           |
+                           v           v           v
+        Block Mapping:    [B1][B2][B3] [B4]        [B5]          [B6]   [B7]   [B8]   [B9]   [B10]
+                           |           |           |
+                           v           v           v
+        Translated Text:  [dã][so][Nobita][giả bộ như][không nghe thấy][huýt sáo][ôm][cái ót][ngẩng đầu][nhìn trời]
+        ```
+    -   **Explanation**
+        -   **Character Positions:** Each character in the original text has a specific position:
+            -   '野' starts at position 0
+            -   '比' starts at position 1
+            -   '大雄' starts at position 2 (treated as a single block)
+            -   '装作' starts at position 4 (treated as a single block)
+            -   And so on...
+        -   **Block Mapping:** Each block represents a logical unit of text that maps to a translation:
+            -   B1 corresponds to '野' -> 'dã'
+            -   B2 corresponds to '比' -> 'so'
+            -   B3 corresponds to '大雄' -> 'Nobita'
+            -   B4 corresponds to '装作' -> 'giả bộ như'
+            -   Etc.
+        -   **Translated Text:** The translated text is aligned with these blocks, showing how each segment translates.
+    -   This representation helps visualize how character positions and block mappings work together. By using both systems, you can accurately track user interactions and ensure that entire words or phrases are highlighted when selected. This approach enhances user experience by providing intuitive and precise text handling in translation applications.
 
 ### 4. UI Requirements
 
@@ -217,26 +270,26 @@ This document outlines the requirements for developing ZXReader, a software appl
 
 ### 7. Milestones
 
-1. **Core Framework:**
+1.  **Core Framework:**
     -   Set up the project structure.
     -   Implement basic UI layout with resizable panels.
     -   Integrate QTEngine.
-2. **File Handling and Chapter Detection:**
+2.  **File Handling and Chapter Detection:**
     -   Implement file loading with encoding detection.
     -   Develop chapter detection using `detect_chapters_methods.py`.
     -   Create the File Info and Chapter panels.
-3. **Reading and Translation:**
+3.  **Reading and Translation:**
     -   Implement the main translation panel.
     -   Enable parallel display of Chinese and translated text.
-4. **Dictionary Lookup:**
+4.  **Dictionary Lookup:**
     -   Develop the dictionary lookup panel.
     -   Load and integrate external dictionaries.
     -   Implement custom dictionary syncing.
-5. **UI Enhancements and Customization:**
+5.  **UI Enhancements and Customization:**
     -   Implement light/dark/book/wood themes.
     -   Add support for custom fonts.
     -   Ensure UI responsiveness.
-6. **Testing and Refinement:**
+6.  **Testing and Refinement:**
     -   Conduct thorough testing.
     -   Address bugs and user feedback.
 

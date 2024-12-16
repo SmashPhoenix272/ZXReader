@@ -36,7 +36,7 @@ class MainWindow(QMainWindow):
         self.dictionary_panel = DictionaryPanel(self.dictionary_manager)
         self.left_panel_layout.addWidget(self.dictionary_panel)
         
-        self.main_translation_panel = MainTranslationPanel(self, self.chapter_manager, self.translation_manager)
+        self.main_translation_panel = MainTranslationPanel(self, self.chapter_manager, self.translation_manager, self.dictionary_panel)
         self.right_panel_layout.addWidget(self.main_translation_panel)
 
         # Connect signals with correct signal names

@@ -37,7 +37,31 @@
 -   **3.4.6. Error Handling**
     -   **Not Found:** If no definition is found for the selected character/word/phrase, a message is displayed to the user in the Dictionary Lookup Panel.
 
--   **3.4.7. Example**
+-   **3.4.7. Handling Duplicate Paragraphs**
+    -   **Challenge:** When dealing with duplicate paragraphs, highlighting must be precise to avoid confusion.
+    -   **Implementation:**
+        -   Use unique identifiers or context-based logic to ensure highlighting only affects the specific instance being interacted with.
+        -   Provide visual cues to help users understand which instance they are interacting with.
+    -   **Example:**
+        ```
+        千叶市公立小学，一年级a班。
+        千叶市公立小学，一年级a班。
+        千叶市公立小学，一年级a班。
+        ```
+        When a user clicks on "千叶" in the second line, only that instance should be highlighted, not the same text in other lines.
+
+-   **3.4.8. Translation Mapping Details**
+    -   **Description:** The translation mapping is created during the translation process by QTEngine. It establishes a relationship between the original Chinese text and its Sino-Vietnamese translation.
+    -   **Data Structure:**
+        -   Keys: Original Chinese text segments
+        -   Values: Corresponding translated text segments with their positions
+    -   **Creation:** During translation, QTEngine records:
+        -   Original text segments
+        -   Their translations
+        -   Position information
+    -   **Usage:** Enables bidirectional highlighting between original and translated text
+
+-   **3.4.9. Example**
     -   **Scenario:** The user is reading a chapter where the original text "千叶市公立小学" is translated to "Thiên Diệp thị công lập tiểu học".
         -   Which translated as follows in by using QTEngine's longest prefix match data:
             -   千叶=Thiên Diệp
@@ -81,8 +105,29 @@
         -   The Dictionary Lookup Panel displays the definition of "小学" retrieved from the dictionaries.
 
     -   **Action:** The user single-click on "tiểu học" in the translated text.
-    -   The system highlights "小学" in the original text.
-    -   The Dictionary Lookup Panel displays the definition of "小学" (or "tiểu học", as they share the same definition in this context).
+    -   **Result:**
+        -   The system highlights "小学" in the original text.
+        -   The Dictionary Lookup Panel displays the definition of "小学" (or "tiểu học", as they share the same definition in this context).
+
+-   **3.4.10. Text Segmentation and Mapping**
+    -   **Process:**
+        -   Original text is segmented into blocks with specific starting positions
+        -   Translation follows the same structure
+        -   Character positions track where each character starts
+        -   Block mapping treats character groups as single units
+    -   **Example Structure:**
+        ```
+        Original Text:    [野][比][大雄][装作][没听到][吹着口哨][抱着][后脑勺][抬头][望天]
+                           |   |    |     |     |       |         |     |       |     |
+                           v   v    v     v     v       v         v     v       v     v
+        Character Pos:     0   1    2     4     6       10        14    16      19    21
+                           |           |           |
+                           v           v           v
+        Block Mapping:    [B1][B2][B3] [B4]        [B5]          [B6]   [B7]   [B8]   [B9]   [B10]
+                           |           |           |
+                           v           v           v
+        Translated Text:  [dã][so][Nobita][giả bộ như][không nghe thấy][huýt sáo][ôm][cái ót][ngẩng đầu][nhìn trời]
+        ```
 
 ### Context
 - The project has implemented file loading, chapter detection, display, and auto selection of the first chapter.

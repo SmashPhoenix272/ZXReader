@@ -1,7 +1,223 @@
 Project Structure Overview:
 ZXReader/
     Combine.py
-    data/
+    setup.py
+    .git/
+        hooks/
+        info/
+        logs/
+            refs/
+                heads/
+                remotes/
+                    origin/
+        objects/
+            00/
+            01/
+            02/
+            03/
+            04/
+            05/
+            07/
+            08/
+            09/
+            0a/
+            0b/
+            0c/
+            0d/
+            0e/
+            0f/
+            11/
+            12/
+            13/
+            14/
+            15/
+            16/
+            17/
+            18/
+            1b/
+            1c/
+            1d/
+            1e/
+            20/
+            22/
+            23/
+            24/
+            25/
+            26/
+            28/
+            29/
+            2a/
+            2b/
+            2c/
+            2d/
+            2e/
+            30/
+            31/
+            32/
+            34/
+            35/
+            36/
+            37/
+            38/
+            39/
+            3a/
+            3b/
+            3c/
+            3d/
+            3e/
+            40/
+            42/
+            44/
+            45/
+            46/
+            47/
+            48/
+            49/
+            4c/
+            4d/
+            4e/
+            50/
+            52/
+            53/
+            54/
+            56/
+            57/
+            58/
+            59/
+            5a/
+            5b/
+            5c/
+            5d/
+            5e/
+            5f/
+            60/
+            61/
+            62/
+            63/
+            64/
+            65/
+            66/
+            67/
+            6a/
+            6b/
+            6d/
+            70/
+            71/
+            72/
+            73/
+            74/
+            75/
+            76/
+            78/
+            79/
+            7a/
+            7c/
+            7e/
+            7f/
+            80/
+            81/
+            82/
+            83/
+            84/
+            85/
+            86/
+            87/
+            88/
+            89/
+            8a/
+            8c/
+            8d/
+            8e/
+            8f/
+            91/
+            93/
+            95/
+            96/
+            97/
+            98/
+            99/
+            9a/
+            9b/
+            9d/
+            9e/
+            9f/
+            a0/
+            a2/
+            a4/
+            a6/
+            a7/
+            a9/
+            aa/
+            ab/
+            ac/
+            ae/
+            af/
+            b0/
+            b2/
+            b3/
+            b4/
+            b5/
+            b9/
+            bb/
+            be/
+            bf/
+            c0/
+            c1/
+            c3/
+            c4/
+            c5/
+            c7/
+            c8/
+            c9/
+            ca/
+            cb/
+            cc/
+            cd/
+            cf/
+            d1/
+            d3/
+            d4/
+            d5/
+            d6/
+            d7/
+            d8/
+            db/
+            dc/
+            dd/
+            de/
+            df/
+            e0/
+            e2/
+            e5/
+            e6/
+            e7/
+            e8/
+            e9/
+            ea/
+            eb/
+            ec/
+            ed/
+            ee/
+            ef/
+            f1/
+            f2/
+            f3/
+            f4/
+            f5/
+            f6/
+            f7/
+            f8/
+            fc/
+            fd/
+            ff/
+            info/
+            pack/
+        refs/
+            heads/
+            remotes/
+                origin/
+            tags/
+    dictionaries/
     fonts/
         Montserrat/
             static/
@@ -12,83 +228,44 @@ ZXReader/
         Open_Sans/
             static/
         Roboto/
-    QTEngine/
-        config.py
-        QTEngine.py
-        setup.py
-        __init__.py
-        .git/
-            hooks/
-            info/
-            logs/
-                refs/
-                    heads/
-                    remotes/
-                        origin/
-            objects/
-                00/
-                08/
-                09/
-                18/
-                1b/
-                1e/
-                2d/
-                32/
-                38/
-                3e/
-                4c/
-                63/
-                6a/
-                7f/
-                88/
-                8d/
-                94/
-                ba/
-                c6/
-                c8/
-                d2/
-                d3/
-                d6/
-                e8/
-                ec/
-                ee/
-                f8/
-                fd/
-                info/
-                pack/
-            refs/
-                heads/
-                remotes/
-                    origin/
-                tags/
-        data/
-        models/
-            chinese_converter.py
-            trie.py
-        src/
-            character_utils.py
-            data_loader.py
-            data_watcher.py
-            performance.py
-            ReplaceChar.py
-            text_processing.py
-            translation_engine.py
-            __init__.py
-        tests/
-            test_traditional.py
-            test_translation.py
     src/
-        chapter_detector.py
         detect_chapters_methods.py
-        dictionary_manager.py
-        file_handler.py
         main.py
-        theme_manager.py
+        test_text_processing.py
+        core/
+            chapter_manager.py
+            detect_chapters_methods.py
+            dictionary_manager.py
+            file_handler.py
+            translation_manager.py
+        gui/
+            chapter_panel.py
+            dictionary_panel.py
+            file_info_panel.py
+            font_manager.py
+            main_translation_panel.py
+            main_window.py
+            menu_bar.py
+            style_manager.py
         QTEngine/
+            config.py
+            QTEngine.py
             __init__.py
+            data/
             models/
+                chinese_converter.py
                 trie.py
+            src/
+                character_utils.py
+                data_loader.py
+                data_watcher.py
+                performance.py
+                ReplaceChar.py
+                text_processing.py
+                translation_engine.py
                 __init__.py
+        utils/
+            qt_utils.py
     WSDev_docs/
 
 
@@ -166,7 +343,1723 @@ if __name__ == '__main__':
     print(f"Combined source code saved to {output_filename}")
 
 # ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\config.py
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\setup.py
+# ========================================
+
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\detect_chapters_methods.py
+# ========================================
+
+import regex as re
+from typing import List, Tuple, Optional
+
+CHAPTER_MATCHERS = {
+    "Mục lục ( Đi trống không )": r"(?<=[　\s])(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|集(?![合和]))).{0,30}$",
+    "Mục lục": r"^[ 　\t]{0,4}(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|集(?![合和])|部(?![分赛游])|篇(?!张))).{0,30}$",
+    "Mục lục ( Phối hợp giới thiệu vắn tắt )": r"(?<=[　\s])(?:(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|集(?![合和])|部(?![分赛游])|回(?![合来事去])|场(?![和合比电是])|篇(?!张))).{0,30}$",
+    "Mục lục ( Cổ điển, light novel dự bị )": r"^[ 　\t]{0,4}(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|集(?![合和])|部(?![分赛游])|回(?![合来事去])|场(?![和合比电是])|话|篇(?!张))).{0,30}$",
+    "Con số ( Thuần con số tiêu đề )": r"(?<=[　\s])\d+\.?[ 　\t]{0,4}$",
+    "Viết kép con số ( Thuần con số tiêu đề )": r"(?<=[　\s])[零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,12}[ 　\t]{0,4}$",
+    "Con số phối hợp ( Thuần con số tiêu đề )": r"(?<=[　\s])[零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟\d]{1,12}[ 　\t]{0,4}$",
+    "Con số Ngăn cách phù Tiêu đề tên": r"^[ 　\t]{0,4}\d{1,5}[:：,.， 、_—\-].{1,30}$",
+    "Viết kép con số Ngăn cách phù Tiêu đề tên": r"^[ 　\t]{0,4}(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|[零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章?)[ 、_—\-].{1,30}$",
+    "Con số phối hợp Ngăn cách phù Tiêu đề tên": r"^[ 　\t]{0,4}(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|[零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章?[ 、_—\-]|\d{1,5}章?[:：,.， 、_—\-]).{0,30}$",
+    "Tiêu đề / số thứ tự": r"^[ 　\t]{0,4}正文[ 　]{1,4}.{0,20}$",
+    "Chapter/Section/Part/Episode số thứ tự Tiêu đề": r"^[ 　\t]{0,4}(?:[Cc]hapter|[Ss]ection|[Pp]art|ＰＡＲＴ|[Nn][oO][.、]|[Ee]pisode|(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外)\s{0,4}\d{1,4}.{0,30}$",
+    "Chapter( Đi giới thiệu vắn tắt )": r"^[ 　\t]{0,4}(?:[Cc]hapter|[Ss]ection|[Pp]art|ＰＡＲＴ|[Nn][Oo]\.|[Ee]pisode)\s{0,4}\d{1,4}.{0,30}$",
+    "Ký hiệu đặc thù Số thứ tự Tiêu đề": r"(?<=[\s　])[【〔〖「『〈［\[](?:第|[Cc]hapter)[\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,10}[章节].{0,20}$",
+    "Ký hiệu đặc thù Tiêu đề ( Thành đôi )": r"(?<=[\s　]{0,4})(?:[\[〈「『〖〔《（【\(].{1,30}[\)】）》〕〗』」〉\]]?|(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外)[ 　]{0,4}$",
+    "Ký hiệu đặc thù Tiêu đề ( Một cái )": r"(?<=[\s　]{0,4})(?:[☆★✦✧].{1,30}|(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外)[ 　]{0,4}$",
+    "Chương / cuốn Số thứ tự Tiêu đề": r"^[ \t　]{0,4}(?:(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|[卷章][\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8})[ 　]{0,4}.{0,30}$",
+    "Trên cùng tiêu đề": r"^\S.{1,20}$",
+    "Song tiêu đề ( Phía trước hướng )": r"(?m)(?<=[ \t　]{0,4})第[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章.{0,30}$(?=[\s　]{0,8}第[\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章)",
+    "Song tiêu đề ( Sau hướng )": r"(?m)(?<=[ \t　]{0,4}第[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章.{0,30}$[\s　]{0,8})第[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章.{0,30}$",
+    "Tên sách Dấu móc Số thứ tự": r"^.{1,20}[(（][\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}[)）][ 　\t]{0,4}$",
+    "Tên sách Số thứ tự": r"^.{1,20}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}[ 　\t]{0,4}$",
+    "Đặc biệt ký tự Tiêu đề Đặc biệt ký hiệu": r"(?<=\={3,6}).{1,40}?(?=\=)",
+    "Số lượng từ chia cắt Phân khúc đọc": r"(?<=[ 　\t]{0,4})(?:.{0,15}分[页节章段]阅读[-_ ]|第\s{0,4}[\d零一二两三四五六七八九十百千万]{1,6}\s{0,4}[页节]).{0,30}$",
+    "Thông dụng quy tắc": r"(?im)^.{0,6}(?:[引楔]子|正文(?!完|结)|[引序前]言|[序终]章|扉页|[上中下][部篇卷]|卷首语|后记|尾声|番外|={2,4}|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|页[、 　]|集(?![合和])|部(?![分是门落])|篇(?!张))).{0,40}$|^.{0,6}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟a-z]{1,8}[、. 　].{0,20}$",
+}
+
+def detect_chapters(text: str, method: Optional[str] = None) -> List[Tuple[int, int]]:
+    """Detect chapter positions in text using the specified method"""
+    if not text:
+        return []
+    
+    # Use first method if none specified
+    pattern = CHAPTER_MATCHERS[method if method in CHAPTER_MATCHERS else list(CHAPTER_MATCHERS.keys())[0]]
+    chapters = []
+    
+    for match in re.finditer(pattern, text, re.MULTILINE):
+        start = match.start()
+        end = match.end()
+        chapters.append((start, end))
+    
+    return chapters if chapters else []
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\main.py
+# ========================================
+
+import sys
+import os
+src_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(src_path)
+from src.gui.main_window import MainWindow
+from src.core.translation_manager import TranslationManager
+from src.core.dictionary_manager import DictionaryManager
+from src.core.chapter_manager import ChapterManager
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+current_dir = os.path.dirname(os.path.abspath(__file__))
+qt_engine_path = os.path.join(current_dir, 'QTEngine')
+sys.path.append(qt_engine_path)
+from PyQt5.QtWidgets import QApplication
+from src.QTEngine.QTEngine import QTEngine
+ 
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    qt_engine = QTEngine()
+    translation_manager = TranslationManager()
+    dictionary_manager = DictionaryManager()
+    chapter_manager = ChapterManager(qt_engine)
+    main_window = MainWindow(translation_manager, dictionary_manager, chapter_manager)
+    main_window.show()
+    sys.exit(app.exec_())
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\test_text_processing.py
+# ========================================
+
+import sys
+import os
+
+# Add necessary paths
+src_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(src_path)
+
+from QTEngine.src.text_processing import convert_to_sino_vietnamese, process_paragraph
+from QTEngine.src.data_loader import DataLoader
+
+def test_mapping():
+    # Test text
+    test_text = """001 0分狂魔
+千叶市公立小学，一年级a班。
+千叶市公立小学，一年级a班。
+千叶市公立小学，一年级a班。
+年轻的大姐姐老师站在上面，手捧一摞试卷，面带微笑看着下方的孩子们......
+她的心情很好，因为在这些孩子们中，有个段位明显高于平均水平的小学生，能够教导这样的学生，老师很自豪。
+“测验成绩出来了哦，这次大家都考得不错，”大姐姐老师面带微笑，满面红光，“在这里要特意表扬一下雪之下，100分，大家鼓掌——”
+“真厉害呢雪乃酱，又是满分，来拿你的试卷吧。”
+随着掌声，教室里孩子们目光整齐划一看向那个默默起身的小萝莉，脸庞娇艳清丽、黑发飘飘，还是个七岁的小女孩就展现出自己的美貌与魅力，就是神色有点淡定，仿佛拿到一百分是再简单不过的事情。
+无形中装了个逼啊。
+角落里的野比大雄单手托腮，无聊的把玩手中铅笔，默默听着周围同学们的窃窃私语。
+“又是100分，好厉害。”
+“好像每次考试她都是100分吧？”
+"""
+    
+    # Load data using DataLoader
+    data_loader = DataLoader()
+    names2, names, viet_phrase, chinese_phien_am, loading_info = data_loader.load_data()
+
+    # Test paragraph processing
+    result, mapping = process_paragraph(test_text, names2, names, viet_phrase, chinese_phien_am)
+    
+    # Print original and translated text with mapping information
+    sys.stdout.buffer.write(("Original Text:\n" + test_text + "\n").encode('utf-8'))
+    sys.stdout.buffer.write(("Translated Text:\n" + result + "\n").encode('utf-8'))
+    sys.stdout.buffer.write("Mapping Information:\n".encode('utf-8'))
+    for block in mapping.blocks:
+        sys.stdout.buffer.write((f"Original: '{block.original}' ({block.orig_start}-{block.orig_end})\n").encode('utf-8'))
+        sys.stdout.buffer.write((f"Translated: '{block.translated}' ({block.trans_start}-{block.trans_end})\n").encode('utf-8'))
+        sys.stdout.buffer.write(("-" * 50 + "\n").encode('utf-8'))
+    
+    # Prepare to save mapping information
+    mapping_info = []
+    for block in mapping.blocks:
+        mapping_info.append(f"Original: '{block.original}' ({block.orig_start}-{block.orig_end})\n")
+        mapping_info.append(f"Translated: '{block.translated}' ({block.trans_start}-{block.trans_end})\n")
+        mapping_info.append("--------------------------------------------------\n")
+
+    # Save output to markdown file
+    with open('test_results.md', 'w', encoding='utf-8') as f:
+        f.write('# Test Results\n')
+        f.write('## Test Mapping Result\n')
+        f.write(f'\n{result}\n')
+        f.write('## Mapping Information\n')
+        f.writelines(mapping_info)
+    return result
+
+if __name__ == "__main__":
+    result = test_mapping()
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\core\chapter_manager.py
+# ========================================
+
+from typing import List, Tuple, Optional
+from src.detect_chapters_methods import detect_chapters, CHAPTER_MATCHERS
+from src.QTEngine.QTEngine import QTEngine
+ 
+class ChapterManager:
+    def __init__(self, qt_engine: QTEngine):
+        self.qt_engine = qt_engine
+        self.chapters: List[Tuple[int, int]] = []
+        self.chapter_titles: List[str] = []
+        self.translated_chapter_titles: List[str] = []
+        self.current_chapter_index: int = -1
+        self.text: str = ""
+        self._detection_method: str = list(CHAPTER_MATCHERS.keys())[0]  # Default to first method
+ 
+    def set_text(self, text: str) -> None:
+        self.text = text
+        self.detect_and_set_chapters()
+ 
+    def detect_and_set_chapters(self) -> None:
+        self.chapters = detect_chapters(self.text, self._detection_method)
+        self.chapter_titles = self._extract_chapter_titles()
+        self._translate_chapter_titles()
+        self.current_chapter_index = 0
+ 
+    def _extract_chapter_titles(self) -> List[str]:
+        titles = []
+        for start, end in self.chapters:
+            titles.append(self.text[start:end])
+        return titles
+ 
+    def _translate_chapter_titles(self) -> None:
+        translated_titles = []
+        for title in self.chapter_titles:
+            translated_title = self.qt_engine.translate(title)
+            translated_titles.append(translated_title)
+        self.translated_chapter_titles = translated_titles
+ 
+    def get_chapter_titles(self) -> List[str]:
+        return self.translated_chapter_titles
+ 
+    def get_chapters(self) -> List[str]:
+        """Get list of chapter titles"""
+        return self.translated_chapter_titles
+ 
+    def get_chapter_text(self, index: int) -> str:
+        if not self.chapters:
+            return ""
+        if index == -1:
+            return self.text
+        if index < 0 or index >= len(self.chapters):
+            return ""
+        start, end = self.chapters[index]
+        
+        # Handle edge case where the last chapter goes to the end of the text
+        if index == len(self.chapters) - 1:
+            return self.text[start:]
+        else:
+            next_start, _ = self.chapters[index+1]
+            return self.text[start:next_start]
+ 
+    def next_chapter(self) -> int:
+        if self.current_chapter_index < len(self.chapters) - 1:
+            self.current_chapter_index += 1
+        return self.current_chapter_index
+ 
+    def prev_chapter(self) -> int:
+        if self.current_chapter_index > 0:
+            self.current_chapter_index -= 1
+        return self.current_chapter_index
+ 
+    def set_current_chapter(self, index: int) -> int:
+        if 0 <= index < len(self.chapters):
+            self.current_chapter_index = index
+        return self.current_chapter_index
+    
+    def get_current_chapter_index(self) -> int:
+        return self.current_chapter_index
+ 
+    @property
+    def detection_methods(self) -> List[str]:
+        """Get available chapter detection methods"""
+        return list(CHAPTER_MATCHERS.keys())
+ 
+    def set_detection_method(self, method: str) -> None:
+        """Set the chapter detection method"""
+        if method in CHAPTER_MATCHERS:
+            self._detection_method = method
+            if self.text:  # Re-detect chapters if we have text
+                self.detect_and_set_chapters()
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\core\detect_chapters_methods.py
+# ========================================
+
+import regex as re
+
+CHAPTER_MATCHERS = {
+    "Mục lục ( Đi trống không )": r"(?<=[　\s])(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|集(?![合和]))).{0,30}$",
+    "Mục lục": r"^[ 　\t]{0,4}(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|集(?![合和])|部(?![分赛游])|篇(?!张))).{0,30}$",
+    "Mục lục ( Phối hợp giới thiệu vắn tắt )": r"(?<=[　\s])(?:(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|集(?![合和])|部(?![分赛游])|回(?![合来事去])|场(?![和合比电是])|篇(?!张))).{0,30}$",
+    "Mục lục ( Cổ điển, light novel dự bị )": r"^[ 　\t]{0,4}(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|集(?![合和])|部(?![分赛游])|回(?![合来事去])|场(?![和合比电是])|话|篇(?!张))).{0,30}$",
+    "Con số ( Thuần con số tiêu đề )": r"(?<=[　\s])\d+\.?[ 　\t]{0,4}$",
+    "Viết kép con số ( Thuần con số tiêu đề )": r"(?<=[　\s])[零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,12}[ 　\t]{0,4}$",
+    "Con số phối hợp ( Thuần con số tiêu đề )": r"(?<=[　\s])[零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟\d]{1,12}[ 　\t]{0,4}$",
+    "Con số Ngăn cách phù Tiêu đề tên": r"^[ 　\t]{0,4}\d{1,5}[:：,.， 、_—\-].{1,30}$",
+    "Viết kép con số Ngăn cách phù Tiêu đề tên": r"^[ 　\t]{0,4}(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|[零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章?)[ 、_—\-].{1,30}$",
+    "Con số phối hợp Ngăn cách phù Tiêu đề tên": r"^[ 　\t]{0,4}(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|[零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章?[ 、_—\-]|\d{1,5}章?[:：,.， 、_—\-]).{0,30}$",
+    "Tiêu đề / số thứ tự": r"^[ 　\t]{0,4}正文[ 　]{1,4}.{0,20}$",
+    "Chapter/Section/Part/Episode số thứ tự Tiêu đề": r"^[ 　\t]{0,4}(?:[Cc]hapter|[Ss]ection|[Pp]art|ＰＡＲＴ|[Nn][oO][.、]|[Ee]pisode|(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外)\s{0,4}\d{1,4}.{0,30}$",
+    "Chapter( Đi giới thiệu vắn tắt )": r"^[ 　\t]{0,4}(?:[Cc]hapter|[Ss]ection|[Pp]art|ＰＡＲＴ|[Nn][Oo]\.|[Ee]pisode)\s{0,4}\d{1,4}.{0,30}$",
+    "Ký hiệu đặc thù Số thứ tự Tiêu đề": r"(?<=[\s　])[【〔〖「『〈［\[](?:第|[Cc]hapter)[\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,10}[章节].{0,20}$",
+    "Ký hiệu đặc thù Tiêu đề ( Thành đôi )": r"(?<=[\s　]{0,4})(?:[\[〈「『〖〔《（【\(].{1,30}[\)】）》〕〗』」〉\]]?|(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外)[ 　]{0,4}$",
+    "Ký hiệu đặc thù Tiêu đề ( Một cái )": r"(?<=[\s　]{0,4})(?:[☆★✦✧].{1,30}|(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外)[ 　]{0,4}$",
+    "Chương / cuốn Số thứ tự Tiêu đề": r"^[ \t　]{0,4}(?:(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|[卷章][\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8})[ 　]{0,4}.{0,30}$",
+    "Trên cùng tiêu đề": r"^\S.{1,20}$",
+    "Song tiêu đề ( Phía trước hướng )": r"(?m)(?<=[ \t　]{0,4})第[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章.{0,30}$(?=[\s　]{0,8}第[\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章)",
+    "Song tiêu đề ( Sau hướng )": r"(?m)(?<=[ \t　]{0,4}第[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章.{0,30}$[\s　]{0,8})第[\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章.{0,30}$",
+    "Tên sách Dấu móc Số thứ tự": r"^.{1,20}[(（][\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}[)）][ 　\t]{0,4}$",
+    "Tên sách Số thứ tự": r"^.{1,20}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}[ 　\t]{0,4}$",
+    "Đặc biệt ký tự Tiêu đề Đặc biệt ký hiệu": r"(?<=\={3,6}).{1,40}?(?=\=)",
+    "Số lượng từ chia cắt Phân khúc đọc": r"(?<=[ 　\t]{0,4})(?:.{0,15}分[页节章段]阅读[-_ ]|第\s{0,4}[\d零一二两三四五六七八九十百千万]{1,6}\s{0,4}[页节]).{0,30}$",
+    "Thông dụng quy tắc": r"(?im)^.{0,6}(?:[引楔]子|正文(?!完|结)|[引序前]言|[序终]章|扉页|[上中下][部篇卷]|卷首语|后记|尾声|番外|={2,4}|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|页[、 　]|集(?![合和])|部(?![分是门落])|篇(?!张))).{0,40}$|^.{0,6}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟a-z]{1,8}[、. 　].{0,20}$",
+}
+
+# Make sure this function is defined
+def create_pattern_matcher(pattern):
+    compiled_pattern = re.compile(pattern, re.MULTILINE | re.VERSION1)
+    def matcher(text):
+        return [(m.start(), m.group()) for m in compiled_pattern.finditer(text)]
+    return matcher
+
+# Create the CHAPTER_MATCHERS dictionary with compiled patterns
+CHAPTER_MATCHERS = {name: create_pattern_matcher(pattern) for name, pattern in CHAPTER_MATCHERS.items()}
+
+def detect_chapters(text):
+    chapters = []
+    for name, matcher in CHAPTER_MATCHERS.items():
+        chapters.extend(matcher(text))
+    
+    # Sort chapters by their position in the text
+    chapters.sort(key=lambda x: x[0])
+    
+    return chapters
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\core\dictionary_manager.py
+# ========================================
+
+import os
+from src.QTEngine.models.trie import Trie
+from PyQt5.QtWidgets import QFileDialog, QApplication
+import sys
+from typing import Dict, Optional, List, Tuple
+
+class DictionaryManager:
+    # Define the order of dictionaries for display
+    DICTIONARY_ORDER = ['Names', 'Names2', 'VietPhrase', 'LacViet', 'ThieuChuu', 'Babylon']
+
+    def __init__(self):
+        """Initializes the Dictionary Manager."""
+        self.dictionaries = {}
+        self.qt_engine_dictionaries = {}  # QTEngine's dictionaries (Names, Names2, VietPhrase)
+        self.load_dictionaries()
+
+    def load_dictionaries(self):
+        """Loads dictionaries from the dictionaries folder and QTEngine."""
+        # Get the project root directory
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(os.path.dirname(current_dir))
+        
+        # Load external dictionaries
+        dictionaries_folder = os.path.join(project_root, 'dictionaries')
+        if os.path.exists(dictionaries_folder):
+            for filename in os.listdir(dictionaries_folder):
+                if filename.endswith('.txt'):
+                    filepath = os.path.join(dictionaries_folder, filename)
+                    dictionary_name = filename[:-4]  # Remove .txt extension
+                    self.dictionaries[dictionary_name] = self.load_dictionary(filepath)
+
+        # Load QTEngine dictionaries
+        qt_engine_data_folder = os.path.join(project_root, 'src', 'QTEngine', 'data')
+        if os.path.exists(qt_engine_data_folder):
+            qt_engine_files = {
+                'Names': 'Names.txt',
+                'Names2': 'Names2.txt',
+                'VietPhrase': 'VietPhrase.txt'
+            }
+            for dict_name, filename in qt_engine_files.items():
+                filepath = os.path.join(qt_engine_data_folder, filename)
+                if os.path.exists(filepath):
+                    self.qt_engine_dictionaries[dict_name] = self.load_dictionary(filepath)
+
+    def load_dictionary(self, filepath: str) -> Trie:
+        """
+        Loads a dictionary from a given file.
+
+        Args:
+            filepath (str): The path to the dictionary file.
+
+        Returns:
+            Trie: A Trie object containing the dictionary data.
+        """
+        trie = Trie()
+        try:
+            with open(filepath, 'r', encoding='utf-8-sig') as f:  # Handle UTF-8 BOM
+                for line in f:
+                    parts = line.strip().split('=', 1)
+                    if len(parts) == 2:
+                        word, definition = parts
+                        # Handle line breaks in definitions (e.g., ThieuChuu, LacViet)
+                        definition = definition.replace('\\n', '\n').replace('\t', '    ')
+                        trie.insert(word, definition)
+        except Exception as e:
+            print(f"Error loading dictionary from {filepath}: {e}")
+        return trie
+
+    def find_longest_prefix_match(self, text: str, dictionary: Trie) -> Optional[Tuple[str, str]]:
+        """
+        Find the longest prefix match in a dictionary.
+
+        Args:
+            text (str): The text to look up.
+            dictionary (Trie): The dictionary to search in.
+
+        Returns:
+            Optional[Tuple[str, str]]: A tuple of (matched_text, definition) if found, None otherwise.
+        """
+        match, definition = dictionary.find_longest_prefix(text)
+        if match and definition:
+            return match, definition
+        return None
+
+    def lookup_word(self, word: str) -> Dict[str, str]:
+        """
+        Looks up a word in all dictionaries using longest prefix matching.
+
+        Args:
+            word (str): The word to look up.
+
+        Returns:
+            Dict[str, str]: A dictionary containing definitions from different dictionaries.
+        """
+        results = {}
+        
+        # First check QTEngine dictionaries
+        for name in ['Names', 'Names2', 'VietPhrase']:
+            if name in self.qt_engine_dictionaries:
+                match = self.find_longest_prefix_match(word, self.qt_engine_dictionaries[name])
+                if match:
+                    results[name] = match[1]
+
+        # Then check external dictionaries
+        for name in ['LacViet', 'ThieuChuu', 'Babylon']:
+            if name in self.dictionaries:
+                match = self.find_longest_prefix_match(word, self.dictionaries[name])
+                if match:
+                    results[name] = match[1]
+
+        return results
+
+    def search_in_definitions(self, query: str) -> Dict[str, List[Tuple[str, str]]]:
+        """
+        Search for a query string within dictionary definitions.
+
+        Args:
+            query (str): The text to search for.
+
+        Returns:
+            Dict[str, List[Tuple[str, str]]]: Dictionary name -> list of (word, definition) pairs.
+        """
+        results = {}
+        
+        # Search in QTEngine dictionaries
+        for name, dictionary in self.qt_engine_dictionaries.items():
+            matches = []
+            for word in dictionary.get_all_words():
+                definition = dictionary.search(word)
+                if definition and query.lower() in definition.lower():
+                    matches.append((word, definition))
+            if matches:
+                results[name] = matches
+
+        # Search in external dictionaries
+        for name, dictionary in self.dictionaries.items():
+            matches = []
+            for word in dictionary.get_all_words():
+                definition = dictionary.search(word)
+                if definition and query.lower() in definition.lower():
+                    matches.append((word, definition))
+            if matches:
+                results[name] = matches
+
+        return results
+
+    def sync_custom_names(self):
+        """
+        Allows users to load a custom Names2.txt file and sync it with QTEngine's Names2.txt.
+        """
+        app = QApplication(sys.argv)
+        file_path, _ = QFileDialog.getOpenFileName(None, 'Open Custom Names2 File', '', 'Text Files (*.txt);;All Files (*)')
+        if file_path:
+            try:
+                with open(file_path, 'r', encoding='utf-8-sig') as custom_file:
+                    custom_names = custom_file.read()
+                
+                current_dir = os.path.dirname(os.path.abspath(__file__))
+                project_root = os.path.dirname(os.path.dirname(current_dir))
+                qt_engine_names2_path = os.path.join(project_root, 'src', 'QTEngine', 'data', 'Names2.txt')
+
+                with open(qt_engine_names2_path, 'w', encoding='utf-8') as qt_engine_file:
+                    qt_engine_file.write(custom_names)
+                
+                print(f"Successfully synced custom Names2.txt with QTEngine's Names2.txt")
+                # Reload the dictionaries
+                self.load_dictionaries()
+            except Exception as e:
+                print(f"Error syncing custom Names2.txt: {e}")
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\core\file_handler.py
+# ========================================
+
+import os
+from PyQt5.QtWidgets import QFileDialog, QMessageBox, QWidget
+import chardet
+
+class FileHandler:
+    def __init__(self):
+        self.parent = QWidget()
+
+    def open_file_dialog(self):
+        file_path, _ = QFileDialog.getOpenFileName(self.parent, "Open Text File", "", "Text Files (*.txt);;All Files (*)")
+        return file_path
+
+    def read_file(self, file_path):
+        try:
+            with open(file_path, 'rb') as file:
+                raw_data = file.read()
+                encoding_result = chardet.detect(raw_data)
+                encoding = encoding_result['encoding']
+                if encoding:
+                    try:
+                        content = raw_data.decode(encoding)
+                        return content
+                    except UnicodeDecodeError:
+                        QMessageBox.critical(self.parent, "Error", f"Could not decode file with encoding: {encoding}")
+                        return None
+                else:
+                    QMessageBox.critical(self.parent, "Error", "Could not detect file encoding.")
+                    return None
+        except Exception as e:
+            QMessageBox.critical(self.parent, "Error", f"Could not read file: {e}")
+            return None
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\core\translation_manager.py
+# ========================================
+
+import os
+import sys
+from typing import Optional, Tuple
+
+# Assuming QTEngine is in the parent directory of 'core'
+current_dir = os.path.dirname(__file__)
+qt_engine_path = os.path.abspath(os.path.join(current_dir, '..', 'QTEngine'))
+sys.path.append(qt_engine_path)
+
+from QTEngine import QTEngine
+from src.QTEngine.src.text_processing import TranslationMapping
+
+class TranslationManager:
+    def __init__(self, qt_engine: Optional[QTEngine] = None):
+        """
+        Initializes the Translation Manager with an optional QTEngine instance.
+        
+        Args:
+            qt_engine (QTEngine, optional): An existing QTEngine instance to use.
+                                          If None, creates a new instance.
+        """
+        self.qt_engine = qt_engine if qt_engine is not None else QTEngine()
+        self.current_mapping = None
+
+    def translate_text(self, text: str) -> str:
+        """
+        Translates the given text using QTEngine.
+
+        Args:
+            text (str): The text to be translated.
+
+        Returns:
+            str: The translated text.
+        """
+        if not text:
+            return ""
+        
+        translated_text, mapping = self.qt_engine.translate_with_mapping(text)
+        self.current_mapping = mapping
+        return translated_text
+    
+    def get_translated_file_path(self, file_path: str) -> str:
+        """
+        Generates the translated file path based on the original file path.
+
+        Args:
+            file_path (str): The path to the original file.
+
+        Returns:
+            str: The translated file path.
+        """
+        if not file_path:
+            return ""
+        
+        file_name = os.path.basename(file_path)
+        file_name_without_extension, file_extension = os.path.splitext(file_name)
+        translated_file_name = self.translate_text(file_name_without_extension)
+        translated_file_path = os.path.join(os.path.dirname(file_path), f"{translated_file_name}{file_extension}")
+        return translated_file_path
+
+    def get_translated_segment(self, original_text: str) -> Optional[Tuple[str, int, int]]:
+        """
+        Get the translated segment and its position for an original text segment.
+
+        Args:
+            original_text (str): The original text segment to look up.
+
+        Returns:
+            Optional[Tuple[str, int, int]]: A tuple containing (translated_text, start_pos, end_pos),
+                                          or None if no mapping exists.
+        """
+        if self.current_mapping:
+            return self.current_mapping.get_translated_segment(original_text)
+        return None
+
+    def get_original_segment(self, translated_text: str) -> Optional[Tuple[str, int, int]]:
+        """
+        Get the original segment and its position for a translated text segment.
+
+        Args:
+            translated_text (str): The translated text segment to look up.
+
+        Returns:
+            Optional[Tuple[str, int, int]]: A tuple containing (original_text, start_pos, end_pos),
+                                          or None if no mapping exists.
+        """
+        if self.current_mapping:
+            return self.current_mapping.get_original_segment(translated_text)
+        return None
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\gui\chapter_panel.py
+# ========================================
+
+from PyQt5.QtWidgets import (
+    QWidget,
+    QVBoxLayout,
+    QComboBox,
+    QListWidget,
+    QPushButton,
+    QHBoxLayout,
+    QMessageBox
+)
+from PyQt5.QtCore import pyqtSignal
+from typing import Optional
+from src.core.chapter_manager import ChapterManager
+from src.core.translation_manager import TranslationManager
+
+class ChapterPanel(QWidget):
+    chapter_selected = pyqtSignal(int)  # Signal when a chapter is selected
+    chapter_changed = pyqtSignal(int)   # Signal when chapter content changes
+
+    def __init__(self, parent: Optional[QWidget], chapter_manager: ChapterManager, translation_manager: TranslationManager):
+        super().__init__(parent)
+        self.chapter_manager = chapter_manager
+        self.translation_manager = translation_manager
+        self.initUI()
+        self.update_detection_methods()
+
+    def initUI(self):
+        layout = QVBoxLayout()
+
+        self.method_dropdown = QComboBox()
+        self.method_dropdown.currentIndexChanged.connect(self.update_chapter_list)  # type: ignore
+        layout.addWidget(self.method_dropdown)
+
+        self.chapter_list = QListWidget()
+        self.chapter_list.itemClicked.connect(self.on_chapter_selected)  # type: ignore
+        layout.addWidget(self.chapter_list)
+
+        nav_layout = QHBoxLayout()
+        self.prev_button = QPushButton("Previous")
+        self.prev_button.clicked.connect(self.prev_chapter)  # type: ignore
+        nav_layout.addWidget(self.prev_button)
+
+        self.next_button = QPushButton("Next")
+        self.next_button.clicked.connect(self.next_chapter)  # type: ignore
+        nav_layout.addWidget(self.next_button)
+        layout.addLayout(nav_layout)
+
+        self.setLayout(layout)
+
+    def update_detection_methods(self):
+        self.method_dropdown.clear()
+        self.method_dropdown.addItems(self.chapter_manager.detection_methods)
+        self.method_dropdown.addItem("Hiển thị toàn bộ")
+
+    def update_chapter_list(self):
+        selected_method = self.method_dropdown.currentText()
+        try:
+            self.chapter_manager.set_detection_method(selected_method)
+            chapters = self.chapter_manager.get_chapters()
+            self.chapter_list.clear()
+            if selected_method == "Hiển thị toàn bộ":
+                self.chapter_list.addItem("Toàn bộ")
+            else:
+                for i, chapter in enumerate(chapters):
+                    self.chapter_list.addItem(chapter)
+                if chapters:
+                    self.chapter_list.setCurrentRow(0)
+                    self.chapter_selected.emit(0)
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Could not detect chapters: {e}")
+
+    def on_chapter_selected(self, item):
+        selected_method = self.method_dropdown.currentText()
+        if selected_method == "Hiển thị toàn bộ":
+            self.chapter_selected.emit(-1)
+        else:
+            self.chapter_selected.emit(self.chapter_list.row(item))
+        self.chapter_list.setCurrentItem(item)
+
+    def prev_chapter(self):
+        current_row = self.chapter_list.currentRow()
+        if current_row > 0:
+            self.chapter_list.setCurrentRow(current_row - 1)
+            self.chapter_selected.emit(current_row - 1)
+
+    def next_chapter(self):
+        current_row = self.chapter_list.currentRow()
+        if current_row < self.chapter_list.count() - 1:
+            self.chapter_list.setCurrentRow(current_row + 1)
+            self.chapter_selected.emit(current_row + 1)
+    
+    def set_chapter_list(self) -> None:
+        chapters = self.chapter_manager.get_chapters()
+        if chapters:
+            self.chapter_list.clear()
+            self.chapter_list.addItems(chapters)
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\gui\dictionary_panel.py
+# ========================================
+
+from PyQt5.QtWidgets import (
+    QWidget, QLabel, QVBoxLayout, QTextEdit, QLineEdit,
+    QPushButton, QScrollArea, QFrame
+)
+from PyQt5.QtCore import pyqtSlot, Qt
+from PyQt5.QtGui import QFont, QTextCharFormat, QTextCursor
+
+class DictionaryPanel(QWidget):
+    def __init__(self, dictionary_manager):
+        super().__init__()
+        self.dictionary_manager = dictionary_manager
+        self.setup_ui()
+
+    def setup_ui(self):
+        """Set up the dictionary panel UI."""
+        layout = QVBoxLayout()
+
+        # Search bar
+        self.search_bar = QLineEdit()
+        self.search_bar.setPlaceholderText("Search in definitions...")
+        self.search_bar.textChanged.connect(self.on_search_text_changed)
+        layout.addWidget(self.search_bar)
+
+        # Definition display
+        self.definition_display = QTextEdit()
+        self.definition_display.setReadOnly(True)
+        self.definition_display.setMinimumHeight(200)
+        
+        # Set up fonts
+        default_font = QFont("Open Sans", 10)
+        self.definition_display.setFont(default_font)
+        
+        # Create text formats for different parts
+        self.header_format = QTextCharFormat()
+        self.header_format.setFontWeight(QFont.Bold)
+        self.header_format.setFontPointSize(11)
+        
+        self.definition_format = QTextCharFormat()
+        self.definition_format.setFontPointSize(10)
+        
+        layout.addWidget(self.definition_display)
+        self.setLayout(layout)
+
+    def format_definition(self, dictionary_name: str, definition: str) -> str:
+        """Format a definition with proper line breaks and indentation."""
+        # Handle special formatting for ThieuChuu and LacViet dictionaries
+        if dictionary_name in ['ThieuChuu', 'LacViet']:
+            # These dictionaries have structured entries with line breaks and tabs
+            # Example: "龢=hòa [huo2]\n\t1. Ðiều hòa, hợp."
+            lines = definition.split('\n')
+            formatted_lines = []
+            for line in lines:
+                if line.startswith('\t'):
+                    # Indent subpoints with spaces for better readability
+                    formatted_lines.append('    ' + line.lstrip('\t'))
+                else:
+                    formatted_lines.append(line)
+            return '\n'.join(formatted_lines)
+        else:
+            # For other dictionaries, just return the definition as is
+            return definition
+
+    @pyqtSlot(str)
+    def lookup_word(self, word: str):
+        """
+        Look up a word and display its definitions.
+        
+        Args:
+            word (str): The word to look up
+        """
+        self.definition_display.clear()
+        cursor = self.definition_display.textCursor()
+        
+        definitions = self.dictionary_manager.lookup_word(word)
+        if definitions:
+            # Display definitions in the specified order
+            for dict_name in self.dictionary_manager.DICTIONARY_ORDER:
+                if dict_name in definitions:
+                    # Add dictionary name header
+                    cursor.insertText(f"{dict_name}:\n", self.header_format)
+                    
+                    # Add formatted definition
+                    formatted_def = self.format_definition(dict_name, definitions[dict_name])
+                    cursor.insertText(f"{formatted_def}\n\n", self.definition_format)
+        else:
+            cursor.insertText("No definition found.", self.definition_format)
+
+    def on_search_text_changed(self, text: str):
+        """
+        Handle search text changes.
+        
+        Args:
+            text (str): The search query
+        """
+        if len(text) < 2:  # Only search if at least 2 characters are entered
+            return
+            
+        self.definition_display.clear()
+        cursor = self.definition_display.textCursor()
+        
+        results = self.dictionary_manager.search_in_definitions(text)
+        if results:
+            for dict_name in self.dictionary_manager.DICTIONARY_ORDER:
+                if dict_name in results:
+                    # Add dictionary name header
+                    cursor.insertText(f"{dict_name}:\n", self.header_format)
+                    
+                    # Add each matching entry
+                    for word, definition in results[dict_name]:
+                        formatted_def = self.format_definition(dict_name, definition)
+                        cursor.insertText(f"{word}: {formatted_def}\n", self.definition_format)
+                    
+                    cursor.insertText("\n")  # Add space between dictionary sections
+        else:
+            cursor.insertText("No matching definitions found.", self.definition_format)
+
+    def clear_content(self):
+        """Clear the panel content."""
+        self.search_bar.clear()
+        self.definition_display.clear()
+
+    def highlight_search_results(self, text: str):
+        """
+        Highlight search results in the definition display.
+        
+        Args:
+            text (str): The text to highlight
+        """
+        if not text:
+            return
+            
+        # Create format for highlighted text
+        highlight_format = QTextCharFormat()
+        highlight_format.setBackground(Qt.yellow)
+        
+        # Find and highlight all occurrences
+        cursor = self.definition_display.textCursor()
+        cursor.movePosition(QTextCursor.Start)
+        while cursor.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor):
+            if cursor.selectedText().lower() == text.lower():
+                cursor.mergeCharFormat(highlight_format)
+            cursor.movePosition(QTextCursor.Right)
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\gui\file_info_panel.py
+# ========================================
+
+import os
+import chardet
+from PyQt5.QtWidgets import (
+    QWidget,
+    QLabel,
+    QVBoxLayout
+)
+
+class FileInfoPanel(QWidget):
+    def __init__(self, file_handler, translation_manager):
+        super().__init__()
+        self.file_handler = file_handler
+        self.translation_manager = translation_manager
+        self.initUI()
+
+    def initUI(self):
+        layout = QVBoxLayout(self)
+        self.file_name_label = QLabel("File Name: ")
+        self.translated_file_name_label = QLabel("Translated File Name: ")
+        self.encoding_label = QLabel("Encoding: ")
+        self.file_size_label = QLabel("File Size: ")
+
+        layout.addWidget(self.file_name_label)
+        layout.addWidget(self.translated_file_name_label)
+        layout.addWidget(self.encoding_label)
+        layout.addWidget(self.file_size_label)
+
+    def set_file_info(self, file_path):
+        file_name = os.path.basename(file_path)
+        translated_file_name = self.translation_manager.translate_text(file_name)
+        
+        try:
+            with open(file_path, 'rb') as file:
+                raw_data = file.read()
+                encoding_result = chardet.detect(raw_data)
+                encoding = encoding_result['encoding']
+        except Exception as e:
+            encoding = "Unknown"
+
+        file_size = os.path.getsize(file_path)
+        self.file_name_label.setText(f"File Name: {file_name}")
+        self.translated_file_name_label.setText(f"Translated File Name: {translated_file_name}")
+        self.encoding_label.setText(f"Encoding: {encoding}")
+        self.file_size_label.setText(f"File Size: {file_size} bytes")
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\gui\font_manager.py
+# ========================================
+
+import os
+from PyQt5.QtGui import QFont, QFontDatabase
+from enum import Enum, auto
+
+class FontType(Enum):
+    UI = auto()          # For interface elements
+    CHINESE = auto()     # For Chinese text
+    VIETNAMESE = auto()  # For Vietnamese translations
+
+class FontWeight:
+    """Font weight definitions matching common font file naming."""
+    THIN = QFont.Thin
+    EXTRA_LIGHT = QFont.ExtraLight
+    LIGHT = QFont.Light
+    REGULAR = QFont.Normal
+    MEDIUM = QFont.Medium
+    SEMI_BOLD = QFont.DemiBold
+    BOLD = QFont.Bold
+    EXTRA_BOLD = QFont.ExtraBold
+    BLACK = QFont.Black
+
+    @staticmethod
+    def from_name(name):
+        """Convert weight name to QFont weight value."""
+        weights = {
+            'thin': QFont.Thin,
+            'extralight': QFont.ExtraLight,
+            'light': QFont.Light,
+            'regular': QFont.Normal,
+            'medium': QFont.Medium,
+            'semibold': QFont.DemiBold,
+            'bold': QFont.Bold,
+            'extrabold': QFont.ExtraBold,
+            'black': QFont.Black
+        }
+        return weights.get(name.lower().replace('-', '').replace('_', ''), QFont.Normal)
+
+class FontFamily:
+    def __init__(self, name, font_type=FontType.UI):
+        self.name = name
+        self.font_type = font_type
+        self.variable_fonts = {}  # style -> path (e.g., 'regular', 'italic')
+        self.static_fonts = {}    # (weight, style) -> path
+        self.loaded_ids = set()   # Set of loaded font IDs
+        self.loaded = False
+
+    def add_variable_font(self, path, style='regular'):
+        """Add a variable font file."""
+        self.variable_fonts[style] = path
+
+    def add_static_font(self, path, weight=FontWeight.REGULAR, style='regular'):
+        """Add a static font file."""
+        self.static_fonts[(weight, style)] = path
+
+    def get_font_path(self, weight=FontWeight.REGULAR, style='regular'):
+        """Get the most appropriate font file path for the requested weight and style."""
+        # Try variable font first
+        if style in self.variable_fonts:
+            return self.variable_fonts[style]
+        
+        # Fall back to static font
+        return self.static_fonts.get((weight, style))
+
+class FontManager:
+    def __init__(self):
+        self.font_families = {}  # name -> FontFamily
+        self.current_fonts = {
+            FontType.UI: None,
+            FontType.CHINESE: None,
+            FontType.VIETNAMESE: None
+        }
+
+    def scan_font_directory(self, directory, font_type=None):
+        """Scan a directory for fonts and add them to the manager."""
+        if not os.path.exists(directory):
+            return False
+
+        for item in os.listdir(directory):
+            item_path = os.path.join(directory, item)
+            if os.path.isdir(item_path):
+                self._scan_font_family(item_path, item, font_type)
+
+        return True
+
+    def _scan_font_family(self, directory, family_name, font_type=None):
+        """Scan a font family directory and add its fonts."""
+        family = FontFamily(family_name, font_type)
+
+        # Check for variable fonts in main directory
+        for file in os.listdir(directory):
+            if 'variable' in file.lower() and file.endswith(('.ttf', '.otf')):
+                style = 'italic' if 'italic' in file.lower() else 'regular'
+                family.add_variable_font(os.path.join(directory, file), style)
+
+        # Check for static fonts
+        static_dir = os.path.join(directory, 'static')
+        if os.path.exists(static_dir):
+            for file in os.listdir(static_dir):
+                if file.endswith(('.ttf', '.otf')):
+                    path = os.path.join(static_dir, file)
+                    style = 'italic' if 'italic' in file.lower() else 'regular'
+                    weight = self._detect_weight_from_filename(file)
+                    family.add_static_font(path, weight, style)
+
+        self.font_families[family_name] = family
+
+    def _detect_weight_from_filename(self, filename):
+        """Detect font weight from filename."""
+        filename = filename.lower()
+        if 'thin' in filename: return FontWeight.THIN
+        if 'extralight' in filename: return FontWeight.EXTRA_LIGHT
+        if 'light' in filename: return FontWeight.LIGHT
+        if 'medium' in filename: return FontWeight.MEDIUM
+        if 'semibold' in filename: return FontWeight.SEMI_BOLD
+        if 'bold' in filename:
+            if 'extra' in filename or 'ultra' in filename:
+                return FontWeight.EXTRA_BOLD
+            return FontWeight.BOLD
+        if 'black' in filename: return FontWeight.BLACK
+        return FontWeight.REGULAR
+
+    def add_font_file(self, path, family_name=None, weight=None, style='regular', font_type=None):
+        """Add a single font file to the manager."""
+        if not os.path.exists(path):
+            return False
+
+        # Use filename as family name if not provided
+        if not family_name:
+            family_name = os.path.splitext(os.path.basename(path))[0]
+            family_name = family_name.split('-')[0]  # Remove weight/style suffixes
+
+        # Create family if it doesn't exist
+        if family_name not in self.font_families:
+            self.font_families[family_name] = FontFamily(family_name, font_type)
+
+        family = self.font_families[family_name]
+        
+        # Detect if it's a variable font
+        if 'variable' in path.lower():
+            family.add_variable_font(path, style)
+        else:
+            if weight is None:
+                weight = self._detect_weight_from_filename(os.path.basename(path))
+            family.add_static_font(path, weight, style)
+
+        return True
+
+    def load_font_family(self, family_name):
+        """Load a font family into the system."""
+        if family_name not in self.font_families:
+            return False
+
+        family = self.font_families[family_name]
+        if family.loaded:
+            return True
+
+        try:
+            # Load variable fonts
+            for path in family.variable_fonts.values():
+                font_id = QFontDatabase.addApplicationFont(path)
+                if font_id != -1:
+                    family.loaded_ids.add(font_id)
+                    family.loaded = True
+
+            # Load static fonts if no variable fonts were loaded
+            if not family.loaded:
+                for path in family.static_fonts.values():
+                    font_id = QFontDatabase.addApplicationFont(path)
+                    if font_id != -1:
+                        family.loaded_ids.add(font_id)
+                        family.loaded = True
+
+            return family.loaded
+
+        except Exception as e:
+            print(f"Error loading font family {family_name}: {e}")
+            return False
+
+    def create_font(self, family_name, size=10, weight=FontWeight.REGULAR):
+        """Create a QFont object for the specified family."""
+        if family_name not in self.font_families:
+            return QFont()
+
+        # Load font if not already loaded
+        if not self.font_families[family_name].loaded:
+            if not self.load_font_family(family_name):
+                return QFont()
+
+        font = QFont(family_name)
+        font.setPointSize(size)
+        font.setWeight(weight)
+        return font
+
+    def set_font(self, font_type, family_name, size=10, weight=FontWeight.REGULAR):
+        """Set the current font for a specific type."""
+        if family_name not in self.font_families:
+            return False
+
+        font = self.create_font(family_name, size, weight)
+        if font:
+            self.current_fonts[font_type] = font
+            return True
+        return False
+
+    def get_current_font(self, font_type):
+        """Get the current font for a specific type."""
+        return self.current_fonts.get(font_type)
+
+    def apply_font_to_widget(self, widget, font_type):
+        """Apply the current font of a specific type to a widget."""
+        font = self.current_fonts.get(font_type)
+        if font:
+            widget.setFont(font)
+            return True
+        return False
+
+    def get_font_families(self, font_type=None):
+        """Get list of available font families, optionally filtered by type."""
+        if font_type is None:
+            return list(self.font_families.keys())
+        return [name for name, family in self.font_families.items() 
+                if family.font_type == font_type]
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\gui\main_translation_panel.py
+# ========================================
+
+from PyQt5.QtWidgets import QTextEdit, QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QPlainTextEdit
+from PyQt5.QtCore import Qt, pyqtSignal, QPoint
+from PyQt5.QtGui import (
+    QTextCursor, QTextCharFormat, QColor, QTextBlockFormat, 
+    QTextDocument, QTextBlockUserData, QTextBlock
+)
+from typing import Optional, Dict, Tuple, List
+from src.core.chapter_manager import ChapterManager
+from src.core.translation_manager import TranslationManager
+from src.QTEngine.src.text_processing import TranslationMapping, Block
+
+class TextSegment:
+    """Represents a segment of text with its mapping."""
+    def __init__(self, text: str, start_pos: int, is_original: bool, mapping_block: Optional[Block] = None):
+        self.text = text
+        self.start_pos = start_pos
+        self.end_pos = start_pos + len(text)
+        self.is_original = is_original
+        self.mapping_block = mapping_block
+
+class TranslationTextEdit(QPlainTextEdit):
+    """Custom QPlainTextEdit that handles mouse events for dictionary lookup."""
+    segment_clicked = pyqtSignal(TextSegment)  # Emits the clicked segment
+
+    def __init__(self):
+        super().__init__()
+        self.setReadOnly(True)
+        self.segments: List[TextSegment] = []
+        
+        # Set up text formats
+        self.highlight_format = QTextCharFormat()
+        self.highlight_format.setBackground(QColor(255, 255, 0, 100))  # Light yellow
+        self.original_format = QTextCharFormat()
+        self.original_format.setBackground(QColor(240, 240, 255))  # Light blue
+        self.translated_format = QTextCharFormat()
+        self.translated_format.setBackground(QColor(240, 255, 240))  # Light green
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            # Get cursor position at click
+            cursor = self.cursorForPosition(event.pos())
+            pos = cursor.position()
+            
+            # Find which segment was clicked
+            clicked_segment = self.find_segment_at_position(pos)
+            if clicked_segment:
+                self.segment_clicked.emit(clicked_segment)
+        
+        super().mousePressEvent(event)
+
+    def find_segment_at_position(self, pos: int) -> Optional[TextSegment]:
+        """Find the text segment at the given position."""
+        for segment in self.segments:
+            if segment.start_pos <= pos < segment.end_pos:
+                return segment
+        return None
+
+    def clear_segments(self):
+        """Clear all segments."""
+        self.segments.clear()
+        self.clear()
+
+    def add_segment(self, segment: TextSegment):
+        """Add a new text segment."""
+        self.segments.append(segment)
+        
+        # Create cursor at segment position
+        cursor = QTextCursor(self.document())
+        cursor.setPosition(segment.start_pos)
+        
+        # Set format based on whether it's original or translated
+        format = self.original_format if segment.is_original else self.translated_format
+        cursor.setCharFormat(format)
+        
+        # Insert the text
+        cursor.insertText(segment.text)
+
+class MainTranslationPanel(QWidget):
+    def __init__(self, parent: Optional[QWidget], chapter_manager: ChapterManager,
+                 translation_manager: TranslationManager, dictionary_panel):
+        super().__init__(parent)
+        self.chapter_manager = chapter_manager
+        self.translation_manager = translation_manager
+        self.dictionary_panel = dictionary_panel
+        
+        # Create text edit
+        self.text_edit = TranslationTextEdit()
+        self.text_edit.segment_clicked.connect(self.handle_segment_click)
+        
+        # Create toggle button
+        self.show_original = False
+        self.toggle_button = QPushButton("Show Original Text")
+        self.toggle_button.clicked.connect(self.toggle_text_display)
+        
+        # Layout
+        layout = QVBoxLayout()
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(self.toggle_button)
+        layout.addLayout(button_layout)
+        layout.addWidget(self.text_edit)
+        self.setLayout(layout)
+
+    def set_chapter_text(self, chapter_index: int):
+        """Set the text for a chapter."""
+        self.text_edit.clear_segments()
+        
+        # Get original text and translate
+        original_text = self.chapter_manager.get_chapter_text(chapter_index)
+        if not original_text:
+            return
+            
+        # Process each paragraph
+        current_pos = 0
+        paragraphs = original_text.splitlines(keepends=True)
+        for paragraph in paragraphs:
+            if not paragraph.strip():
+                current_pos += len(paragraph)
+                continue
+                
+            # Get translation and mapping
+            translated_text = self.translation_manager.translate_text(paragraph.strip())
+            mapping = self.translation_manager.current_mapping
+            
+            if self.show_original:
+                # Add original text segments
+                for block in mapping.blocks:
+                    segment = TextSegment(
+                        block.original,
+                        current_pos,
+                        True,
+                        block
+                    )
+                    self.text_edit.add_segment(segment)
+                    current_pos += len(block.original)
+                
+                # Add newline between original and translation
+                self.text_edit.add_segment(TextSegment("\n", current_pos, True))
+                current_pos += 1
+                
+                # Add translated text segments
+                for block in mapping.blocks:
+                    segment = TextSegment(
+                        block.translated,
+                        current_pos,
+                        False,
+                        block
+                    )
+                    self.text_edit.add_segment(segment)
+                    current_pos += len(block.translated)
+            else:
+                # Add only translated text segments
+                for block in mapping.blocks:
+                    segment = TextSegment(
+                        block.translated,
+                        current_pos,
+                        False,
+                        block
+                    )
+                    self.text_edit.add_segment(segment)
+                    current_pos += len(block.translated)
+            
+            # Add paragraph break
+            self.text_edit.add_segment(TextSegment(paragraph[len(paragraph.strip()):], current_pos, False))
+            current_pos += len(paragraph[len(paragraph.strip()):])
+
+    def handle_segment_click(self, segment: TextSegment):
+        """Handle when a text segment is clicked."""
+        if not segment.mapping_block:
+            return
+            
+        # Clear any existing highlights
+        cursor = self.text_edit.textCursor()
+        cursor.select(QTextCursor.Document)
+        cursor.setCharFormat(QTextCharFormat())
+        
+        # Highlight the clicked segment and its corresponding translation/original
+        for other_segment in self.text_edit.segments:
+            if other_segment.mapping_block == segment.mapping_block:
+                cursor = self.text_edit.textCursor()
+                cursor.setPosition(other_segment.start_pos)
+                cursor.setPosition(other_segment.end_pos, QTextCursor.KeepAnchor)
+                cursor.setCharFormat(self.text_edit.highlight_format)
+        
+        # Look up the word
+        if segment.is_original:
+            self.dictionary_panel.lookup_word(segment.text)
+        else:
+            original_segment = next(
+                (s for s in self.text_edit.segments 
+                 if s.mapping_block == segment.mapping_block and s.is_original),
+                None
+            )
+            if original_segment:
+                self.dictionary_panel.lookup_word(original_segment.text)
+
+    def toggle_text_display(self):
+        """Toggle between showing original and translated text."""
+        self.show_original = not self.show_original
+        self.toggle_button.setText("Hide Original Text" if self.show_original else "Show Original Text")
+        
+        if self.chapter_manager.chapters:
+            self.set_chapter_text(0)
+
+    def set_text(self, text: str):
+        """Set the entire text content."""
+        self.chapter_manager.set_text(text)
+        if self.chapter_manager.chapters:
+            self.set_chapter_text(0)
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\gui\main_window.py
+# ========================================
+
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QScrollArea, QFileDialog
+from PyQt5.QtCore import Qt, pyqtSignal
+from src.gui.file_info_panel import FileInfoPanel
+from src.gui.chapter_panel import ChapterPanel
+from src.gui.dictionary_panel import DictionaryPanel
+from src.gui.main_translation_panel import MainTranslationPanel
+from src.gui.menu_bar import MenuBar
+#from src.utils.qt_utils import create_font
+class MainWindow(QMainWindow):
+    def __init__(self, translation_manager, dictionary_manager, chapter_manager):
+        super().__init__()
+        self.translation_manager = translation_manager
+        self.dictionary_manager = dictionary_manager
+        self.chapter_manager = chapter_manager
+        self.setWindowTitle("ZXReader")
+        self.setGeometry(100, 100, 1200, 800)
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
+        self.main_layout = QVBoxLayout(self.central_widget)
+        self.menu_bar = MenuBar(self)
+        self.setMenuBar(self.menu_bar)
+        self.main_content_layout = QHBoxLayout()
+        self.main_layout.addLayout(self.main_content_layout)
+        self.left_panel_layout = QVBoxLayout()
+        self.main_content_layout.addLayout(self.left_panel_layout)
+        self.right_panel_layout = QVBoxLayout()
+        self.main_content_layout.addLayout(self.right_panel_layout)
+
+        # Initialize panels with proper parent and managers
+        self.file_info_panel = FileInfoPanel(self, self.translation_manager)
+        self.left_panel_layout.addWidget(self.file_info_panel)
+        
+        self.chapter_panel = ChapterPanel(self, self.chapter_manager, self.translation_manager)
+        self.left_panel_layout.addWidget(self.chapter_panel)
+        
+        self.dictionary_panel = DictionaryPanel(self.dictionary_manager)
+        self.left_panel_layout.addWidget(self.dictionary_panel)
+        
+        self.main_translation_panel = MainTranslationPanel(self, self.chapter_manager, self.translation_manager, self.dictionary_panel)
+        self.right_panel_layout.addWidget(self.main_translation_panel)
+
+        # Connect signals with correct signal names
+        self.menu_bar.file_opened.connect(self.set_file_info)
+        self.chapter_panel.chapter_selected.connect(self.set_chapter_text)
+        self.chapter_panel.chapter_changed.connect(self.set_chapter_list)
+    
+    def open_file_dialog(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Text Files (*.txt)")
+        if file_path:
+            self.set_file_info(file_path)
+            with open(file_path, 'r', encoding='utf-8') as f:
+                text = f.read()
+                self.main_translation_panel.set_text(text)
+    
+    def set_file_info(self, file_path):
+        self.file_info_panel.set_file_info(file_path)
+    def set_chapter_text(self, chapter_text):
+         self.main_translation_panel.set_chapter_text(chapter_text)
+    def set_chapter_list(self, chapter_list):
+        self.main_translation_panel.set_chapter_list(chapter_list)
+if __name__ == '__main__':
+    from PyQt5.QtWidgets import QApplication
+    from src.core.translation_manager import TranslationManager
+    from src.core.dictionary_manager import DictionaryManager
+    from src.core.chapter_manager import ChapterManager
+    from src.QTEngine.QTEngine import QTEngine
+    import sys
+    app = QApplication(sys.argv)
+    qt_engine = QTEngine()
+    translation_manager = TranslationManager(qt_engine)
+    dictionary_manager = DictionaryManager(qt_engine)
+    chapter_manager = ChapterManager(qt_engine)
+    main_window = MainWindow(translation_manager, dictionary_manager, chapter_manager)
+    main_window.show()
+    sys.exit(app.exec_())
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\gui\menu_bar.py
+# ========================================
+
+from PyQt5.QtWidgets import QMenuBar, QMenu, QAction
+from PyQt5.QtCore import pyqtSignal
+
+class MenuBar(QMenuBar):
+    file_opened = pyqtSignal(str)
+    def __init__(self, main_window):
+        super().__init__()
+        self.main_window = main_window
+        self.init_menus()
+
+    def init_menus(self):
+        file_menu = QMenu("File", self)
+        self.addMenu(file_menu)
+
+        open_file_action = QAction("Open", self)
+        open_file_action.triggered.connect(self.open_file)
+        file_menu.addAction(open_file_action)
+        
+        save_file_action = QAction("Save", self)
+        file_menu.addAction(save_file_action)
+        
+        save_as_file_action = QAction("Save As", self)
+        file_menu.addAction(save_as_file_action)
+        
+        exit_action = QAction("Exit", self)
+        file_menu.addAction(exit_action)
+        
+        edit_menu = QMenu("Edit", self)
+        self.addMenu(edit_menu)
+        
+        copy_action = QAction("Copy", self)
+        edit_menu.addAction(copy_action)
+        
+        paste_action = QAction("Paste", self)
+        edit_menu.addAction(paste_action)
+        
+        cut_action = QAction("Cut", self)
+        edit_menu.addAction(cut_action)
+        
+        select_all_action = QAction("Select All", self)
+        edit_menu.addAction(select_all_action)
+        
+        view_menu = QMenu("View", self)
+        self.addMenu(view_menu)
+        
+        zoom_in_action = QAction("Zoom In", self)
+        view_menu.addAction(zoom_in_action)
+        
+        zoom_out_action = QAction("Zoom Out", self)
+        view_menu.addAction(zoom_out_action)
+        
+        reset_zoom_action = QAction("Reset Zoom", self)
+        view_menu.addAction(reset_zoom_action)
+        
+        help_menu = QMenu("Help", self)
+        self.addMenu(help_menu)
+        
+        about_action = QAction("About", self)
+        help_menu.addAction(about_action)
+    
+    def open_file(self):
+        self.main_window.open_file_dialog()
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\gui\style_manager.py
+# ========================================
+
+from PyQt5.QtWidgets import QWidget
+from typing import Optional
+from PyQt5.QtGui import QFont
+
+class StyleManager:
+    def __init__(self) -> None:
+        self.current_theme = "light"
+
+    def get_style(self) -> str:
+        if self.current_theme == "light":
+            return """
+                QMainWindow {
+                    background-color: #f0f0f0;
+                }
+                QWidget {
+                    background-color: #f0f0f0;
+                    color: #333;
+                }
+                QMenuBar {
+                    background-color: #e0e0e0;
+                    color: #333;
+                }
+                QMenuBar::item {
+                    background-color: #e0e0e0;
+                    color: #333;
+                }
+                QMenuBar::item::selected {
+                    background-color: #d0d0d0;
+                }
+                QMenu {
+                    background-color: #e0e0e0;
+                    color: #333;
+                }
+                QMenu::item::selected {
+                    background-color: #d0d0d0;
+                }
+                QLabel {
+                    color: #333;
+                }
+                QTextEdit {
+                    background-color: #fff;
+                    color: #333;
+                }
+                QComboBox {
+                    background-color: #fff;
+                    color: #333;
+                }
+                QPushButton {
+                    background-color: #e0e0e0;
+                    color: #333;
+                }
+                QPushButton::hover {
+                    background-color: #d0d0d0;
+                }
+            """
+        elif self.current_theme == "dark":
+            return """
+                QMainWindow {
+                    background-color: #333;
+                }
+                QWidget {
+                    background-color: #333;
+                    color: #f0f0f0;
+                }
+                 QMenuBar {
+                    background-color: #444;
+                    color: #f0f0f0;
+                }
+                QMenuBar::item {
+                    background-color: #444;
+                    color: #f0f0f0;
+                }
+                QMenuBar::item::selected {
+                    background-color: #555;
+                }
+                QMenu {
+                    background-color: #444;
+                    color: #f0f0f0;
+                }
+                QMenu::item::selected {
+                    background-color: #555;
+                }
+                QLabel {
+                    color: #f0f0f0;
+                }
+                QTextEdit {
+                    background-color: #555;
+                    color: #f0f0f0;
+                }
+                QComboBox {
+                    background-color: #555;
+                    color: #f0f0f0;
+                }
+                QPushButton {
+                    background-color: #444;
+                    color: #f0f0f0;
+                }
+                QPushButton::hover {
+                    background-color: #555;
+                }
+            """
+        elif self.current_theme == "book":
+            return """
+                QMainWindow {
+                    background-color: #f5f0e1;
+                }
+                QWidget {
+                    background-color: #f5f0e1;
+                    color: #333;
+                }
+                QMenuBar {
+                    background-color: #e8e0d1;
+                    color: #333;
+                }
+                QMenuBar::item {
+                    background-color: #e8e0d1;
+                    color: #333;
+                }
+                QMenuBar::item::selected {
+                    background-color: #d0c8b8;
+                }
+                QMenu {
+                    background-color: #e8e0d1;
+                    color: #333;
+                }
+                QMenu::item::selected {
+                    background-color: #d0c8b8;
+                }
+                QLabel {
+                    color: #333;
+                }
+                QTextEdit {
+                    background-color: #fff;
+                    color: #333;
+                }
+                QComboBox {
+                    background-color: #fff;
+                    color: #333;
+                }
+                QPushButton {
+                    background-color: #e8e0d1;
+                    color: #333;
+                }
+                QPushButton::hover {
+                    background-color: #d0c8b8;
+                }
+            """
+        elif self.current_theme == "wood":
+            return """
+                QMainWindow {
+                    background-color: #a38b6a;
+                }
+                QWidget {
+                    background-color: #a38b6a;
+                    color: #f0f0f0;
+                }
+                QMenuBar {
+                    background-color: #8a7357;
+                    color: #f0f0f0;
+                }
+                QMenuBar::item {
+                    background-color: #8a7357;
+                    color: #f0f0f0;
+                }
+                QMenuBar::item::selected {
+                    background-color: #715e46;
+                }
+                QMenu {
+                    background-color: #8a7357;
+                    color: #f0f0f0;
+                }
+                QMenu::item::selected {
+                    background-color: #715e46;
+                }
+                QLabel {
+                    color: #f0f0f0;
+                }
+                QTextEdit {
+                    background-color: #b9a58a;
+                    color: #f0f0f0;
+                }
+                QComboBox {
+                    background-color: #b9a58a;
+                    color: #f0f0f0;
+                }
+                QPushButton {
+                    background-color: #8a7357;
+                    color: #f0f0f0;
+                }
+                QPushButton::hover {
+                    background-color: #715e46;
+                }
+            """
+        return ""
+
+    def apply_style(self, widget: QWidget) -> None:
+        style = self.get_style()
+        widget.setStyleSheet(style)
+
+    def load_fonts(self) -> None:
+        # Load custom fonts if needed
+        pass
+
+    def set_font(self, widget: QWidget, font_name: str = "Arial", size: int = 10) -> None:
+        font = QFont(font_name, size)
+        widget.setFont(font)
+
+    def set_theme(self, theme: str) -> None:
+        self.current_theme = theme
+
+
+# ========================================
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\config.py
 # ========================================
 
 """
@@ -247,26 +2140,27 @@ validate_config()
 
 
 # ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\QTEngine.py
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\QTEngine.py
 # ========================================
 
 import re
 import logging
 from typing import Dict, List, Tuple, Optional, Any, Callable
 
-from models.trie import Trie
-from models.chinese_converter import ChineseConverter
+from src.QTEngine.models.trie import Trie
+from src.QTEngine.models.chinese_converter import ChineseConverter
 
 # Import the new modularized functions
-from src.character_utils import LATIN_CHARS, replace_special_chars
-from src.text_processing import (
+from src.QTEngine.src.character_utils import LATIN_CHARS, replace_special_chars
+from src.QTEngine.src.text_processing import (
     convert_to_sino_vietnamese, 
     rephrase, 
-    process_paragraph
+    process_paragraph,
+    TranslationMapping
 )
-from src.performance import profile_function
-from src.data_loader import load_data, DataLoader
-from src.translation_engine import TranslationEngine
+from src.QTEngine.src.performance import profile_function
+from src.QTEngine.src.data_loader import load_data, DataLoader
+from src.QTEngine.src.translation_engine import TranslationEngine
 
 class QTEngine(TranslationEngine):
     """
@@ -319,15 +2213,43 @@ class QTEngine(TranslationEngine):
             str: Translated Sino-Vietnamese text
         """
         try:
-            return process_paragraph(
+            translated_text, _ = process_paragraph(
                 text, 
                 self.names2, 
                 self.names, 
                 self.viet_phrase, 
                 self.chinese_phien_am
             )
+            return translated_text
         except Exception as e:
             self.logger.error(f"Translation failed: {e}")
+            raise
+
+    def translate_with_mapping(self, text: str) -> Tuple[str, TranslationMapping]:
+        """
+        Translate Chinese text to Sino-Vietnamese and return mapping information.
+        
+        Args:
+            text (str): Input Chinese text
+        
+        Returns:
+            Tuple[str, TranslationMapping]: Translated text and mapping information
+        """
+        try:
+            # First convert Traditional to Simplified if necessary
+            simplified_text = self.chinese_converter.auto_convert_to_simplified(text)
+            if simplified_text is None:
+                simplified_text = text
+
+            return process_paragraph(
+                simplified_text,
+                self.names2,
+                self.names,
+                self.viet_phrase,
+                self.chinese_phien_am
+            )
+        except Exception as e:
+            self.logger.error(f"Translation with mapping failed: {e}")
             raise
     
     def validate_translation(self, original: str, translated: str) -> bool:
@@ -380,9 +2302,9 @@ class QTEngine(TranslationEngine):
         return {
             'loading_info': self.loading_info,
             'data_sources': {
-                'names2_size': len(self.names2.keys()),
-                'names_size': len(self.names.keys()),
-                'viet_phrase_size': len(self.viet_phrase.keys()),
+                'names2_size': len(self.names2.get_all_words()),
+                'names_size': len(self.names.get_all_words()),
+                'viet_phrase_size': len(self.viet_phrase.get_all_words()),
                 'chinese_phien_am_size': len(self.chinese_phien_am)
             }
         }
@@ -434,13 +2356,14 @@ class QTEngine(TranslationEngine):
         if simplified_text is None:
             simplified_text = paragraph
             
-        return process_paragraph(
+        translated_text, _ = process_paragraph(
             simplified_text, 
             self.names2, 
             self.names, 
             self.viet_phrase, 
             self.chinese_phien_am
         )
+        return translated_text
     
     def get_loading_info(self) -> Dict[str, Any]:
         """
@@ -452,13 +2375,7 @@ class QTEngine(TranslationEngine):
         return self.loading_info
 
 # ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\setup.py
-# ========================================
-
-
-
-# ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\__init__.py
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\__init__.py
 # ========================================
 
 from .QTEngine import QTEngine
@@ -469,7 +2386,7 @@ __all__ = ['QTEngine', 'TranslationEngine', 'DataLoader']
 
 
 # ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\models\chinese_converter.py
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\models\chinese_converter.py
 # ========================================
 
 from typing import Optional
@@ -539,7 +2456,7 @@ class ChineseConverter:
 
 
 # ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\models\trie.py
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\models\trie.py
 # ========================================
 
 from typing import Dict, List, Tuple, Optional, Union
@@ -663,11 +2580,11 @@ class Trie:
         return words
 
 # ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\src\character_utils.py
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\src\character_utils.py
 # ========================================
 
 from typing import Set, Dict
-from src.ReplaceChar import SPECIAL_CHARS
+from src.QTEngine.src.ReplaceChar import SPECIAL_CHARS
 
 # Comprehensive set of Latin characters including various language variants
 LATIN_CHARS: Set[str] = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -692,7 +2609,7 @@ def replace_special_chars(text: str) -> str:
 
 
 # ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\src\data_loader.py
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\src\data_loader.py
 # ========================================
 
 import os
@@ -703,8 +2620,8 @@ from typing import Tuple, Dict, Any, Optional, List, Union
 from functools import lru_cache, wraps
 from datetime import datetime, timedelta
 
-from models.trie import Trie
-import config
+from src.QTEngine.models.trie import Trie
+import src.QTEngine.config as config
 
 # Configure logging based on config
 logging.basicConfig(
@@ -837,14 +2754,21 @@ class DataLoader:
             required_files (Optional[List[str]]): Custom list of required files
             refresh_interval (timedelta): Interval for automatic data refresh
         """
-        self.data_dir = data_dir or config.DATA_LOADER_CONFIG.get('data_dir', 'data')
+        # Get the absolute path of the QTEngine directory
+        self.qt_engine_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        
+        # Set data directory relative to QTEngine directory if not provided
+        if data_dir is None:
+            data_dir = os.path.join(self.qt_engine_dir, 'data')
+        
+        self.data_dir = data_dir
         self.required_files = required_files or [
             'Names2.txt', 'Names.txt', 'VietPhrase.txt', 'ChinesePhienAmWords.txt'
         ]
         self.refresh_interval = refresh_interval
         self.last_load_time = None
         self.loaded_data = None
-    
+        
     @retry_on_failure()
     def load_data(self) -> Tuple[Trie, Trie, Trie, Dict[str, str], Dict[str, Any]]:
         """
@@ -956,7 +2880,7 @@ def load_data(
 
 
 # ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\src\data_watcher.py
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\src\data_watcher.py
 # ========================================
 
 import os
@@ -966,7 +2890,7 @@ from typing import Dict, Callable, Optional, Any
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-from src.data_loader import DataLoader, DataLoadError
+from src.QTEngine.src.data_loader import DataLoader, DataLoadError
 
 logger = logging.getLogger(__name__)
 
@@ -998,6 +2922,7 @@ class DataFileWatcher:
         # Track file modification times
         self.file_mtimes: Dict[str, float] = {}
         self._initialize_file_mtimes()
+        self.observer = None
     
     def _initialize_file_mtimes(self):
         """
@@ -1071,9 +2996,9 @@ class DataFileWatcher:
         
         # Setup file system observer
         event_handler = DataFileHandler(self)
-        observer = Observer()
-        observer.schedule(event_handler, self.data_dir, recursive=False)
-        observer.start()
+        self.observer = Observer()
+        self.observer.schedule(event_handler, self.data_dir, recursive=False)
+        self.observer.start()
         
         if blocking:
             try:
@@ -1081,10 +3006,18 @@ class DataFileWatcher:
                     time.sleep(self.check_interval)
                     self.check_and_reload()
             except KeyboardInterrupt:
-                observer.stop()
-            observer.join()
+                self.observer.stop()
+            self.observer.join()
         
-        return observer
+        return self.observer
+    
+    def stop(self):
+        """
+        Stop watching data files for changes.
+        """
+        if self.observer:
+            self.observer.stop()
+            self.observer.join()
 
 def create_data_watcher(data_dir: str, 
                         reload_callback: Optional[Callable] = None) -> DataFileWatcher:
@@ -1104,7 +3037,7 @@ def create_data_watcher(data_dir: str,
 
 
 # ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\src\performance.py
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\src\performance.py
 # ========================================
 
 import cProfile
@@ -1140,7 +3073,7 @@ def profile_function(func: Callable) -> Callable:
 
 
 # ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\src\ReplaceChar.py
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\src\ReplaceChar.py
 # ========================================
 
 ﻿SPECIAL_CHARS = {
@@ -1282,14 +3215,85 @@ def profile_function(func: Callable) -> Callable:
 }
 
 # ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\src\text_processing.py
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\src\text_processing.py
 # ========================================
 
 from typing import List, Tuple, Dict, Optional
-from models.trie import Trie
+from src.QTEngine.models.trie import Trie
 from .character_utils import replace_special_chars, LATIN_CHARS
 import re
 import logging
+
+class Block:
+    def __init__(self, original: str, translated: str, orig_start: int, trans_start: int):
+        self.original = original
+        self.translated = translated
+        self.orig_start = orig_start
+        self.orig_end = orig_start + len(original)
+        self.trans_start = trans_start
+        self.trans_end = trans_start + len(translated)
+
+class TranslationMapping:
+    def __init__(self):
+        self.blocks: List[Block] = []
+        self.original_to_block: Dict[str, List[Block]] = {}  # One original text might map to multiple blocks (duplicates)
+        self.translated_to_block: Dict[str, List[Block]] = {}  # One translated text might map to multiple blocks
+        self.current_original_pos = 0
+        self.current_translated_pos = 0
+
+    def add_block(self, original: str, translated: str):
+        """Add a new block to the mapping."""
+        block = Block(original, translated, self.current_original_pos, self.current_translated_pos)
+        self.blocks.append(block)
+        
+        # Update mappings
+        if original not in self.original_to_block:
+            self.original_to_block[original] = []
+        self.original_to_block[original].append(block)
+        
+        if translated not in self.translated_to_block:
+            self.translated_to_block[translated] = []
+        self.translated_to_block[translated].append(block)
+        
+        # Update positions
+        self.current_original_pos = block.orig_end
+        self.current_translated_pos = block.trans_end
+
+    def get_translated_segment(self, original: str, position: Optional[int] = None) -> Optional[Tuple[str, int, int]]:
+        """
+        Get translated segment and its position for an original text segment.
+        If position is provided, returns the block closest to that position.
+        """
+        blocks = self.original_to_block.get(original)
+        if not blocks:
+            return None
+            
+        if position is not None:
+            # Find the block closest to the given position
+            closest_block = min(blocks, key=lambda b: abs(b.orig_start - position))
+            return (closest_block.translated, closest_block.trans_start, closest_block.trans_end)
+        
+        # If no position provided, return the first occurrence
+        block = blocks[0]
+        return (block.translated, block.trans_start, block.trans_end)
+
+    def get_original_segment(self, translated: str, position: Optional[int] = None) -> Optional[Tuple[str, int, int]]:
+        """
+        Get original segment and its position for a translated text segment.
+        If position is provided, returns the block closest to that position.
+        """
+        blocks = self.translated_to_block.get(translated)
+        if not blocks:
+            return None
+            
+        if position is not None:
+            # Find the block closest to the given position
+            closest_block = min(blocks, key=lambda b: abs(b.trans_start - position))
+            return (closest_block.original, closest_block.orig_start, closest_block.orig_end)
+        
+        # If no position provided, return the first occurrence
+        block = blocks[0]
+        return (block.original, block.orig_start, block.orig_end)
 
 def convert_to_sino_vietnamese(
     text: str, 
@@ -1297,9 +3301,9 @@ def convert_to_sino_vietnamese(
     names: Trie, 
     viet_phrase: Trie, 
     chinese_phien_am: Dict[str, str]
-) -> str:
+) -> Tuple[str, TranslationMapping]:
     """
-    Convert Chinese text to Sino-Vietnamese.
+    Convert Chinese text to Sino-Vietnamese using block-based mapping.
 
     Args:
         text (str): The input Chinese text.
@@ -1309,18 +3313,14 @@ def convert_to_sino_vietnamese(
         chinese_phien_am (Dict[str, str]): Dictionary containing ChinesePhienAmWords.txt data.
 
     Returns:
-        str: The converted Sino-Vietnamese text.
-
-    Raises:
-        ValueError: If input parameters are invalid.
+        Tuple[str, TranslationMapping]: The converted Sino-Vietnamese text and mapping information.
     """
-    # Input validation
     if not isinstance(text, str):
         raise ValueError(f"Input text must be a string, got {type(text)}")
     
     if not text:
         logging.warning("Empty input text provided")
-        return ""
+        return "", TranslationMapping()
     
     # Validate Trie and dictionary inputs
     for name, obj in [('names2', names2), ('names', names), ('viet_phrase', viet_phrase)]:
@@ -1333,72 +3333,71 @@ def convert_to_sino_vietnamese(
     text = replace_special_chars(text)
     
     tokens = []
+    mapping = TranslationMapping()
     i = 0
-    chunk_size = 1000  # Process text in chunks of 1000 characters internally
     
     while i < len(text):
-        chunk = text[i:i+chunk_size]
-        j = 0
+        # Check for a sequence of Latin characters
+        latin_start = i
+        while i < len(text) and text[i] in LATIN_CHARS:
+            i += 1
+        if i > latin_start:
+            latin_text = text[latin_start:i]
+            tokens.append(latin_text)
+            mapping.add_block(latin_text, latin_text)
+            continue
         
-        while j < len(chunk):
-            # Check for a sequence of Latin characters
-            latin_start = j
-            while j < len(chunk) and chunk[j] in LATIN_CHARS:
-                j += 1
-            if j > latin_start:
-                latin_text = chunk[latin_start:j]
-                tokens.append(latin_text)
-                continue
-            
-            # Check Names2 first (with value splitting)
-            name2_match, value = names2.find_longest_prefix(chunk[j:])
-            if name2_match:
-                tokens.append(split_value(value))
-                j += len(name2_match)
-                continue
-            
-            # Check Names (with value splitting)
-            name_match, value = names.find_longest_prefix(chunk[j:])
-            if name_match:
-                tokens.append(split_value(value))
-                j += len(name_match)
-                continue
-            
-            # Check VietPhrase
-            viet_phrase_match, value = viet_phrase.find_longest_prefix(chunk[j:])
-            if viet_phrase_match:
-                tokens.append(split_value(value))
-                j += len(viet_phrase_match)
-                continue
-            
-            # Check Chinese Phien Am Words
-            if chunk[j:j+1] in chinese_phien_am:
-                tokens.append(chinese_phien_am[chunk[j:j+1]])
-                j += 1
-                continue
-            
-            # If no match found, add the character as is
-            tokens.append(chunk[j])
-            j += 1
+        # Try Names2 first
+        name2_match, value = names2.find_longest_prefix(text[i:])
+        if name2_match and value is not None:
+            translated = split_value(value)
+            tokens.append(translated)
+            mapping.add_block(name2_match, translated)
+            i += len(name2_match)
+            continue
         
-        i += chunk_size
+        # Try Names
+        name_match, value = names.find_longest_prefix(text[i:])
+        if name_match and value is not None:
+            translated = split_value(value)
+            tokens.append(translated)
+            mapping.add_block(name_match, translated)
+            i += len(name_match)
+            continue
+        
+        # Try VietPhrase
+        viet_phrase_match, value = viet_phrase.find_longest_prefix(text[i:])
+        if viet_phrase_match and value is not None:
+            translated = split_value(value)
+            tokens.append(translated)
+            mapping.add_block(viet_phrase_match, translated)
+            i += len(viet_phrase_match)
+            continue
+        
+        # Try Chinese Phien Am Words
+        if text[i:i+1] in chinese_phien_am:
+            translated = chinese_phien_am[text[i:i+1]]
+            tokens.append(translated)
+            mapping.add_block(text[i:i+1], translated)
+            i += 1
+            continue
+        
+        # If no match found, add the character as is
+        tokens.append(text[i])
+        mapping.add_block(text[i], text[i])
+        i += 1
 
     # Rephrase the tokens
     result = rephrase(tokens)
 
-    # Apply regex transformations directly to the result
-    # Remove spaces after left quotation marks and capitalize first word
+    # Apply regex transformations
     result = re.sub(r'([\[\“\‘])\s*(\w)', lambda m: m.group(1) + m.group(2).upper(), result)
-    # Remove spaces before right quotation marks
     result = re.sub(r'\s+([”\’\]])', r'\1', result)
-    # Capitalize first word after ? and ! marks
     result = re.sub(r'([?!⟨:«])\s+(\w)', lambda m: m.group(1) + ' ' + m.group(2).upper(), result)
-    # Remove spaces before colon and semicolon
     result = re.sub(r'\s+([;:?!.])', r'\1', result)
-    # Capitalize first word after a single dot, but not after triple dots
     result = re.sub(r'(?<!\.)\.(?!\.)\s+(\w)', lambda m: '. ' + m.group(1).upper(), result)
-    return result
-
+    
+    return result, mapping
 
 def split_value(value: str) -> str:
     """
@@ -1410,27 +3409,21 @@ def split_value(value: str) -> str:
     Returns:
         str: First non-empty definition of the value, or a space if empty.
     """
-    # Check for '=' first to handle special cases like "的=/như thế/đích"
     if '=' in value:
         parts = value.split('=', 1)
         value = parts[1]
     
-    # Split by '/' or '|' and return the first non-empty part
     split_parts = value.replace("|", "/").split("/")
     
-    # If the first part is an empty string, return a space
     if not split_parts[0].strip():
         return ' '
     
-    # Find the first non-empty part
     for part in split_parts:
         stripped_part = part.strip()
         if stripped_part:
             return stripped_part
     
-    # If no non-empty part found, return the original value
     return value
-
 
 def rephrase(tokens: List[str]) -> str:
     """
@@ -1466,14 +3459,13 @@ def rephrase(tokens: List[str]) -> str:
     text = ''.join(result)
     return text
 
-
 def process_paragraph(
     paragraph: str, 
     names2: Trie, 
     names: Trie, 
     viet_phrase: Trie, 
     chinese_phien_am: Dict[str, str]
-) -> str:
+) -> Tuple[str, TranslationMapping]:
     """
     Process a single paragraph by converting it to Sino-Vietnamese.
 
@@ -1485,14 +3477,16 @@ def process_paragraph(
         chinese_phien_am (Dict[str, str]): Dictionary containing ChinesePhienAmWords.txt data.
 
     Returns:
-        str: The processed paragraph in Sino-Vietnamese.
+        Tuple[str, TranslationMapping]: The processed paragraph in Sino-Vietnamese and mapping information.
     """
-    # Split the paragraph into lines while preserving empty lines
     lines = paragraph.splitlines(keepends=True)
     result_lines = []
+    mapping = TranslationMapping()
+    
+    current_orig_pos = 0
+    current_trans_pos = 0
     
     for line in lines:
-        # Preserve leading whitespace
         leading_space = ''
         for char in line:
             if char.isspace():
@@ -1500,35 +3494,55 @@ def process_paragraph(
             else:
                 break
                 
-        # Convert the actual content
         content = line.lstrip()
-        if content:  # Only convert non-empty content
-            converted = convert_to_sino_vietnamese(content, names2, names, viet_phrase, chinese_phien_am)
+        if content:
+            converted, line_mapping = convert_to_sino_vietnamese(content, names2, names, viet_phrase, chinese_phien_am)
             result_lines.append(leading_space + converted)
-        else:  # Preserve empty lines
+            
+            # Adjust positions for leading space
+            space_offset = len(leading_space)
+            
+            # Update positions for this line's blocks
+            for block in line_mapping.blocks:
+                block.orig_start += current_orig_pos + space_offset
+                block.orig_end += current_orig_pos + space_offset
+                block.trans_start += current_trans_pos + space_offset
+                block.trans_end += current_trans_pos + space_offset
+                mapping.blocks.append(block)
+                
+                # Update the mapping dictionaries
+                if block.original not in mapping.original_to_block:
+                    mapping.original_to_block[block.original] = []
+                mapping.original_to_block[block.original].append(block)
+                
+                if block.translated not in mapping.translated_to_block:
+                    mapping.translated_to_block[block.translated] = []
+                mapping.translated_to_block[block.translated].append(block)
+            
+            # Update positions for next line
+            current_orig_pos += len(line)
+            current_trans_pos += len(leading_space + converted)
+        else:
             result_lines.append(line)
+            # Update positions for empty lines
+            current_orig_pos += len(line)
+            current_trans_pos += len(line)
     
-    return ''.join(result_lines)
-
+    return ''.join(result_lines), mapping
 
 def preprocess_text(text: str) -> str:
     """
     Preprocess input text for translation.
     
-    :param text: Input text to preprocess
-    :return: Preprocessed text
+    Args:
+        text (str): Input text to preprocess
+    Returns:
+        str: Preprocessed text
     """
-    # Remove extra whitespaces
     text = re.sub(r'\s+', ' ', text).strip()
-    
-    # Convert to lowercase (optional, depends on translation strategy)
     text = text.lower()
-    
-    # Remove punctuation (optional)
     text = re.sub(r'[^\w\s]', '', text)
-    
     return text
-
 
 def process_paragraph_new(
     paragraph: str, 
@@ -1536,24 +3550,25 @@ def process_paragraph_new(
     names_trie: Dict[str, str], 
     viet_phrase_trie: Dict[str, str], 
     chinese_phien_am_data: Dict[str, str]
-) -> str:
+) -> Tuple[str, TranslationMapping]:
     """
     Process and translate a paragraph.
     
-    :param paragraph: Input paragraph
-    :param names2_trie: Names2 translation dictionary
-    :param names_trie: Names translation dictionary
-    :param viet_phrase_trie: VietPhrase translation dictionary
-    :param chinese_phien_am_data: Chinese Phien Am translation dictionary
-    :return: Translated paragraph
+    Args:
+        paragraph (str): Input paragraph
+        names2_trie (Dict[str, str]): Names2 translation dictionary
+        names_trie (Dict[str, str]): Names translation dictionary
+        viet_phrase_trie (Dict[str, str]): VietPhrase translation dictionary
+        chinese_phien_am_data (Dict[str, str]): Chinese Phien Am translation dictionary
+    Returns:
+        Tuple[str, TranslationMapping]: Translated paragraph and mapping information
     """
-    # Placeholder for backward compatibility
     preprocessed_text = preprocess_text(paragraph)
     
-    # Implement basic translation logic
     translated_segments = []
+    mapping = TranslationMapping()
+    
     for segment in preprocessed_text.split():
-        # Attempt translations in order of priority
         translation = (
             viet_phrase_trie.get(segment) or
             names_trie.get(segment) or
@@ -1561,23 +3576,24 @@ def process_paragraph_new(
             segment
         )
         translated_segments.append(translation)
+        mapping.add_mapping(segment, translation)
     
-    return ' '.join(translated_segments)
-
+    return ' '.join(translated_segments), mapping
 
 def convert_to_sino_vietnamese_new(text: str) -> str:
     """
     Fallback method to convert text to Sino-Vietnamese.
     
-    :param text: Input text
-    :return: Converted text
+    Args:
+        text (str): Input text
+    Returns:
+        str: Converted text
     """
-    # Placeholder implementation
     return text
 
 
 # ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\src\translation_engine.py
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\src\translation_engine.py
 # ========================================
 
 from abc import ABC, abstractmethod
@@ -1585,8 +3601,8 @@ from typing import Dict, Optional, Any, Tuple
 import logging
 import os
 
-from src.data_loader import DataLoader
-from src.data_watcher import DataFileWatcher, create_data_watcher
+from src.QTEngine.src.data_loader import DataLoader
+from src.QTEngine.src.data_watcher import DataFileWatcher, create_data_watcher
 
 logger = logging.getLogger(__name__)
 
@@ -1705,7 +3721,7 @@ class TranslationEngine(ABC):
 
 
 # ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\src\__init__.py
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\src\__init__.py
 # ========================================
 
 # QTEngine source package
@@ -1720,1129 +3736,20 @@ from .data_loader import load_data
 
 
 # ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\tests\test_traditional.py
+# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\utils\qt_utils.py
 # ========================================
 
-import unittest
-import logging
-import os
-from QTEngine import QTEngine
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
-
-class TestTraditionalChineseTranslation(unittest.TestCase):
-    def setUp(self):
-        """Set up QTEngine instance before each test."""
-        self.engine = QTEngine()
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        self.test_file = os.path.join(current_dir, 'Tradional.txt')
-        
-    def test_traditional_file_translation(self):
-        """Test translation of Traditional Chinese text from file."""
-        try:
-            with open(self.test_file, 'r', encoding='utf-8') as f:
-                traditional_text = f.read()
-                
-            # Log the input text
-            logger.info("="*50)
-            logger.info("Testing Traditional.txt content:")
-            logger.info(f"Input text (first 100 chars): {traditional_text[:100]}")
-                
-            # First check if text is detected as Traditional
-            is_traditional = self.engine.chinese_converter.is_traditional(traditional_text)
-            logger.info(f"\nText detected as Traditional Chinese: {is_traditional}")
-            
-            # Get simplified version
-            simplified = self.engine.chinese_converter.auto_convert_to_simplified(traditional_text)
-            if simplified and simplified != traditional_text:
-                logger.info("\nConversion Results:")
-                logger.info(f"Original  : {traditional_text[:100]}")
-                logger.info(f"Simplified: {simplified[:100]}")
-            else:
-                logger.info("\nNo conversion needed or no Chinese characters found")
-            
-            # Translate the text
-            translated = self.engine.translate_paragraph(traditional_text)
-            logger.info("\nTranslation Results:")
-            logger.info(f"Original   : {traditional_text[:100]}")
-            logger.info(f"Translated : {translated[:100]}")
-            
-            # Basic assertions
-            self.assertIsNotNone(translated)
-            self.assertNotEqual(translated.strip(), "")
-            self.assertNotEqual(translated, traditional_text)
-            
-            # Save translation result
-            output_file = os.path.join(os.path.dirname(self.test_file), 'traditional_translation_result.txt')
-            with open(output_file, 'w', encoding='utf-8') as f:
-                f.write(f"Original Text:\n{traditional_text}\n\n")
-                f.write(f"Simplified Text:\n{simplified}\n\n")
-                f.write(f"Translated Text:\n{translated}")
-            logger.info(f"\nFull translation saved to: {output_file}")
-            
-        except FileNotFoundError:
-            logger.error(f"Test file not found: {self.test_file}")
-            raise
-        except Exception as e:
-            logger.error(f"Error during translation: {str(e)}")
-            raise
-
-    def test_sample_traditional_texts(self):
-        """Test translation of sample Traditional Chinese texts."""
-        test_cases = [
-            "這是繁體中文的例子",  # Traditional
-            "这是简体中文的例子",  # Simplified (for comparison)
-            "這個故事非常有趣",    # Traditional
-            "這些是我們的傳統文化",  # Traditional
-            "Hello World!"         # Non-Chinese (for testing handling)
-        ]
-        
-        logger.info("\n" + "="*50)
-        logger.info("Testing sample Traditional texts:")
-        
-        for text in test_cases:
-            logger.info("\n" + "-"*30)
-            logger.info(f"Testing text: {text}")
-            
-            # Check if Traditional
-            is_traditional = self.engine.chinese_converter.is_traditional(text)
-            logger.info(f"Detected as Traditional: {is_traditional}")
-            
-            # Convert if needed
-            simplified = self.engine.chinese_converter.auto_convert_to_simplified(text)
-            if simplified and simplified != text:
-                logger.info(f"Converted to Simplified: {simplified}")
-            else:
-                logger.info("No conversion needed")
-            
-            # Translate
-            translated = self.engine.translate_paragraph(text)
-            logger.info(f"Translation result: {translated}")
-            
-            # Assertions
-            self.assertIsNotNone(translated)
-            if self.engine.chinese_converter.has_chinese(text):
-                self.assertNotEqual(translated.strip(), "")
-                self.assertNotEqual(translated, text)
-
-if __name__ == '__main__':
-    unittest.main()
-
-
-# ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\QTEngine\tests\test_translation.py
-# ========================================
-
-import unittest
-import os
-import time
-from QTEngine import QTEngine
-
-class TestQTEngineTranslation(unittest.TestCase):
-    def setUp(self):
-        start_setup = time.time()
-        # Create QTEngine instance
-        self.engine = QTEngine()
-        self.test_file = os.path.join(os.path.dirname(__file__), 'Test.txt')
-        self.output_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'translated_result')
-        end_setup = time.time()
-        print(f"\nSetUp duration: {end_setup - start_setup:.4f} seconds")
-
-    def test_translation(self):
-        start_time = time.time()
-        
-        # Measure file reading time
-        start_read = time.time()
-        with open(self.test_file, 'r', encoding='utf-8') as f:
-            content = f.read()
-        end_read = time.time()
-        print(f"File reading duration: {end_read - start_read:.4f} seconds")
-
-        # Measure paragraph splitting time
-        start_split = time.time()
-        paragraphs = [p.strip() for p in content.split('\n\n') if p.strip()]
-        end_split = time.time()
-        print(f"Paragraph splitting duration: {end_split - start_split:.4f} seconds")
-
-        # Measure translation time
-        start_translate = time.time()
-        with open(self.output_file, 'w', encoding='utf-8') as f:
-            f.write("Translation Results:\n\n")
-            
-            for i, paragraph in enumerate(paragraphs, 1):
-                if paragraph.strip():
-                    translated = self.engine.translate_paragraph(paragraph)
-                    f.write(f"Paragraph {i}:\n")
-                    f.write("Original:\n")
-                    f.write(paragraph + "\n\n")
-                    f.write("Translated:\n")
-                    f.write(translated + "\n")
-                    f.write("-" * 50 + "\n\n")
-                    
-                    self.assertIsNotNone(translated)
-                    self.assertNotEqual(translated.strip(), "")
-        end_translate = time.time()
-        print(f"Translation and writing duration: {end_translate - start_translate:.4f} seconds")
-        
-        end_time = time.time()
-        print(f"test_translation total duration: {end_time - start_time:.4f} seconds")
-
-    def test_single_text_translation(self):
-        start_time = time.time()
-        test_text = "你好，世界！"
-        
-        # Measure translation time
-        start_translate = time.time()
-        translated = self.engine.translate(test_text)
-        end_translate = time.time()
-        print(f"Single text translation duration: {end_translate - start_translate:.4f} seconds")
-        
-        self.assertIsNotNone(translated)
-        self.assertNotEqual(translated.strip(), "")
-        
-        end_time = time.time()
-        print(f"test_single_text_translation total duration: {end_time - start_time:.4f} seconds")
-
-    def test_loading_info(self):
-        start_time = time.time()
-        
-        # Measure loading info retrieval time
-        start_load = time.time()
-        loading_info = self.engine.get_loading_info()
-        end_load = time.time()
-        print(f"Loading info retrieval duration: {end_load - start_load:.4f} seconds")
-        
-        self.assertIsNotNone(loading_info)
-        
-        end_time = time.time()
-        print(f"test_loading_info total duration: {end_time - start_time:.4f} seconds")
-
-if __name__ == '__main__':
-    unittest.main()
-
-
-# ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\chapter_detector.py
-# ========================================
-
-import re
-import importlib.util
-import os
-
-class ChapterDetector:
-    """Handles chapter detection using various regex methods."""
-    
-    def __init__(self):
-        self.methods = self._load_detection_methods()
-        
-    def _load_detection_methods(self):
-        """Load chapter detection methods from detect_chapters_methods.py."""
-        try:
-            # Get the path to detect_chapters_methods.py
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            methods_file = os.path.join(current_dir, 'detect_chapters_methods.py')
-            
-            # Load the module
-            spec = importlib.util.spec_from_file_location("detect_chapters_methods", methods_file)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-            
-            # Return the methods dictionary
-            return module.CHAPTER_DETECTION_METHODS
-        except Exception as e:
-            print(f"Error loading chapter detection methods: {str(e)}")
-            return {}
-
-    def get_available_methods(self):
-        """Return list of available detection method names."""
-        return list(self.methods.keys())
-
-    def detect_chapters(self, text, method_name):
-        """
-        Detect chapters in the text using the specified method.
-        
-        Args:
-            text (str): The text content to analyze
-            method_name (str): Name of the detection method to use
-            
-        Returns:
-            list: List of dictionaries containing chapter information
-                  Each dict has 'title' and 'start_pos' keys
-        """
-        if method_name not in self.methods:
-            raise ValueError(f"Unknown chapter detection method: {method_name}")
-            
-        try:
-            pattern = self.methods[method_name]
-            chapters = []
-            
-            # Find all matches
-            for match in re.finditer(pattern, text):
-                chapter_info = {
-                    'title': match.group(0).strip(),
-                    'start_pos': match.start()
-                }
-                chapters.append(chapter_info)
-            
-            # Add chapter content by finding text between chapter starts
-            for i in range(len(chapters)):
-                start = chapters[i]['start_pos']
-                if i < len(chapters) - 1:
-                    end = chapters[i + 1]['start_pos']
-                else:
-                    end = len(text)
-                    
-                # Get chapter content (excluding the title)
-                title_end = start + len(chapters[i]['title'])
-                chapters[i]['content'] = text[title_end:end].strip()
-            
-            return chapters
-            
-        except Exception as e:
-            raise Exception(f"Error detecting chapters: {str(e)}")
-
-    def extract_chapter_content(self, text, chapter_info):
-        """Extract the content for a specific chapter."""
-        try:
-            start_pos = chapter_info['start_pos'] + len(chapter_info['title'])
-            return text[start_pos:].strip()
-        except Exception as e:
-            raise Exception(f"Error extracting chapter content: {str(e)}")
-
-
-# ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\detect_chapters_methods.py
-# ========================================
-
-import regex as re
-
-CHAPTER_MATCHERS = {
-    "Mục lục ( Đi trống không )": r"(?<=[　\s])(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|集(?![合和]))).{0,30}$",
-    "Mục lục": r"^[ 　\t]{0,4}(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|集(?![合和])|部(?![分赛游])|篇(?!张))).{0,30}$",
-    "Mục lục ( Phối hợp giới thiệu vắn tắt )": r"(?<=[　\s])(?:(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|集(?![合和])|部(?![分赛游])|回(?![合来事去])|场(?![和合比电是])|篇(?!张))).{0,30}$",
-    "Mục lục ( Cổ điển, light novel dự bị )": r"^[ 　\t]{0,4}(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|集(?![合和])|部(?![分赛游])|回(?![合来事去])|场(?![和合比电是])|话|篇(?!张))).{0,30}$",
-    "Con số ( Thuần con số tiêu đề )": r"(?<=[　\s])\d+\.?[ 　\t]{0,4}$",
-    "Viết kép con số ( Thuần con số tiêu đề )": r"(?<=[　\s])[零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,12}[ 　\t]{0,4}$",
-    "Con số phối hợp ( Thuần con số tiêu đề )": r"(?<=[　\s])[零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟\d]{1,12}[ 　\t]{0,4}$",
-    "Con số Ngăn cách phù Tiêu đề tên": r"^[ 　\t]{0,4}\d{1,5}[:：,.， 、_—\-].{1,30}$",
-    "Viết kép con số Ngăn cách phù Tiêu đề tên": r"^[ 　\t]{0,4}(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|[零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章?)[ 、_—\-].{1,30}$",
-    "Con số phối hợp Ngăn cách phù Tiêu đề tên": r"^[ 　\t]{0,4}(?:序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|[零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章?[ 、_—\-]|\d{1,5}章?[:：,.， 、_—\-]).{0,30}$",
-    "Tiêu đề / số thứ tự": r"^[ 　\t]{0,4}正文[ 　]{1,4}.{0,20}$",
-    "Chapter/Section/Part/Episode số thứ tự Tiêu đề": r"^[ 　\t]{0,4}(?:[Cc]hapter|[Ss]ection|[Pp]art|ＰＡＲＴ|[Nn][oO][.、]|[Ee]pisode|(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外)\s{0,4}\d{1,4}.{0,30}$",
-    "Chapter( Đi giới thiệu vắn tắt )": r"^[ 　\t]{0,4}(?:[Cc]hapter|[Ss]ection|[Pp]art|ＰＡＲＴ|[Nn][Oo]\.|[Ee]pisode)\s{0,4}\d{1,4}.{0,30}$",
-    "Ký hiệu đặc thù Số thứ tự Tiêu đề": r"(?<=[\s　])[【〔〖「『〈［\[](?:第|[Cc]hapter)[\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,10}[章节].{0,20}$",
-    "Ký hiệu đặc thù Tiêu đề ( Thành đôi )": r"(?<=[\s　]{0,4})(?:[\[〈「『〖〔《（【\(].{1,30}[\)】）》〕〗』」〉\]]?|(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外)[ 　]{0,4}$",
-    "Ký hiệu đặc thù Tiêu đề ( Một cái )": r"(?<=[\s　]{0,4})(?:[☆★✦✧].{1,30}|(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外)[ 　]{0,4}$",
-    "Chương / cuốn Số thứ tự Tiêu đề": r"^[ \t　]{0,4}(?:(?:内容|文章)?简介|文案|前言|序章|楔子|正文(?!完|结)|终章|后记|尾声|番外|[卷章][\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8})[ 　]{0,4}.{0,30}$",
-    "Trên cùng tiêu đề": r"^\S.{1,20}$",
-    "Song tiêu đề ( Phía trước hướng )": r"(?m)(?<=[ \t　]{0,4})第[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章.{0,30}$(?=[\s　]{0,8}第[\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章)",
-    "Song tiêu đề ( Sau hướng )": r"(?m)(?<=[ \t　]{0,4}第[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章.{0,30}$[\s　]{0,8})第[\d零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}章.{0,30}$",
-    "Tên sách Dấu móc Số thứ tự": r"^.{1,20}[(（][\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}[)）][ 　\t]{0,4}$",
-    "Tên sách Số thứ tự": r"^.{1,20}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]{1,8}[ 　\t]{0,4}$",
-    "Đặc biệt ký tự Tiêu đề Đặc biệt ký hiệu": r"(?<=\={3,6}).{1,40}?(?=\=)",
-    "Số lượng từ chia cắt Phân khúc đọc": r"(?<=[ 　\t]{0,4})(?:.{0,15}分[页节章段]阅读[-_ ]|第\s{0,4}[\d零一二两三四五六七八九十百千万]{1,6}\s{0,4}[页节]).{0,30}$",
-    "Thông dụng quy tắc": r"(?im)^.{0,6}(?:[引楔]子|正文(?!完|结)|[引序前]言|[序终]章|扉页|[上中下][部篇卷]|卷首语|后记|尾声|番外|={2,4}|第\s{0,4}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟]+?\s{0,4}(?:章|节(?!课)|卷|页[、 　]|集(?![合和])|部(?![分是门落])|篇(?!张))).{0,40}$|^.{0,6}[\d〇零一二两三四五六七八九十百千万壹贰叁肆伍陆柒捌玖拾佰仟a-z]{1,8}[、. 　].{0,20}$",
-}
-
-# Make sure this function is defined
-def create_pattern_matcher(pattern):
-    compiled_pattern = re.compile(pattern, re.MULTILINE | re.VERSION1)
-    def matcher(text):
-        return [(m.start(), m.group()) for m in compiled_pattern.finditer(text)]
-    return matcher
-
-# Create the CHAPTER_MATCHERS dictionary with compiled patterns
-CHAPTER_MATCHERS = {name: create_pattern_matcher(pattern) for name, pattern in CHAPTER_MATCHERS.items()}
-
-def detect_chapters(text):
-    chapters = []
-    for name, matcher in CHAPTER_MATCHERS.items():
-        chapters.extend(matcher(text))
-    
-    # Sort chapters by their position in the text
-    chapters.sort(key=lambda x: x[0])
-    
-    return chapters
-
-# ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\dictionary_manager.py
-# ========================================
-
-import os
-import sys
-
-# Add QTEngine to Python path
-current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-qt_engine_path = os.path.join(current_dir, 'QTEngine')
-if qt_engine_path not in sys.path:
-    sys.path.append(qt_engine_path)
-
-from QTEngine.models.trie import Trie
-
-class DictionaryManager:
-    """Manages multiple dictionary sources and lookups."""
-    
-    def __init__(self):
-        self.dictionaries = {}
-        self.qt_engine = None  # Will be set when QTEngine is initialized
-        
-    def load_dictionaries(self):
-        """Load all available dictionaries."""
-        try:
-            # Get the data directory path
-            current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            data_dir = os.path.join(current_dir, 'data')
-            
-            # Load each dictionary file
-            dictionary_files = {
-                'babylon': 'Babylon.txt',
-                'lacviet': 'LacViet.txt',
-                'thieuchuu': 'ThieuChuu.txt'
-            }
-            
-            for dict_name, filename in dictionary_files.items():
-                file_path = os.path.join(data_dir, filename)
-                if os.path.exists(file_path):
-                    self.dictionaries[dict_name] = self._load_dictionary(file_path)
-                    
-        except Exception as e:
-            raise Exception(f"Error loading dictionaries: {str(e)}")
-
-    def _load_dictionary(self, file_path):
-        """Load a single dictionary file into a Trie structure."""
-        trie = Trie()
-        try:
-            with open(file_path, 'r', encoding='utf-8-sig') as file:
-                for line in file:
-                    # Handle different dictionary formats
-                    if '=' in line:  # ThieuChuu and LacViet format
-                        key, value = line.strip().split('=', 1)
-                        trie.insert(key, value)
-                    else:  # Babylon format
-                        # Assuming tab-separated format
-                        parts = line.strip().split('\t')
-                        if len(parts) >= 2:
-                            trie.insert(parts[0], parts[1])
-            return trie
-        except Exception as e:
-            raise Exception(f"Error loading dictionary {file_path}: {str(e)}")
-
-    def lookup(self, text):
-        """
-        Look up text in all available dictionaries.
-        
-        Args:
-            text (str): Text to look up
-            
-        Returns:
-            dict: Dictionary name -> definition mapping
-        """
-        results = {}
-        
-        # Look up in QTEngine dictionaries if available
-        if self.qt_engine:
-            try:
-                qt_result = self.qt_engine.translate(text)
-                if qt_result:
-                    results['QTEngine'] = qt_result
-            except Exception as e:
-                print(f"QTEngine lookup error: {str(e)}")
-
-        # Look up in other dictionaries
-        for dict_name, dictionary in self.dictionaries.items():
-            try:
-                result = dictionary.search(text)
-                if result:
-                    results[dict_name] = result
-            except Exception as e:
-                print(f"Dictionary lookup error in {dict_name}: {str(e)}")
-
-        return results
-
-    def set_qt_engine(self, engine):
-        """Set the QTEngine instance for translation lookups."""
-        self.qt_engine = engine
-
-    def sync_custom_names(self, custom_names_path):
-        """
-        Sync custom Names2.txt with QTEngine's Names2.txt.
-        
-        Args:
-            custom_names_path (str): Path to custom Names2.txt file
-        """
-        try:
-            if not self.qt_engine:
-                raise Exception("QTEngine not initialized")
-                
-            # Implementation will depend on QTEngine's API for dictionary updates
-            # This is a placeholder for the actual implementation
-            pass
-            
-        except Exception as e:
-            raise Exception(f"Error syncing custom names: {str(e)}")
-
-
-# ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\file_handler.py
-# ========================================
-
-import os
-import chardet
-
-class FileHandler:
-    """Handles file operations including loading, encoding detection, and metadata extraction."""
-    
-    @staticmethod
-    def detect_encoding(file_path):
-        """Detect the encoding of a file."""
-        with open(file_path, 'rb') as file:
-            raw_data = file.read()
-            result = chardet.detect(raw_data)
-            return result['encoding']
-
-    @staticmethod
-    def load_file(file_path):
-        """Load a file with automatic encoding detection."""
-        try:
-            encoding = FileHandler.detect_encoding(file_path)
-            with open(file_path, 'r', encoding=encoding) as file:
-                content = file.read()
-                return {
-                    'content': content,
-                    'encoding': encoding,
-                    'size': os.path.getsize(file_path),
-                    'name': os.path.basename(file_path)
-                }
-        except Exception as e:
-            raise Exception(f"Error loading file: {str(e)}")
-
-    @staticmethod
-    def get_file_info(file_path):
-        """Get file metadata without loading content."""
-        try:
-            return {
-                'name': os.path.basename(file_path),
-                'size': os.path.getsize(file_path),
-                'encoding': FileHandler.detect_encoding(file_path),
-                'path': file_path
-            }
-        except Exception as e:
-            raise Exception(f"Error getting file info: {str(e)}")
-
-    @staticmethod
-    def format_file_size(size_in_bytes):
-        """Convert file size to human-readable format."""
-        for unit in ['B', 'KB', 'MB', 'GB']:
-            if size_in_bytes < 1024:
-                return f"{size_in_bytes:.2f} {unit}"
-            size_in_bytes /= 1024
-        return f"{size_in_bytes:.2f} TB"
-
-
-# ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\main.py
-# ========================================
-
-import sys
-import os
-
-# Add QTEngine to Python path
-current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-qt_engine_path = os.path.join(current_dir, 'QTEngine')
-if qt_engine_path not in sys.path:
-    sys.path.append(qt_engine_path)
-    os.chdir(qt_engine_path)  # Change working directory for QTEngine initialization
-
-import qtawesome as qta
-from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
-                            QHBoxLayout, QLabel, QComboBox, QTextEdit, QSplitter,
-                            QMenuBar, QMenu, QFileDialog, QStatusBar, QMessageBox,
-                            QListWidget, QListWidgetItem, QPushButton)
-from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtGui import QTextCursor
-from theme_manager import ThemeManager
-from file_handler import FileHandler
-from chapter_detector import ChapterDetector
-from dictionary_manager import DictionaryManager
-from QTEngine.QTEngine import QTEngine
-
-class FileInfoPanel(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        layout = QVBoxLayout()
-        
-        # Header with icon
-        header_layout = QHBoxLayout()
-        icon_label = QLabel()
-        icon_label.setPixmap(qta.icon('fa5s.file-alt').pixmap(24, 24))
-        header_layout.addWidget(icon_label)
-        header_layout.addWidget(QLabel("File Information"))
-        header_layout.addStretch()
-        layout.addLayout(header_layout)
-        
-        # File info labels
-        self.file_name_label = QLabel("File: No file opened")
-        self.file_size_label = QLabel("Size: -")
-        self.file_encoding_label = QLabel("Encoding: -")
-        
-        layout.addWidget(self.file_name_label)
-        layout.addWidget(self.file_size_label)
-        layout.addWidget(self.file_encoding_label)
-        layout.addStretch()
-        self.setLayout(layout)
-    
-    def update_info(self, file_info):
-        """Update the panel with file information."""
-        self.file_name_label.setText(f"File: {file_info['name']}")
-        self.file_size_label.setText(f"Size: {FileHandler.format_file_size(file_info['size'])}")
-        self.file_encoding_label.setText(f"Encoding: {file_info['encoding']}")
-
-class ChapterPanel(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.chapter_detector = ChapterDetector()
-        self.chapters = []
-        self.init_ui()
-        
-    def init_ui(self):
-        layout = QVBoxLayout()
-        
-        # Header with icon
-        header_layout = QHBoxLayout()
-        icon_label = QLabel()
-        icon_label.setPixmap(qta.icon('fa5s.list-ol').pixmap(24, 24))
-        header_layout.addWidget(icon_label)
-        header_layout.addWidget(QLabel("Chapters"))
-        header_layout.addStretch()
-        layout.addLayout(header_layout)
-        
-        # Chapter detection method selector
-        method_layout = QHBoxLayout()
-        method_layout.addWidget(QLabel("Detection Method:"))
-        self.method_selector = QComboBox()
-        self.method_selector.addItems(self.chapter_detector.get_available_methods())
-        self.method_selector.currentTextChanged.connect(self.on_method_changed)
-        method_layout.addWidget(self.method_selector)
-        layout.addLayout(method_layout)
-        
-        # Chapter list
-        self.chapter_list = QListWidget()
-        self.chapter_list.itemClicked.connect(self.on_chapter_selected)
-        layout.addWidget(self.chapter_list)
-        
-        self.setLayout(layout)
-    
-    def detect_chapters(self, text):
-        """Detect chapters in the text using current method."""
-        try:
-            method = self.method_selector.currentText()
-            self.chapters = self.chapter_detector.detect_chapters(text, method)
-            self.update_chapter_list()
-            return True
-        except Exception as e:
-            QMessageBox.warning(None, "Chapter Detection Error", str(e))
-            return False
-    
-    def update_chapter_list(self):
-        """Update the chapter list widget with detected chapters."""
-        self.chapter_list.clear()
-        for chapter in self.chapters:
-            item = QListWidgetItem(chapter['title'])
-            self.chapter_list.addItem(item)
-    
-    def on_method_changed(self, method):
-        """Handle chapter detection method change."""
-        if hasattr(self, 'current_text'):
-            self.detect_chapters(self.current_text)
-    
-    def on_chapter_selected(self, item):
-        """Handle chapter selection."""
-        index = self.chapter_list.row(item)
-        if 0 <= index < len(self.chapters):
-            chapter = self.chapters[index]
-            # Emit signal to update main translation panel
-            if hasattr(self, 'chapter_selected_callback'):
-                self.chapter_selected_callback(chapter)
-
-class MainTranslationPanel(QWidget):
-    text_selected = pyqtSignal(str)
-    
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        layout = QVBoxLayout()
-        
-        # Header with icon
-        header_layout = QHBoxLayout()
-        icon_label = QLabel()
-        icon_label.setPixmap(qta.icon('fa5s.language').pixmap(24, 24))
-        header_layout.addWidget(icon_label)
-        header_layout.addWidget(QLabel("Translation"))
-        header_layout.addStretch()
-        layout.addLayout(header_layout)
-        
-        # Text display area
-        self.text_area = QTextEdit()
-        self.text_area.selectionChanged.connect(self.on_text_selected)
-        layout.addWidget(self.text_area)
-        
-        self.setLayout(layout)
-    
-    def set_content(self, content):
-        """Set the content of the text area."""
-        self.text_area.setText(content)
-        
-    def set_chapter_content(self, chapter):
-        """Set the content to the selected chapter."""
-        if chapter and 'content' in chapter:
-            self.text_area.setText(chapter['content'])
-    
-    def on_text_selected(self):
-        """Handle text selection."""
-        cursor = self.text_area.textCursor()
-        if cursor.hasSelection():
-            selected_text = cursor.selectedText()
-            self.text_selected.emit(selected_text)
-
-class DictionaryPanel(QWidget):
-    def __init__(self, dictionary_manager, parent=None):
-        super().__init__(parent)
-        self.dictionary_manager = dictionary_manager
-        self.init_ui()
-        
-    def init_ui(self):
-        layout = QVBoxLayout()
-        
-        # Header with icon
-        header_layout = QHBoxLayout()
-        icon_label = QLabel()
-        icon_label.setPixmap(qta.icon('fa5s.book').pixmap(24, 24))
-        header_layout.addWidget(icon_label)
-        header_layout.addWidget(QLabel("Dictionary"))
-        header_layout.addStretch()
-        layout.addLayout(header_layout)
-        
-        # Search box and button
-        search_layout = QHBoxLayout()
-        self.search_box = QTextEdit()
-        self.search_box.setMaximumHeight(30)
-        self.search_box.setPlaceholderText("Enter text to look up...")
-        search_layout.addWidget(self.search_box)
-        
-        lookup_button = QPushButton(qta.icon('fa5s.search'), "")
-        lookup_button.setToolTip("Look up")
-        lookup_button.clicked.connect(self.perform_lookup)
-        search_layout.addWidget(lookup_button)
-        
-        layout.addLayout(search_layout)
-        
-        # Results area
-        self.results_area = QTextEdit()
-        self.results_area.setReadOnly(True)
-        layout.addWidget(self.results_area)
-        
-        self.setLayout(layout)
-    
-    def perform_lookup(self):
-        """Perform dictionary lookup for the text in search box."""
-        text = self.search_box.toPlainText().strip()
-        if text:
-            self.lookup_text(text)
-    
-    def lookup_text(self, text):
-        """Look up text in dictionaries and display results."""
-        try:
-            results = self.dictionary_manager.lookup(text)
-            
-            # Format and display results
-            formatted_results = []
-            for dict_name, result in results.items():
-                formatted_results.append(f"=== {dict_name} ===\n{result}\n")
-            
-            if formatted_results:
-                self.results_area.setText("\n".join(formatted_results))
-            else:
-                self.results_area.setText("No results found.")
-                
-        except Exception as e:
-            self.results_area.setText(f"Error during lookup: {str(e)}")
-
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.theme_manager = ThemeManager()
-        self.current_file = None
-        self.current_text = None
-        
-        # Initialize QTEngine and DictionaryManager
-        self.qt_engine = QTEngine()
-        self.dictionary_manager = DictionaryManager()
-        self.dictionary_manager.set_qt_engine(self.qt_engine)
-        self.dictionary_manager.load_dictionaries()
-        
-        self.init_ui()
-        
-    def init_ui(self):
-        """Initialize the user interface."""
-        self.setWindowTitle("ZXReader")
-        self.setMinimumSize(800, 600)
-        
-        # Create menu bar
-        self.create_menu_bar()
-        
-        # Create status bar
-        self.statusBar = QStatusBar()
-        self.setStatusBar(self.statusBar)
-        self.statusBar.showMessage("Ready")
-        
-        # Create main widget and layout
-        main_widget = QWidget()
-        self.setCentralWidget(main_widget)
-        main_layout = QHBoxLayout(main_widget)
-        
-        # Create splitter for resizable panels
-        splitter = QSplitter(Qt.Orientation.Horizontal)
-        
-        # Left side (File Info and Chapter panels)
-        left_widget = QWidget()
-        left_layout = QVBoxLayout(left_widget)
-        self.file_info_panel = FileInfoPanel()
-        self.chapter_panel = ChapterPanel()
-        left_layout.addWidget(self.file_info_panel)
-        left_layout.addWidget(self.chapter_panel)
-        left_widget.setLayout(left_layout)
-        
-        # Center (Translation panel)
-        self.translation_panel = MainTranslationPanel()
-        
-        # Right side (Dictionary panel)
-        self.dictionary_panel = DictionaryPanel(self.dictionary_manager)
-        
-        # Add widgets to splitter
-        splitter.addWidget(left_widget)
-        splitter.addWidget(self.translation_panel)
-        splitter.addWidget(self.dictionary_panel)
-        
-        # Set initial sizes (20% - 60% - 20%)
-        splitter.setSizes([200, 600, 200])
-        
-        # Add splitter to main layout
-        main_layout.addWidget(splitter)
-        
-        # Connect signals
-        self.chapter_panel.chapter_selected_callback = self.translation_panel.set_chapter_content
-        self.translation_panel.text_selected.connect(self.dictionary_panel.lookup_text)
-        
-        # Apply initial theme
-        self.apply_theme('light')
-    
-    def create_menu_bar(self):
-        """Create the application menu bar."""
-        menubar = QMenuBar()
-        self.setMenuBar(menubar)
-        
-        # File menu
-        file_menu = QMenu("&File", self)
-        menubar.addMenu(file_menu)
-        
-        # File menu actions
-        open_action = file_menu.addAction(qta.icon('fa5s.folder-open'), "Open")
-        open_action.setShortcut("Ctrl+O")
-        open_action.triggered.connect(self.open_file)
-        
-        file_menu.addSeparator()
-        
-        exit_action = file_menu.addAction(qta.icon('fa5s.door-open'), "Exit")
-        exit_action.setShortcut("Ctrl+Q")
-        exit_action.triggered.connect(self.close)
-        
-        # View menu
-        view_menu = QMenu("&View", self)
-        menubar.addMenu(view_menu)
-        
-        # Theme submenu
-        theme_menu = QMenu("Theme", self)
-        theme_menu.setIcon(qta.icon('fa5s.paint-brush'))
-        view_menu.addMenu(theme_menu)
-        
-        # Theme actions
-        for theme in ['light', 'dark', 'book', 'wood']:
-            theme_action = theme_menu.addAction(theme.capitalize())
-            theme_action.triggered.connect(lambda checked, t=theme: self.apply_theme(t))
-    
-    def open_file(self):
-        """Open a file dialog to select a text file."""
-        file_path, _ = QFileDialog.getOpenFileName(
-            self,
-            "Open Text File",
-            "",
-            "Text Files (*.txt);;All Files (*)"
-        )
-        if file_path:
-            try:
-                self.statusBar.showMessage(f"Opening file: {file_path}")
-                
-                # Load file and update UI
-                file_data = FileHandler.load_file(file_path)
-                self.current_file = file_path
-                self.current_text = file_data['content']
-                
-                # Update file info panel
-                self.file_info_panel.update_info(file_data)
-                
-                # Update translation panel with full content
-                self.translation_panel.set_content(self.current_text)
-                
-                # Detect chapters
-                self.chapter_panel.current_text = self.current_text
-                if self.chapter_panel.detect_chapters(self.current_text):
-                    self.statusBar.showMessage(f"File loaded successfully: {file_data['name']}")
-                else:
-                    self.statusBar.showMessage(f"File loaded but chapter detection failed: {file_data['name']}")
-                
-            except Exception as e:
-                self.statusBar.showMessage("Error loading file")
-                QMessageBox.critical(self, "Error", f"Failed to load file: {str(e)}")
-    
-    def apply_theme(self, theme_name):
-        """Apply the selected theme to the application."""
-        try:
-            stylesheet = self.theme_manager.apply_theme(QApplication.instance(), theme_name)
-            self.setStyleSheet(stylesheet)
-            self.statusBar.showMessage(f"Theme changed to {theme_name}")
-        except Exception as e:
-            self.statusBar.showMessage(f"Error applying theme: {str(e)}")
-            QMessageBox.warning(self, "Theme Error", f"Failed to apply theme: {str(e)}")
-
-def main():
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec())
-
-if __name__ == '__main__':
-    main()
-
-
-# ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\theme_manager.py
-# ========================================
-
-from PyQt6.QtGui import QPalette, QColor, QFont
-from PyQt6.QtCore import Qt
-import os
-
-class ThemeManager:
-    """Manages application themes and font settings."""
-    
-    THEMES = {
-        'light': {
-            'window': '#FFFFFF',
-            'text': '#000000',
-            'panel_bg': '#F5F5F5',
-            'border': '#E0E0E0',
-            'highlight': '#007AFF',
-            'highlight_text': '#FFFFFF'
-        },
-        'dark': {
-            'window': '#1E1E1E',
-            'text': '#FFFFFF',
-            'panel_bg': '#252526',
-            'border': '#3E3E42',
-            'highlight': '#0078D4',
-            'highlight_text': '#FFFFFF'
-        },
-        'book': {
-            'window': '#F5E6D3',
-            'text': '#2C1810',
-            'panel_bg': '#FFF9F0',
-            'border': '#D4C4B7',
-            'highlight': '#8B4513',
-            'highlight_text': '#FFFFFF'
-        },
-        'wood': {
-            'window': '#3B2507',
-            'text': '#F5E6D3',
-            'panel_bg': '#2C1810',
-            'border': '#8B4513',
-            'highlight': '#D2691E',
-            'highlight_text': '#FFFFFF'
-        }
-    }
-
-    def __init__(self):
-        self.current_theme = 'light'
-        self.fonts = self._load_fonts()
-        
-    def _load_fonts(self):
-        """Load custom fonts from the fonts directory."""
-        fonts = {}
-        try:
-            current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            fonts_dir = os.path.join(current_dir, 'fonts')
-            
-            # Load Noto Sans SC for Chinese text
-            noto_sc_path = os.path.join(fonts_dir, 'Noto_Sans_SC', 'NotoSansSC-Regular.ttf')
-            if os.path.exists(noto_sc_path):
-                chinese_font = QFont('Noto Sans SC')
-                chinese_font.setPointSize(12)
-                fonts['chinese'] = chinese_font
-            
-            # Load Open Sans for UI text
-            open_sans_path = os.path.join(fonts_dir, 'Open_Sans', 'static', 'OpenSans-Regular.ttf')
-            if os.path.exists(open_sans_path):
-                ui_font = QFont('Open Sans')
-                ui_font.setPointSize(10)
-                fonts['ui'] = ui_font
-            
-        except Exception as e:
-            print(f"Error loading fonts: {str(e)}")
-            # Fallback to system fonts
-            fonts['chinese'] = QFont('SimSun', 12)
-            fonts['ui'] = QFont('Arial', 10)
-            
-        return fonts
-
-    def apply_theme(self, app, theme_name):
-        """Apply the specified theme to the application."""
-        if theme_name not in self.THEMES:
-            raise ValueError(f"Unknown theme: {theme_name}")
-            
-        self.current_theme = theme_name
-        theme = self.THEMES[theme_name]
-        
-        # Create and configure palette
-        palette = QPalette()
-        
-        # Set colors for various UI elements
-        palette.setColor(QPalette.ColorRole.Window, QColor(theme['window']))
-        palette.setColor(QPalette.ColorRole.WindowText, QColor(theme['text']))
-        palette.setColor(QPalette.ColorRole.Base, QColor(theme['panel_bg']))
-        palette.setColor(QPalette.ColorRole.Text, QColor(theme['text']))
-        palette.setColor(QPalette.ColorRole.Button, QColor(theme['panel_bg']))
-        palette.setColor(QPalette.ColorRole.ButtonText, QColor(theme['text']))
-        palette.setColor(QPalette.ColorRole.Highlight, QColor(theme['highlight']))
-        palette.setColor(QPalette.ColorRole.HighlightedText, QColor(theme['highlight_text']))
-        
-        # Apply palette to application
-        app.setPalette(palette)
-        
-        # Apply default fonts
-        app.setFont(self.fonts['ui'])
-        
-        # Return stylesheet for additional styling
-        return self._get_stylesheet(theme)
-        
-    def _get_stylesheet(self, theme):
-        """Generate stylesheet for the current theme."""
-        return f"""
-            QMainWindow {{
-                background-color: {theme['window']};
-            }}
-            
-            QWidget {{
-                background-color: {theme['panel_bg']};
-                color: {theme['text']};
-                border: 1px solid {theme['border']};
-            }}
-            
-            QTextEdit {{
-                background-color: {theme['window']};
-                color: {theme['text']};
-                border: 1px solid {theme['border']};
-                padding: 5px;
-            }}
-            
-            QComboBox {{
-                background-color: {theme['panel_bg']};
-                color: {theme['text']};
-                border: 1px solid {theme['border']};
-                padding: 5px;
-            }}
-            
-            QLabel {{
-                border: none;
-                background-color: transparent;
-            }}
-            
-            QSplitter::handle {{
-                background-color: {theme['border']};
-            }}
-            
-            QSplitter::handle:horizontal {{
-                width: 1px;
-            }}
-            
-            QSplitter::handle:vertical {{
-                height: 1px;
-            }}
-        """
-
-    def get_chinese_font(self):
-        """Get the font for Chinese text."""
-        return self.fonts['chinese']
-
-    def get_ui_font(self):
-        """Get the font for UI elements."""
-        return self.fonts['ui']
-
-
-# ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\__init__.py
-# ========================================
-
-"""
-QTEngine - Translation Engine Package for ZXReader
-"""
-
-
-# ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\models\trie.py
-# ========================================
-
-"""
-Trie data structure for efficient dictionary lookups
-"""
-
-class Trie:
-    def __init__(self):
-        self.root = {}
-        self.end_symbol = '*'
-
-    def insert(self, word: str, value=None):
-        """Insert a word into the trie"""
-        node = self.root
-        for char in word:
-            node = node.setdefault(char, {})
-        node[self.end_symbol] = value if value is not None else True
-
-    def search(self, word: str) -> bool:
-        """Search for a word in the trie"""
-        node = self._traverse(word)
-        return node is not None and self.end_symbol in node
-
-    def starts_with(self, prefix: str) -> bool:
-        """Check if any word starts with the given prefix"""
-        return self._traverse(prefix) is not None
-
-    def _traverse(self, chars: str):
-        """Helper method to traverse the trie"""
-        node = self.root
-        for char in chars:
-            if char not in node:
-                return None
-            node = node[char]
-        return node
-
-
-# ========================================
-# File: C:\Users\Zhu Xian\source\repos\ZXReader\src\QTEngine\models\__init__.py
-# ========================================
-
-"""
-Models module for QTEngine
-"""
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMessageBox, QDesktopWidget
+
+# Define constants for easier use
+HORIZONTAL = Qt.Orientation.Horizontal
+VERTICAL = Qt.Orientation.Vertical
+YES = QMessageBox.StandardButton.Yes
+NO = QMessageBox.StandardButton.No
+
+def center_window(window):
+    """Centers the given window on the screen."""
+    screen = QDesktopWidget().screenGeometry()
+    size = window.geometry()
+    window.move((screen.width() - size.width()) // 2, (screen.height() - size.height()) // 2)
