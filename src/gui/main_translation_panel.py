@@ -16,18 +16,27 @@ def format_translated_text(text: str) -> str:
     words = text.split()
     formatted = []
     for i, word in enumerate(words):
+        # Keep a space before the word unless it starts with certain punctuation
         if i > 0 and not word[0] in ',.!?;:"\'])}':
             formatted.append(' ')
         formatted.append(word)
     
     text = ''.join(formatted)
     
-    # Apply regex transformations
+    # Apply regex transformations in specific order
+    # 1. Handle quotes and brackets
     text = re.sub(r'([\[\“\‘])\s*(\w)', lambda m: m.group(1) + m.group(2).upper(), text)
     text = re.sub(r'\s+([”\’\]])', r'\1', text)
+    
+    # 2. Handle special punctuation that needs space after
     text = re.sub(r'([?!⟨:«])\s+(\w)', lambda m: m.group(1) + ' ' + m.group(2).upper(), text)
-    text = re.sub(r'\s+([;:?!.])', r'\1', text)
-    text = re.sub(r'(?<!\.)\.(?!\.)\s+(\w)', lambda m: '. ' + m.group(2).upper(), text)
+    
+    # 3. Handle periods separately to maintain mapping
+    text = re.sub(r'\s*\.\s*(?=\w)', '. ', text)  # Ensure exactly one space after period
+    text = re.sub(r'(?<=\.)\s+(\w)', lambda m: ' ' + m.group(1).upper(), text)
+    
+    # 4. Handle other punctuation
+    text = re.sub(r'\s+([;:?!])', r'\1', text)
     
     return text
 
@@ -205,6 +214,7 @@ class MainTranslationPanel(QWidget):
         self.chapter_manager = chapter_manager
         self.translation_manager = translation_manager
         self.dictionary_panel = dictionary_panel
+        self.current_chapter_index = 0  # Track current chapter
         
         # Create text edit
         self.text_edit = TranslationTextEdit()
@@ -227,6 +237,7 @@ class MainTranslationPanel(QWidget):
     def set_chapter_text(self, chapter_index: int):
         """Set the text for a chapter."""
         self.text_edit.clear_segments()
+        self.current_chapter_index = chapter_index  # Update current chapter index
         
         # Get original text and translate
         original_text = self.chapter_manager.get_chapter_text(chapter_index)
@@ -272,25 +283,52 @@ class MainTranslationPanel(QWidget):
                 current_idx = 0
                 for block in mapping.blocks:
                     # Find the formatted version of this block in the formatted text
-                    block_text = block.translated
-                    idx = trans_text.lower().find(block_text.lower(), current_idx)
-                    if idx >= 0:
-                        # Add any spacing before this block
-                        if idx > current_idx:
-                            trans_parts.append(TextSegment(
-                                trans_text[current_idx:idx],
-                                current_pos + current_idx,
-                                False
-                            ))
-                        # Add the block with proper capitalization from the formatted text
-                        actual_text = trans_text[idx:idx + len(block_text)]
+                    block_text = block.translated.strip()
+                    # Handle empty translations specially
+                    if not block_text:
+                        # For empty translations, just keep the mapping
                         trans_parts.append(TextSegment(
-                            actual_text,
-                            current_pos + idx,
+                            "",
+                            current_pos + current_idx,
                             False,
                             block
                         ))
-                        current_idx = idx + len(block_text)
+                        continue
+                    
+                    # Look for the block text, considering potential punctuation
+                    search_idx = current_idx
+                    while True:
+                        idx = trans_text.lower().find(block_text.lower(), search_idx)
+                        if idx < 0:
+                            break
+                            
+                        # Check if this is the correct occurrence (not part of another word)
+                        is_word_boundary = True
+                        if idx > 0 and trans_text[idx-1].isalnum():
+                            is_word_boundary = False
+                        if idx + len(block_text) < len(trans_text) and trans_text[idx + len(block_text)].isalnum():
+                            is_word_boundary = False
+                            
+                        if is_word_boundary:
+                            # Add any spacing before this block
+                            if idx > current_idx:
+                                trans_parts.append(TextSegment(
+                                    trans_text[current_idx:idx],
+                                    current_pos + current_idx,
+                                    False
+                                ))
+                            # Add the block with proper capitalization from the formatted text
+                            actual_text = trans_text[idx:idx + len(block_text)]
+                            trans_parts.append(TextSegment(
+                                actual_text,
+                                current_pos + idx,
+                                False,
+                                block
+                            ))
+                            current_idx = idx + len(block_text)
+                            break
+                            
+                        search_idx = idx + 1
                 
                 # Add any remaining spacing
                 if current_idx < len(trans_text):
@@ -318,25 +356,52 @@ class MainTranslationPanel(QWidget):
                 current_idx = 0
                 for block in mapping.blocks:
                     # Find the formatted version of this block in the formatted text
-                    block_text = block.translated
-                    idx = trans_text.lower().find(block_text.lower(), current_idx)
-                    if idx >= 0:
-                        # Add any spacing before this block
-                        if idx > current_idx:
-                            trans_parts.append(TextSegment(
-                                trans_text[current_idx:idx],
-                                current_pos + current_idx,
-                                False
-                            ))
-                        # Add the block with proper capitalization from the formatted text
-                        actual_text = trans_text[idx:idx + len(block_text)]
+                    block_text = block.translated.strip()
+                    # Handle empty translations specially
+                    if not block_text:
+                        # For empty translations, just keep the mapping
                         trans_parts.append(TextSegment(
-                            actual_text,
-                            current_pos + idx,
+                            "",
+                            current_pos + current_idx,
                             False,
                             block
                         ))
-                        current_idx = idx + len(block_text)
+                        continue
+                    
+                    # Look for the block text, considering potential punctuation
+                    search_idx = current_idx
+                    while True:
+                        idx = trans_text.lower().find(block_text.lower(), search_idx)
+                        if idx < 0:
+                            break
+                            
+                        # Check if this is the correct occurrence (not part of another word)
+                        is_word_boundary = True
+                        if idx > 0 and trans_text[idx-1].isalnum():
+                            is_word_boundary = False
+                        if idx + len(block_text) < len(trans_text) and trans_text[idx + len(block_text)].isalnum():
+                            is_word_boundary = False
+                            
+                        if is_word_boundary:
+                            # Add any spacing before this block
+                            if idx > current_idx:
+                                trans_parts.append(TextSegment(
+                                    trans_text[current_idx:idx],
+                                    current_pos + current_idx,
+                                    False
+                                ))
+                            # Add the block with proper capitalization from the formatted text
+                            actual_text = trans_text[idx:idx + len(block_text)]
+                            trans_parts.append(TextSegment(
+                                actual_text,
+                                current_pos + idx,
+                                False,
+                                block
+                            ))
+                            current_idx = idx + len(block_text)
+                            break
+                            
+                        search_idx = idx + 1
                 
                 # Add any remaining spacing
                 if current_idx < len(trans_text):
@@ -387,10 +452,11 @@ class MainTranslationPanel(QWidget):
         self.toggle_button.setText("Hide Original Text" if self.show_original else "Show Original Text")
         
         if self.chapter_manager.chapters:
-            self.set_chapter_text(0)
+            self.set_chapter_text(self.current_chapter_index)  # Use current chapter index
 
     def set_text(self, text: str):
         """Set the entire text content."""
         self.chapter_manager.set_text(text)
         if self.chapter_manager.chapters:
             self.set_chapter_text(0)
+            self.current_chapter_index = 0  # Reset chapter index when loading new text

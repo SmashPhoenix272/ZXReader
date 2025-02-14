@@ -1,16 +1,16 @@
 import os
-import chardet
 from PyQt5.QtWidgets import (
     QWidget,
     QLabel,
     QVBoxLayout
 )
+from src.core.file_handler import FileHandler
 
 class FileInfoPanel(QWidget):
-    def __init__(self, file_handler, translation_manager):
+    def __init__(self, parent, translation_manager):
         super().__init__()
-        self.file_handler = file_handler
         self.translation_manager = translation_manager
+        self.file_handler = FileHandler()  # Create instance of FileHandler
         self.initUI()
 
     def initUI(self):
@@ -29,16 +29,11 @@ class FileInfoPanel(QWidget):
         file_name = os.path.basename(file_path)
         translated_file_name = self.translation_manager.translate_text(file_name)
         
-        try:
-            with open(file_path, 'rb') as file:
-                raw_data = file.read()
-                encoding_result = chardet.detect(raw_data)
-                encoding = encoding_result['encoding']
-        except Exception as e:
-            encoding = "Unknown"
+        # Use FileHandler's encoding detection
+        encoding_name = self.file_handler.get_file_encoding(file_path)
 
         file_size = os.path.getsize(file_path)
         self.file_name_label.setText(f"File Name: {file_name}")
         self.translated_file_name_label.setText(f"Translated File Name: {translated_file_name}")
-        self.encoding_label.setText(f"Encoding: {encoding}")
+        self.encoding_label.setText(f"Encoding: {encoding_name}")
         self.file_size_label.setText(f"File Size: {file_size} bytes")
