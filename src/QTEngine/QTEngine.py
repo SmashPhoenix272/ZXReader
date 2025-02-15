@@ -1,4 +1,5 @@
 import re
+import os
 import logging
 from typing import Dict, List, Tuple, Optional, Any, Callable
 
@@ -80,12 +81,13 @@ class QTEngine(TranslationEngine):
             self.logger.error(f"Translation failed: {e}")
             raise
 
-    def translate_with_mapping(self, text: str) -> Tuple[str, TranslationMapping]:
+    def translate_with_mapping(self, text: str, force_refresh: bool = False) -> Tuple[str, TranslationMapping]:
         """
         Translate Chinese text to Sino-Vietnamese and return mapping information.
         
         Args:
             text (str): Input Chinese text
+            force_refresh (bool): Force refresh of translation data
         
         Returns:
             Tuple[str, TranslationMapping]: Translated text and mapping information
@@ -96,12 +98,17 @@ class QTEngine(TranslationEngine):
             if simplified_text is None:
                 simplified_text = text
 
+            # If force_refresh, reload data first
+            if force_refresh:
+                self.refresh_data()
+
             return process_paragraph(
                 simplified_text,
                 self.names2,
                 self.names,
                 self.viet_phrase,
-                self.chinese_phien_am
+                self.chinese_phien_am,
+                force_refresh=force_refresh
             )
         except Exception as e:
             self.logger.error(f"Translation with mapping failed: {e}")
@@ -130,19 +137,52 @@ class QTEngine(TranslationEngine):
         
         return True
     
-    def refresh_data(self):
+    def refresh_data(self, specific_file: Optional[str] = None):
         """
         Refresh translation data using the data loader.
+        
+        Args:
+            specific_file (Optional[str]): If provided, only reload this specific file
         """
         try:
-            (
-                self.names2, 
-                self.names, 
-                self.viet_phrase, 
-                self.chinese_phien_am, 
-                self.loading_info
-            ) = self.data_loader.load_data()
-            self.logger.info("Translation data refreshed successfully")
+            if specific_file:
+                # Only reload the specific dictionary
+                filepath = os.path.join(self.data_loader.data_dir, specific_file)
+                if not os.path.exists(filepath):
+                    return
+                    
+                if specific_file == 'Names2.txt':
+                    trie = Trie()
+                    data = self.data_loader.load_dictionary(filepath)
+                    for key, value in data.items():
+                        trie.insert(key, value)
+                    self.names2 = trie
+                elif specific_file == 'Names.txt':
+                    trie = Trie()
+                    data = self.data_loader.load_dictionary(filepath)
+                    for key, value in data.items():
+                        trie.insert(key, value)
+                    self.names = trie
+                elif specific_file == 'VietPhrase.txt':
+                    trie = Trie()
+                    data = self.data_loader.load_dictionary(filepath)
+                    for key, value in data.items():
+                        trie.insert(key, value)
+                    self.viet_phrase = trie
+                elif specific_file == 'ChinesePhienAmWords.txt':
+                    self.data_loader.load_chinese_phien_am(filepath)
+                    self.chinese_phien_am = self.data_loader.chinese_phien_am_data
+                self.logger.info(f"Translation data refreshed successfully for {specific_file}")
+            else:
+                # Full reload
+                (
+                    self.names2, 
+                    self.names, 
+                    self.viet_phrase, 
+                    self.chinese_phien_am, 
+                    self.loading_info
+                ) = self.data_loader.load_data()
+                self.logger.info("Translation data refreshed successfully")
         except Exception as e:
             self.logger.error(f"Data refresh failed: {e}")
             raise

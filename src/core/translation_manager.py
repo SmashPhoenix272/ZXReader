@@ -22,12 +22,13 @@ class TranslationManager:
         self.qt_engine = qt_engine if qt_engine is not None else QTEngine()
         self.current_mapping = None
 
-    def translate_text(self, text: str) -> str:
+    def translate_text(self, text: str, force_refresh: bool = False) -> str:
         """
         Translates the given text using QTEngine.
 
         Args:
             text (str): The text to be translated.
+            force_refresh (bool): Force refresh of translation data.
 
         Returns:
             str: The translated text.
@@ -35,7 +36,7 @@ class TranslationManager:
         if not text:
             return ""
         
-        translated_text, mapping = self.qt_engine.translate_with_mapping(text)
+        translated_text, mapping = self.qt_engine.translate_with_mapping(text, force_refresh=force_refresh)
         self.current_mapping = mapping
         return translated_text
     

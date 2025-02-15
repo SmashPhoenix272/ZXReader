@@ -1,5 +1,9 @@
-from PyQt5.QtWidgets import QTextEdit, QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QPlainTextEdit
+from PyQt5.QtWidgets import (
+    QTextEdit, QWidget, QVBoxLayout, QPushButton, QHBoxLayout, 
+    QPlainTextEdit, QMenu, QAction
+)
 from PyQt5.QtCore import Qt, pyqtSignal, QPoint
+from src.gui.dictionary_edit_dialog import DictionaryEditDialog
 from PyQt5.QtGui import (
     QTextCursor, QTextCharFormat, QColor, QTextBlockFormat, 
     QTextDocument, QTextBlockUserData, QTextBlock
@@ -57,11 +61,13 @@ class TranslationTextEdit(QPlainTextEdit):
     """Custom QPlainTextEdit that handles mouse events for dictionary lookup."""
     segment_clicked = pyqtSignal(TextSegment)  # Emits the clicked segment
     selection_lookup = pyqtSignal(str)  # Emits selected text for dictionary lookup
+    dictionary_updated = pyqtSignal(str)  # Emits when dictionary is updated, includes filename
 
-    def __init__(self):
+    def __init__(self, dictionary_manager=None):
         super().__init__()
         self.setReadOnly(True)
         self.segments: List[TextSegment] = []
+        self.dictionary_manager = dictionary_manager
         
         # Set up text formats
         self.highlight_format = QTextCharFormat()
@@ -76,6 +82,103 @@ class TranslationTextEdit(QPlainTextEdit):
         self.selection_start_pos = -1
         self.selection_in_original = False
         self.last_clicked_segment = None
+
+    def contextMenuEvent(self, event):
+        """Handle right-click context menu."""
+        menu = QMenu(self)
+        
+        # Check for selected text first
+        cursor = self.textCursor()
+        if cursor.hasSelection():
+            selected_text = cursor.selectedText()
+            if selected_text.strip():
+                # Get the segment to check if selection is in original text
+                pos = cursor.selectionStart()
+                segment = self.find_segment_at_position(pos)
+                if segment:
+                    if segment.is_original:
+                        chinese_text = selected_text
+                        hanviet = self.dictionary_manager.convert_to_hanviet(chinese_text)
+                        
+                        # Add dictionary actions for selected text
+                        for dict_name in ["Names", "Names2", "VietPhrase"]:
+                            existing_def = self.dictionary_manager.get_definition(dict_name, chinese_text)
+                            action_text = f"Edit {dict_name}" if existing_def else f"Add to {dict_name}"
+                            action = QAction(action_text, self)
+                            action.triggered.connect(
+                                lambda checked, d=dict_name, c=chinese_text, h=hanviet, e=existing_def:
+                                self.show_dictionary_dialog(d, c, h, e)
+                            )
+                            menu.addAction(action)
+                        
+                        menu.exec_(event.globalPos())
+                        return
+                    elif segment.mapping_block:
+                        # For translated text, try to find the corresponding Chinese text
+                        # by looking up the mapping block
+                        chinese_text = segment.mapping_block.original
+                        hanviet = self.dictionary_manager.convert_to_hanviet(chinese_text)
+                        
+                        # Add dictionary actions for the original Chinese text
+                        for dict_name in ["Names", "Names2", "VietPhrase"]:
+                            existing_def = self.dictionary_manager.get_definition(dict_name, chinese_text)
+                            action_text = f"Edit {dict_name}" if existing_def else f"Add to {dict_name}"
+                            action = QAction(action_text, self)
+                            action.triggered.connect(
+                                lambda checked, d=dict_name, c=chinese_text, h=hanviet, e=existing_def:
+                                self.show_dictionary_dialog(d, c, h, e)
+                            )
+                            menu.addAction(action)
+                        
+                        menu.exec_(event.globalPos())
+                        return
+        
+        # Fall back to highlighted block if no text is selected
+        cursor = self.cursorForPosition(event.pos())
+        pos = cursor.position()
+        segment = self.find_segment_at_position(pos)
+        
+        if segment and segment.mapping_block:
+            chinese_text = segment.mapping_block.original
+            hanviet = self.dictionary_manager.convert_to_hanviet(chinese_text)
+            
+            # Add dictionary actions for highlighted block
+            for dict_name in ["Names", "Names2", "VietPhrase"]:
+                existing_def = self.dictionary_manager.get_definition(dict_name, chinese_text)
+                action_text = f"Edit {dict_name}" if existing_def else f"Add to {dict_name}"
+                action = QAction(action_text, self)
+                action.triggered.connect(
+                    lambda checked, d=dict_name, c=chinese_text, h=hanviet, e=existing_def:
+                    self.show_dictionary_dialog(d, c, h, e)
+                )
+                menu.addAction(action)
+            
+            menu.exec_(event.globalPos())
+        
+    def show_dictionary_dialog(self, dictionary_name: str, chinese_text: str, 
+                             hanviet: str, existing_def: Optional[str]):
+        """Show dialog for adding/editing dictionary entry."""
+        dialog = DictionaryEditDialog(
+            self,
+            chinese_text=chinese_text,
+            hanviet=hanviet,
+            definition=existing_def or hanviet,  # Use hanviet as default definition
+            dictionary_type=dictionary_name,
+            is_edit=existing_def is not None
+        )
+        
+        # Connect the dialog's dictionary_updated signal to our signal
+        dialog.dictionary_updated.connect(self.dictionary_updated.emit)
+        
+        if dialog.exec_():
+            values = dialog.get_values()
+            if self.dictionary_manager.add_to_dictionary(
+                dictionary_name, 
+                values["chinese_text"], 
+                values["definition"]
+            ):
+                # Signal will be emitted by the dialog
+                pass
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -104,12 +207,58 @@ class TranslationTextEdit(QPlainTextEdit):
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
-            # If there's a selection, prioritize it over segment click
             cursor = self.textCursor()
-            if cursor.hasSelection() and self.selection_in_original:
+            if cursor.hasSelection():
                 selected_text = cursor.selectedText()
                 if selected_text.strip():
-                    self.selection_lookup.emit(selected_text)
+                    # Get the segment to check if selection is in original text
+                    start_pos = cursor.selectionStart()
+                    end_pos = cursor.selectionEnd()
+                    
+                    # Find all segments in the selection range
+                    selected_segments = []
+                    for segment in self.segments:
+                        # Check if segment overlaps with selection
+                        if (segment.start_pos <= end_pos and segment.end_pos >= start_pos):
+                            # Calculate the overlapping text
+                            seg_start = max(start_pos, segment.start_pos)
+                            seg_end = min(end_pos, segment.end_pos)
+                            
+                            if seg_end > seg_start:
+                                selected_text = segment.text[
+                                    max(0, seg_start - segment.start_pos):
+                                    seg_end - segment.start_pos
+                                ]
+                                if selected_text.strip():
+                                    selected_segments.append((selected_text, segment))
+                    
+                    if selected_segments:
+                        # For original text
+                        if self.selection_in_original:
+                            combined_text = ''.join(text for text, _ in selected_segments)
+                            self.selection_lookup.emit(combined_text)
+                        # For translated text
+                        else:
+                            # Get the selected Vietnamese text
+                            viet_text = ' '.join(text for text, _ in selected_segments)
+                            viet_text = viet_text.strip()
+                            
+                            # Try to find a matching block for the exact Vietnamese text
+                            for segment in self.segments:
+                                if not segment.is_original and segment.mapping_block:
+                                    if viet_text == segment.text.strip():
+                                        self.selection_lookup.emit(segment.mapping_block.original)
+                                        break
+                                    # Also check if it's part of a compound word
+                                    elif ' ' in segment.text:
+                                        parts = segment.text.split()
+                                        if viet_text in parts:
+                                            # Find the corresponding Chinese text
+                                            chinese_parts = segment.mapping_block.original
+                                            if len(parts) == len(chinese_parts):
+                                                idx = parts.index(viet_text)
+                                                self.selection_lookup.emit(chinese_parts[idx])
+                                                break
             
             self.is_selecting = False
             self.selection_start_pos = -1
@@ -135,6 +284,9 @@ class TranslationTextEdit(QPlainTextEdit):
                 # Emit the selected text for lookup
                 if clicked_segment.is_original:
                     self.selection_lookup.emit(clicked_segment.text)
+                else:
+                    # For translated text, use the original Chinese text
+                    self.selection_lookup.emit(clicked_segment.mapping_block.original)
                 
                 event.accept()
                 return
@@ -142,7 +294,7 @@ class TranslationTextEdit(QPlainTextEdit):
         super().mouseDoubleClickEvent(event)
 
     def mouseMoveEvent(self, event):
-        if self.is_selecting and self.selection_in_original:
+        if self.is_selecting:
             # Get current cursor position
             cursor = self.cursorForPosition(event.pos())
             current_pos = cursor.position()
@@ -156,9 +308,13 @@ class TranslationTextEdit(QPlainTextEdit):
             current_segment = None
             
             for segment in self.segments:
-                # Stop if we reach translated text
-                if not segment.is_original:
-                    break
+                # For original text, only collect original segments
+                if self.selection_in_original:
+                    if not segment.is_original:
+                        break
+                # For translated text, only collect translated segments
+                elif segment.is_original:
+                    continue
                     
                 # Check if segment is in selection range
                 if segment.start_pos <= end_pos and segment.end_pos >= start_pos:
@@ -172,7 +328,12 @@ class TranslationTextEdit(QPlainTextEdit):
                             seg_end - segment.start_pos
                         ]
                         if selected_text.strip():
-                            selected_segments.append(selected_text)
+                            if self.selection_in_original:
+                                selected_segments.append(selected_text)
+                            else:
+                                # For translated text, use the original Chinese text
+                                if segment.mapping_block:
+                                    selected_segments.append(segment.mapping_block.original)
             
             # Emit the combined selected text for dictionary lookup
             if selected_segments:
@@ -182,10 +343,54 @@ class TranslationTextEdit(QPlainTextEdit):
 
     def find_segment_at_position(self, pos: int) -> Optional[TextSegment]:
         """Find the segment at the given position."""
+        # First find the direct segment
+        direct_segment = None
         for segment in self.segments:
             if segment.start_pos <= pos < segment.end_pos:
-                return segment
-        return None
+                direct_segment = segment
+                break
+                
+        if not direct_segment:
+            return None
+            
+        # If it's original text, return as is
+        if direct_segment.is_original:
+            return direct_segment
+            
+        # For translated text, try to find compound words
+        if not direct_segment.is_original and direct_segment.mapping_block:
+            # Get the full text and position within it
+            text = direct_segment.text
+            rel_pos = pos - direct_segment.start_pos
+            
+            # Find word boundaries
+            start = rel_pos
+            end = rel_pos
+            
+            # Expand selection to word boundaries
+            while start > 0 and (text[start-1].isalpha() or text[start-1] == ' '):
+                start -= 1
+            while end < len(text) and (text[end].isalpha() or text[end] == ' '):
+                end += 1
+                
+            # Trim spaces from edges
+            while start < end and text[start] == ' ':
+                start += 1
+            while end > start and text[end-1] == ' ':
+                end -= 1
+                
+            # If we found a word boundary different from the original segment
+            if start != 0 or end != len(text):
+                # Create a new segment for the compound word
+                new_segment = TextSegment(
+                    text[start:end],
+                    direct_segment.start_pos + start,
+                    False,
+                    direct_segment.mapping_block
+                )
+                return new_segment
+                
+        return direct_segment
 
     def clear_segments(self):
         """Clear all segments."""
@@ -216,10 +421,11 @@ class MainTranslationPanel(QWidget):
         self.dictionary_panel = dictionary_panel
         self.current_chapter_index = 0  # Track current chapter
         
-        # Create text edit
-        self.text_edit = TranslationTextEdit()
+        # Create text edit with dictionary manager from dictionary panel
+        self.text_edit = TranslationTextEdit(self.dictionary_panel.dictionary_manager)
         self.text_edit.segment_clicked.connect(self.handle_segment_click)
         self.text_edit.selection_lookup.connect(self.handle_selection_lookup)
+        self.text_edit.dictionary_updated.connect(self.handle_dictionary_update)
         
         # Create toggle button
         self.show_original = False
@@ -460,3 +666,26 @@ class MainTranslationPanel(QWidget):
         if self.chapter_manager.chapters:
             self.set_chapter_text(0)
             self.current_chapter_index = 0  # Reset chapter index when loading new text
+            
+    def handle_dictionary_update(self, specific_file: Optional[str] = None):
+        """
+        Handle dictionary update by refreshing the current text.
+        
+        Args:
+            specific_file (Optional[str]): If provided, only reload this specific dictionary
+        """
+        # Get the current text before refreshing
+        current_text = None
+        if self.chapter_manager.chapters:
+            current_text = self.chapter_manager.get_chapter_text(self.current_chapter_index)
+        
+        # Reload only the specific dictionary if provided
+        self.dictionary_panel.dictionary_manager.load_dictionaries(specific_file=specific_file)
+        
+        # Force refresh translation with current text
+        if current_text:
+            # Get translation and mapping with force_refresh
+            translated_text = self.translation_manager.translate_text(current_text, force_refresh=True)
+            
+            # Update the display
+            self.set_chapter_text(self.current_chapter_index)

@@ -20,6 +20,7 @@ class TranslationMapping:
         self.translated_to_block: Dict[str, List[Block]] = {}  # One translated text might map to multiple blocks
         self.current_original_pos = 0
         self.current_translated_pos = 0
+        self.compound_blocks: Dict[str, List[Block]] = {}  # Store compound word mappings
 
     def add_block(self, original: str, translated: str):
         """Add a new block to the mapping."""
@@ -35,6 +36,20 @@ class TranslationMapping:
             self.translated_to_block[translated] = []
         self.translated_to_block[translated].append(block)
         
+        # Handle compound words in Vietnamese text
+        if ' ' in translated:
+            # Add each part of the compound word
+            parts = translated.split()
+            for part in parts:
+                if part not in self.translated_to_block:
+                    self.translated_to_block[part] = []
+                self.translated_to_block[part].append(block)
+            
+            # Store the compound word mapping
+            if translated not in self.compound_blocks:
+                self.compound_blocks[translated] = []
+            self.compound_blocks[translated].append(block)
+        
         # Update positions
         self.current_original_pos = block.orig_end
         self.current_translated_pos = block.trans_end
@@ -45,6 +60,17 @@ class TranslationMapping:
         If position is provided, returns the block closest to that position.
         """
         blocks = self.original_to_block.get(original)
+        if not blocks:
+            # Try to find a block that contains this text
+            for orig, block_list in self.original_to_block.items():
+                if original in orig:
+                    blocks = block_list
+                    break
+                # Also check for compound words
+                for compound_text, compound_blocks in self.compound_blocks.items():
+                    if original in compound_text:
+                        blocks = compound_blocks
+                        break
         if not blocks:
             return None
             
@@ -64,6 +90,21 @@ class TranslationMapping:
         """
         blocks = self.translated_to_block.get(translated)
         if not blocks:
+            # Try to find a block that contains this text
+            for trans, block_list in self.translated_to_block.items():
+                # Handle Vietnamese text with spaces
+                trans_parts = trans.split()
+                if translated in trans_parts or translated == trans:
+                    blocks = block_list
+                    break
+                
+            # Also check compound blocks
+            if not blocks:
+                for compound_text, compound_blocks in self.compound_blocks.items():
+                    if translated in compound_text.split():
+                        blocks = compound_blocks
+                        break
+        if not blocks:
             return None
             
         if position is not None:
@@ -80,8 +121,24 @@ def convert_to_sino_vietnamese(
     names2: Trie, 
     names: Trie, 
     viet_phrase: Trie, 
-    chinese_phien_am: Dict[str, str]
+    chinese_phien_am: Dict[str, str],
+    force_refresh: bool = False
 ) -> Tuple[str, TranslationMapping]:
+    """
+    Convert Chinese text to Sino-Vietnamese using block-based mapping.
+    Now with improved compound word handling.
+
+    Args:
+        text (str): The input Chinese text.
+        names2 (Trie): Trie containing Names2.txt data.
+        names (Trie): Trie containing Names.txt data.
+        viet_phrase (Trie): Trie containing VietPhrase.txt data.
+        chinese_phien_am (Dict[str, str]): Dictionary containing ChinesePhienAmWords.txt data.
+        force_refresh (bool): Force refresh of translation data.
+
+    Returns:
+        Tuple[str, TranslationMapping]: The converted Sino-Vietnamese text and mapping information.
+    """
     """
     Convert Chinese text to Sino-Vietnamese using block-based mapping.
 
@@ -127,31 +184,48 @@ def convert_to_sino_vietnamese(
             mapping.add_block(latin_text, latin_text)
             continue
         
-        # Try Names2 first
-        name2_match, value = names2.find_longest_prefix(text[i:])
-        if name2_match and value is not None:
-            translated = split_value(value)
-            tokens.append(translated)
-            mapping.add_block(name2_match, translated)
-            i += len(name2_match)
-            continue
+        # Try to find all possible matches at current position
+        remaining_text = text[i:]
+        matches = []
         
-        # Try Names
-        name_match, value = names.find_longest_prefix(text[i:])
-        if name_match and value is not None:
-            translated = split_value(value)
-            tokens.append(translated)
-            mapping.add_block(name_match, translated)
-            i += len(name_match)
-            continue
+        # Check all dictionaries for matches
+        for source, trie in [('names2', names2), ('names', names), ('viet_phrase', viet_phrase)]:
+            match, value = trie.find_longest_prefix(remaining_text)
+            if match and value is not None:
+                matches.append((match, value, len(match)))
         
-        # Try VietPhrase
-        viet_phrase_match, value = viet_phrase.find_longest_prefix(text[i:])
-        if viet_phrase_match and value is not None:
+        # Sort matches by length in descending order
+        matches.sort(key=lambda x: x[2], reverse=True)
+        
+        # Also check for shorter matches that might be part of compound words
+        for j in range(1, min(4, len(remaining_text) + 1)):  # Check up to 3 characters
+            substr = remaining_text[:j]
+            for source, trie in [('names2', names2), ('names', names), ('viet_phrase', viet_phrase)]:
+                match, value = trie.find_longest_prefix(substr)
+                if match and value is not None and (match, value, len(match)) not in matches:
+                    matches.append((match, value, len(match)))
+        
+        if matches:
+            # Use the longest match by default
+            match, value, length = matches[0]
             translated = split_value(value)
+            
+            # Check if next character forms a compound word
+            if i + length < len(text):
+                next_char = text[i + length:i + length + 1]
+                for next_match, next_value, _ in matches[1:]:
+                    if next_match.startswith(next_char):
+                        # Found a potential compound word
+                        next_translated = split_value(next_value)
+                        if ' ' in next_translated:  # If it's a multi-word translation
+                            translated = next_translated
+                            match = next_match
+                            length = len(next_match)
+                            break
+            
             tokens.append(translated)
-            mapping.add_block(viet_phrase_match, translated)
-            i += len(viet_phrase_match)
+            mapping.add_block(match, translated)
+            i += length
             continue
         
         # Try Chinese Phien Am Words
@@ -244,7 +318,8 @@ def process_paragraph(
     names2: Trie, 
     names: Trie, 
     viet_phrase: Trie, 
-    chinese_phien_am: Dict[str, str]
+    chinese_phien_am: Dict[str, str],
+    force_refresh: bool = False
 ) -> Tuple[str, TranslationMapping]:
     """
     Process a single paragraph by converting it to Sino-Vietnamese.

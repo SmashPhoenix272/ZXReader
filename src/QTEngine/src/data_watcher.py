@@ -4,10 +4,24 @@ import logging
 from typing import Dict, Callable, Optional, Any
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+from threading import Timer
 
 from src.QTEngine.src.data_loader import DataLoader, DataLoadError
 
 logger = logging.getLogger(__name__)
+
+def debounce(wait):
+    """Decorator to debounce a function."""
+    def decorator(fn):
+        timer = None
+        def debounced(*args, **kwargs):
+            nonlocal timer
+            if timer is not None:
+                timer.cancel()
+            timer = Timer(wait, lambda: fn(*args, **kwargs))
+            timer.start()
+        return debounced
+    return decorator
 
 class DataFileWatcher:
     """
@@ -48,46 +62,28 @@ class DataFileWatcher:
             if os.path.exists(filepath):
                 self.file_mtimes[filename] = os.path.getmtime(filepath)
     
-    def check_and_reload(self) -> bool:
+    @debounce(0.01)  # Reduce debounce time to 10ms for near-instant response
+    def reload_data(self, filename: Optional[str] = None):
         """
-        Check if any data files have been modified and reload if necessary.
+        Reload data with debouncing.
         
-        Returns:
-            bool: True if data was reloaded, False otherwise
+        Args:
+            filename (Optional[str]): If provided, only reload this specific file
         """
-        files_modified = False
-        
-        for filename in self.data_loader.required_files:
-            filepath = os.path.join(self.data_dir, filename)
-            
-            if not os.path.exists(filepath):
-                continue
-            
-            current_mtime = os.path.getmtime(filepath)
-            
-            # Check if file has been modified
-            if filename not in self.file_mtimes or current_mtime != self.file_mtimes[filename]:
-                logger.info(f"Detected changes in {filename}")
-                self.file_mtimes[filename] = current_mtime
-                files_modified = True
-        
-        # If any files were modified, reload data
-        if files_modified:
-            try:
-                # Reload data
-                reloaded_data = self.data_loader.load_data()
-                
-                # Call reload callback if provided
-                if self.reload_callback:
-                    self.reload_callback(reloaded_data)
-                
-                logger.info("Data successfully reloaded")
+        try:
+            # Skip reloading if file is not in required files
+            if filename and filename not in self.data_loader.required_files:
                 return True
-            except DataLoadError as e:
-                logger.error(f"Failed to reload data: {e}")
-                return False
-        
-        return False
+
+            # Pass the specific file to load_data for selective reloading
+            reloaded_data = self.data_loader.load_data(specific_file=filename)
+            if self.reload_callback:
+                self.reload_callback(reloaded_data)
+            logger.info(f"Successfully reloaded data{' for ' + filename if filename else ''}")
+            return True
+        except DataLoadError as e:
+            logger.error(f"Failed to reload data: {e}")
+            return False
     
     def start_watching(self, blocking: bool = False):
         """
@@ -105,9 +101,22 @@ class DataFileWatcher:
                     return
                 
                 filename = os.path.basename(event.src_path)
+                # Only reload if it's a required file and not already being reloaded
                 if filename in self.watcher.data_loader.required_files:
-                    logger.info(f"File modified: {filename}")
-                    self.watcher.check_and_reload()
+                    # Get current time
+                    current_time = time.time()
+                    # Get last modification time for this file
+                    last_mtime = self.watcher.file_mtimes.get(filename, 0)
+                    
+                    # Only reload if enough time has passed since last reload
+                    if current_time - last_mtime > 0.1:  # 100ms minimum between reloads
+                        logger.info(f"File modified: {filename}")
+                        # Update modification time
+                        self.watcher.file_mtimes[filename] = current_time
+                        # Pass the specific file that changed
+                        self.watcher.reload_data(filename=filename)  # This is debounced
+                else:
+                    logger.debug(f"Ignoring modification of non-required file: {filename}")
         
         # Setup file system observer
         event_handler = DataFileHandler(self)
@@ -119,7 +128,6 @@ class DataFileWatcher:
             try:
                 while True:
                     time.sleep(self.check_interval)
-                    self.check_and_reload()
             except KeyboardInterrupt:
                 self.observer.stop()
             self.observer.join()

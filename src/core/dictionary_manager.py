@@ -15,40 +15,70 @@ class DictionaryManager:
         self.chinese_phien_am_data = {}  # Dictionary for ChinesePhienAmWords
         self.load_dictionaries()
 
-    def load_dictionaries(self):
-        """Loads dictionaries from the dictionaries folder and QTEngine."""
+    def load_dictionaries(self, specific_file: Optional[str] = None):
+        """
+        Loads dictionaries from the dictionaries folder and QTEngine.
+        
+        Args:
+            specific_file (Optional[str]): If provided, only reload this specific dictionary
+        """
         # Get the project root directory
         current_dir = os.path.dirname(os.path.abspath(__file__))
         project_root = os.path.dirname(os.path.dirname(current_dir))
         
-        # Load external dictionaries
-        dictionaries_folder = os.path.join(project_root, 'dictionaries')
-        if os.path.exists(dictionaries_folder):
-            for filename in os.listdir(dictionaries_folder):
-                if filename.endswith('.txt') or filename.endswith('cedict_ts.u8'):
-                    filepath = os.path.join(dictionaries_folder, filename)
-                    dictionary_name = filename[:-4] if filename.endswith('.txt') else 'Cedict'  # Remove .txt extension
-                    print(f"Loading dictionary: {dictionary_name} from {filepath}")
-                    self.dictionaries[dictionary_name] = self.load_dictionary(filepath)
-                    print(f"Dictionary {dictionary_name} loaded with {len(self.dictionaries[dictionary_name].get_all_words())} words")
-
-        # Load QTEngine dictionaries
-        qt_engine_data_folder = os.path.join(project_root, 'src', 'QTEngine', 'data')
-        if os.path.exists(qt_engine_data_folder):
+        if specific_file:
+            # Handle QTEngine dictionaries
+            qt_engine_data_folder = os.path.join(project_root, 'src', 'QTEngine', 'data')
             qt_engine_files = {
                 'Names': 'Names.txt',
                 'Names2': 'Names2.txt',
                 'VietPhrase': 'VietPhrase.txt'
             }
-            for dict_name, filename in qt_engine_files.items():
-                filepath = os.path.join(qt_engine_data_folder, filename)
-                if os.path.exists(filepath):
-                    self.qt_engine_dictionaries[dict_name] = self.load_dictionary(filepath)
             
-            # Load ChinesePhienAmWords dictionary
-            chinese_phien_am_path = os.path.join(qt_engine_data_folder, 'ChinesePhienAmWords.txt')
-            if os.path.exists(chinese_phien_am_path):
-                self.load_chinese_phien_am(chinese_phien_am_path)
+            # Check if it's a QTEngine dictionary
+            for dict_name, filename in qt_engine_files.items():
+                if filename == specific_file:
+                    filepath = os.path.join(qt_engine_data_folder, filename)
+                    if os.path.exists(filepath):
+                        self.qt_engine_dictionaries[dict_name] = self.load_dictionary(filepath)
+                    return
+            
+            # Check if it's ChinesePhienAmWords
+            if specific_file == 'ChinesePhienAmWords.txt':
+                chinese_phien_am_path = os.path.join(qt_engine_data_folder, 'ChinesePhienAmWords.txt')
+                if os.path.exists(chinese_phien_am_path):
+                    self.load_chinese_phien_am(chinese_phien_am_path)
+                return
+        else:
+            # Load all dictionaries
+            # Load external dictionaries
+            dictionaries_folder = os.path.join(project_root, 'dictionaries')
+            if os.path.exists(dictionaries_folder):
+                for filename in os.listdir(dictionaries_folder):
+                    if filename.endswith('.txt') or filename.endswith('cedict_ts.u8'):
+                        filepath = os.path.join(dictionaries_folder, filename)
+                        dictionary_name = filename[:-4] if filename.endswith('.txt') else 'Cedict'  # Remove .txt extension
+                        print(f"Loading dictionary: {dictionary_name} from {filepath}")
+                        self.dictionaries[dictionary_name] = self.load_dictionary(filepath)
+                        print(f"Dictionary {dictionary_name} loaded with {len(self.dictionaries[dictionary_name].get_all_words())} words")
+
+            # Load QTEngine dictionaries
+            qt_engine_data_folder = os.path.join(project_root, 'src', 'QTEngine', 'data')
+            if os.path.exists(qt_engine_data_folder):
+                qt_engine_files = {
+                    'Names': 'Names.txt',
+                    'Names2': 'Names2.txt',
+                    'VietPhrase': 'VietPhrase.txt'
+                }
+                for dict_name, filename in qt_engine_files.items():
+                    filepath = os.path.join(qt_engine_data_folder, filename)
+                    if os.path.exists(filepath):
+                        self.qt_engine_dictionaries[dict_name] = self.load_dictionary(filepath)
+                
+                # Load ChinesePhienAmWords dictionary
+                chinese_phien_am_path = os.path.join(qt_engine_data_folder, 'ChinesePhienAmWords.txt')
+                if os.path.exists(chinese_phien_am_path):
+                    self.load_chinese_phien_am(chinese_phien_am_path)
 
     def load_dictionary(self, filepath: str) -> Trie:
         """
@@ -262,3 +292,74 @@ class DictionaryManager:
             result.append(hanviet)
         
         return ' '.join(result)
+
+    def add_to_dictionary(self, dictionary_name: str, word: str, definition: str) -> bool:
+        """
+        Add a new entry to a dictionary.
+        
+        Args:
+            dictionary_name (str): Name of the dictionary to add to
+            word (str): Word to add
+            definition (str): Definition of the word
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            # Get dictionary path
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            project_root = os.path.dirname(os.path.dirname(current_dir))
+            
+            if dictionary_name in ["Names", "Names2", "VietPhrase"]:
+                filename = f'{dictionary_name}.txt'
+                dictionary_path = os.path.join(project_root, 'src', 'QTEngine', 'data', filename)
+            else:
+                return False
+            
+            # Read existing content
+            with open(dictionary_path, 'r', encoding='utf-8-sig') as f:
+                lines = f.readlines()
+            
+            # Check if word already exists
+            for i, line in enumerate(lines):
+                if line.strip().startswith(f"{word}="):
+                    # Update existing entry
+                    lines[i] = f"{word}={definition}\n"
+                    break
+            else:
+                # Add new entry
+                # Ensure the last line ends with a newline
+                if lines and not lines[-1].endswith('\n'):
+                    lines.append('\n')
+                # Add the new entry on a new line
+                lines.append(f"{word}={definition}\n")
+            
+            # Write back to file
+            with open(dictionary_path, 'w', encoding='utf-8') as f:
+                f.writelines(lines)
+            
+            # Only reload the specific dictionary
+            self.load_dictionaries(specific_file=filename)
+            
+            return True
+            
+        except Exception as e:
+            print(f"Error adding to dictionary {dictionary_name}: {e}")
+            return False
+
+    def get_definition(self, dictionary_name: str, word: str) -> Optional[str]:
+        """
+        Get definition from a specific dictionary.
+        
+        Args:
+            dictionary_name (str): Name of the dictionary
+            word (str): Word to look up
+            
+        Returns:
+            Optional[str]: Definition if found, None otherwise
+        """
+        if dictionary_name in self.qt_engine_dictionaries:
+            match = self.find_longest_prefix_match(word, self.qt_engine_dictionaries[dictionary_name])
+            if match and match[0] == word:  # Only return if exact match
+                return match[1]
+        return None

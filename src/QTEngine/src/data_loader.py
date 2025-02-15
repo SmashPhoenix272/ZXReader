@@ -90,10 +90,9 @@ def retry_on_failure(max_retries: int = 3, delay: int = 1):
         return wrapper
     return decorator
 
-@lru_cache(maxsize=config.DATA_LOADER_CONFIG['cache_enabled'] and 32 or 0)
-def load_file_cached(file_path: str) -> Dict[str, Any]:
+def load_file(file_path: str) -> Dict[str, Any]:
     """
-    Cached version of file loading with optional memoization.
+    Load file without caching to ensure fresh data.
     
     Args:
         file_path (str): Full path to the file
@@ -156,19 +155,16 @@ class DataLoader:
         self.loaded_data = None
         
     @retry_on_failure()
-    def load_data(self) -> Tuple[Trie, Trie, Trie, Dict[str, str], Dict[str, Any]]:
+    def load_data(self, specific_file: Optional[str] = None) -> Tuple[Trie, Trie, Trie, Dict[str, str], Dict[str, Any]]:
         """
         Load data from various files into Trie structures and dictionaries.
+        
+        Args:
+            specific_file (Optional[str]): If provided, only reload this specific file
         
         Returns:
             Tuple containing loaded data structures and loading information
         """
-        # Check if data needs refreshing
-        if (self.loaded_data is not None and 
-            self.last_load_time is not None and 
-            datetime.now() - self.last_load_time < self.refresh_interval):
-            return self.loaded_data
-        
         loading_info: Dict[str, Any] = {'files_loaded': [], 'load_timestamp': datetime.now()}
         
         try:
@@ -180,25 +176,51 @@ class DataLoader:
                 'chinese_phien_am': os.path.join(self.data_dir, 'ChinesePhienAmWords.txt')
             }
             
-            # Load data with validation, making Names2.txt optional
-            names2_data = {}
-            names2_trie = Trie()
-            if os.path.exists(file_paths['names2']):
-                names2_data = load_file_cached(file_paths['names2'])
-                if DataValidator.validate_dictionary(names2_data, min_entries=0):
-                    for key in names2_data:
-                        names2_trie.insert(key, names2_data[key])
-                    if not DataValidator.validate_trie(names2_trie, min_entries=0):
-                        logger.warning("Names2.txt Trie validation failed, ignoring the file")
-                        names2_data = {}
-                        names2_trie = Trie()
-                else:
-                    logger.warning("Names2.txt data validation failed, ignoring the file")
+            # If we have existing data and only need to reload one file
+            if specific_file and self.loaded_data:
+                names2_trie, names_trie, viet_phrase_trie, chinese_phien_am_data, old_info = self.loaded_data
+                
+                # Only reload the specific file
+                if specific_file == 'Names2.txt':
                     names2_data = {}
-            
-            names_data = load_file_cached(file_paths['names'])
-            viet_phrase_data = load_file_cached(file_paths['viet_phrase'])
-            chinese_phien_am_data = load_file_cached(file_paths['chinese_phien_am'])
+                    names2_trie = Trie()
+                    if os.path.exists(file_paths['names2']):
+                        names2_data = load_file(file_paths['names2'])
+                        if DataValidator.validate_dictionary(names2_data, min_entries=0):
+                            for key in names2_data:
+                                names2_trie.insert(key, names2_data[key])
+                elif specific_file == 'Names.txt':
+                    names_data = load_file(file_paths['names'])
+                    names_trie = Trie()
+                    for key in names_data:
+                        names_trie.insert(key, names_data[key])
+                elif specific_file == 'VietPhrase.txt':
+                    viet_phrase_data = load_file(file_paths['viet_phrase'])
+                    viet_phrase_trie = Trie()
+                    for key in viet_phrase_data:
+                        viet_phrase_trie.insert(key, viet_phrase_data[key])
+                elif specific_file == 'ChinesePhienAmWords.txt':
+                    chinese_phien_am_data = load_file(file_paths['chinese_phien_am'])
+            else:
+                # Load all data
+                names2_data = {}
+                names2_trie = Trie()
+                if os.path.exists(file_paths['names2']):
+                    names2_data = load_file(file_paths['names2'])
+                    if DataValidator.validate_dictionary(names2_data, min_entries=0):
+                        for key in names2_data:
+                            names2_trie.insert(key, names2_data[key])
+                        if not DataValidator.validate_trie(names2_trie, min_entries=0):
+                            logger.warning("Names2.txt Trie validation failed, ignoring the file")
+                            names2_data = {}
+                            names2_trie = Trie()
+                    else:
+                        logger.warning("Names2.txt data validation failed, ignoring the file")
+                        names2_data = {}
+                
+                names_data = load_file(file_paths['names'])
+                viet_phrase_data = load_file(file_paths['viet_phrase'])
+                chinese_phien_am_data = load_file(file_paths['chinese_phien_am'])
             
             # Validate loaded data
             if not all([
