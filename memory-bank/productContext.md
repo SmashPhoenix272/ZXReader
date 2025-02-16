@@ -1,142 +1,197 @@
-# ZXReader Product Context
+# Product Context
 
-## Purpose & Problem Space
+## Purpose
 
-### Why This Project Exists
-ZXReader addresses the need for Chinese text reading with Sino-Vietnamese translation support. It serves readers who:
-- Want to read Chinese texts with Sino-Vietnamese translations
-- Need quick access to dictionary definitions while reading
-- Require efficient chapter navigation and text management
-- Prefer customizable reading experiences
-- Work with texts in various Chinese encodings
+ZXReader is a specialized tool for reading and translating Chinese text into Sino-Vietnamese, designed to enhance the reading experience for Vietnamese readers studying Chinese texts.
 
-### Problems Solved
-1. **Translation Accessibility**
-   - Provides instant Sino-Vietnamese translations
-   - Maintains context between original and translated text
-   - Enables seamless switching between translation modes
-   - Preserves reading position when toggling views
+### Core Problems Solved
+1. **Language Barrier**
+   - Enables Vietnamese readers to understand Chinese texts
+   - Provides accurate Sino-Vietnamese translations
+   - Maintains cultural and linguistic nuances
 
-2. **Dictionary Integration**
-   - Offers comprehensive dictionary lookups from multiple sources
-   - Supports bidirectional lookups between Chinese and Sino-Vietnamese
-   - Allows custom dictionary additions through Names2.txt
+2. **Reading Experience**
+   - Side-by-side original and translated text
+   - Chapter-based navigation
+   - Customizable display options
+   - Efficient dictionary lookup
 
-3. **Reading Experience**
-   - Simplifies chapter navigation and management
-   - Supports multiple Chinese encodings (UTF-8, GB18030, GBK, GB2312, BIG5)
-   - Provides clear text organization and display
-   - Maintains reading position across interactions
-
-4. **User Customization**
-   - Enables theme selection (light/dark/book/wood)
-   - Supports custom fonts
-   - Allows panel size adjustments
-   - Remembers user preferences and states
+3. **Text Processing**
+   - Handles multiple Chinese encodings
+   - Processes large text files
+   - Maintains text formatting
+   - Preserves reading position
 
 ## User Experience Goals
 
-### Core Experience
-1. **Effortless Reading**
-   - Clean, distraction-free interface
-   - Smooth chapter navigation
-   - Clear text presentation in both languages
-   - Position preservation when switching views
+### 1. Ease of Use
+- Intuitive interface
+- Clear navigation
+- Responsive controls
+- Consistent behavior
 
-2. **Intuitive Translation**
-   - Instant access to translations
-   - Clear relationship between original and translated text
-   - Easy dictionary lookup through clicks or text selection
-   - Consistent state management
+### 2. Performance
+- Fast file loading
+- Quick translations
+- Smooth scrolling
+- Efficient dictionary lookups
+- Minimal resource usage
 
-3. **Efficient Dictionary Usage**
-   - Quick access to definitions
-   - Multiple dictionary source integration
-   - Custom dictionary support
-   - State-aware lookups
+### 3. Reliability
+- Accurate translations
+- Stable operation
+- Data preservation
+- Error recovery
 
-4. **Comfortable Customization**
-   - Easy theme switching
-   - Flexible font selection
-   - Adjustable panel layouts
-   - Persistent preferences
+### 4. Customization
+- Display preferences
+- Font options
+- Dictionary management
+- Layout control
 
-### User Interaction Flow
-1. **File Loading**
-   - Select text file
-   - Automatic encoding detection
-   - View file information with encoding details
-   - Auto-detect chapters
+## Key Features
 
-2. **Reading Process**
-   - Navigate chapters with position tracking
-   - Toggle between original and translated text
-   - Maintain reading position across interactions
-   - Access dictionary lookups
+### 1. File Management
+- Multiple encoding support
+- Smart encoding detection
+- Large file handling
+- Position tracking
 
-3. **Dictionary Usage**
-   - Single-click for word lookup
-   - Double-click for text selection
-   - Search specific terms
-   - Context-aware lookups
+### 2. Translation
+- Chinese to Sino-Vietnamese
+- Character/word mapping
+- Context awareness
+- Dictionary integration
 
-4. **Customization**
-   - Select preferred theme
-   - Choose fonts
-   - Adjust panel sizes
-   - Persistent settings
+### 3. Navigation
+- Chapter detection
+- Position markers
+- Quick navigation
+- Progress tracking
 
-## Success Metrics
+### 4. Dictionary
+- Custom dictionary editing
+- Real-time updates
+- Smart word lookup
+- Case-sensitive handling
+- Compound word support
 
-### User-Centric Metrics
-1. **Reading Efficiency**
-   - Quick chapter navigation
-   - Fast translation display
-   - Responsive dictionary lookups
-   - Seamless state preservation
+### 5. Interface
+- Split-panel display
+- Resizable sections
+- Font customization
+- Theme options
 
-2. **Translation Accuracy**
-   - Correct Sino-Vietnamese translations
-   - Accurate dictionary definitions
-   - Proper text highlighting
-   - Consistent encoding handling
+## User Workflows
 
-3. **User Satisfaction**
-   - Intuitive interface navigation
-   - Comfortable reading experience
-   - Effective customization options
-   - Reliable state management
+### 1. Opening Files
+```mermaid
+flowchart TD
+    A[Select File] --> B[Detect Encoding]
+    B --> C[Load Content]
+    C --> D[Detect Chapters]
+    D --> E[Display Text]
+```
 
-### Technical Metrics
-1. **Performance**
-   - Fast file loading
-   - Accurate encoding detection
-   - Quick translation processing
-   - Responsive dictionary lookups
-   - Efficient state management
+### 2. Translation Process
+```mermaid
+flowchart TD
+    A[Load Text] --> B[Process Content]
+    B --> C[Apply Translation]
+    C --> D[Dictionary Lookup]
+    D --> E[Display Results]
+```
 
-2. **Reliability**
-   - Stable file handling
-   - Robust encoding support
-   - Consistent translation mapping
-   - Accurate chapter detection
-   - Dependable state preservation
+### 3. Dictionary Management
+```mermaid
+flowchart TD
+    A[Edit Dictionary] --> B[Validate Changes]
+    B --> C[Update Dictionary]
+    C --> D[Reload Selective]
+    D --> E[Update Display]
+```
 
-3. **Customization**
-   - Proper theme application
-   - Correct font loading
-   - Reliable panel resizing
-   - Persistent user preferences
+## Feature Details
 
-### File Handling Metrics
-1. **Encoding Support**
-   - Successful detection of various encodings
-   - Proper handling of GB2312/GB18030
-   - Accurate UTF-8 recognition
-   - Reliable fallback mechanisms
+### 1. File Support
+- Text files (.txt)
+- Multiple encodings
+- Large file handling
+- Progress indication
 
-2. **State Management**
-   - Consistent chapter position tracking
-   - Reliable view toggle preservation
-   - Accurate progress retention
-   - Proper preference persistence
+### 2. Translation Features
+- Word-by-word translation
+- Context awareness
+- Dictionary integration
+- Format preservation
+
+### 3. Navigation Features
+- Chapter detection
+- Position tracking
+- Quick jumping
+- History tracking
+
+### 4. Dictionary Features
+- Custom entries
+- Quick editing
+- Real-time updates
+- Compound words
+- Case sensitivity
+
+### 5. Display Features
+- Split panels
+- Font selection
+- Theme options
+- Layout control
+
+## User Benefits
+
+### 1. Efficiency
+- Quick file loading
+- Fast translations
+- Efficient navigation
+- Responsive interface
+
+### 2. Accuracy
+- Precise translations
+- Context awareness
+- Dictionary support
+- Format preservation
+
+### 3. Convenience
+- Easy navigation
+- Quick lookup
+- Custom dictionaries
+- Position saving
+
+### 4. Learning
+- Original text access
+- Translation comparison
+- Dictionary building
+- Language patterns
+
+## Success Criteria
+
+### 1. Performance
+- Sub-second file loading
+- Instant translations
+- Smooth scrolling
+- Quick dictionary updates
+
+### 2. Reliability
+- Accurate translations
+- Stable operation
+- Data preservation
+- Error handling
+
+### 3. Usability
+- Intuitive controls
+- Clear feedback
+- Consistent behavior
+- Easy customization
+
+### 4. Value
+- Enhanced reading
+- Learning support
+- Time savings
+- Knowledge retention

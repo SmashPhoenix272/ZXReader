@@ -1,26 +1,33 @@
 # ZXReader Active Context
 
-## Current Focus: File Encoding and UI Improvements
+## Current Focus: Dictionary Management and Performance Optimization
 
 ### Recent Changes
-1. **Enhanced File Encoding Support**
-   - Improved encoding detection with multi-layer approach
-   - Added support for GB18030, GBK, GB2312, BIG5
-   - Implemented smart encoding detection with validation
-   - Added caching of successful encodings
-   - Fixed UTF-8 detection and display
+1. **Dictionary Management Improvements**
+   - Added right-click menu for dictionary editing
+   - Created dictionary edit dialog
+   - Implemented dictionary update functionality
+   - Added text case modification options
+   - Fixed line ending issues in dictionary files
 
-2. **Show/Hide Original Text Improvements**
-   - Fixed chapter position preservation when toggling
-   - Added chapter index tracking
-   - Improved state management for text display
+2. **Dictionary Performance Optimization**
+   - Added selective dictionary loading
+   - Reduced debounce time to 10ms
+   - Added file modification tracking
+   - Improved Trie creation for selective reloads
+   - Prevented duplicate reloads
+   - Reduced wait time from 5s to near-instant
 
-3. **File Info Panel Enhancements**
-   - Improved encoding detection display
-   - Added proper handling of GB2312/GB18030 detection
-   - Better integration with FileHandler
+3. **Text Selection and Translation**
+   - Fixed Vietnamese word boundary detection
+   - Improved compound word handling (e.g. 'không muốn')
+   - Fixed dictionary lookup for translated text
+   - Better block mapping between languages
 
 ### Current State
+- Dictionary editing and management fully operational
+- Optimized dictionary reload performance
+- Improved text selection and translation accuracy
 - Core file handling and chapter management working
 - Translation system operational
 - UI panels in place and functioning
@@ -28,38 +35,42 @@
 - Show/hide original text maintains chapter position
 
 ### Active Decisions
-1. **File Encoding Strategy**
-   - Try last successful encoding first
-   - Use chardet with confidence threshold > 0.8
-   - Fall back to common Chinese encodings
-   - Validate Chinese character presence
-   - Special handling for GB2312/GB18030
+1. **Dictionary Management Strategy**
+   - Enable right-click editing for quick updates
+   - Implement selective dictionary reloading
+   - Track file modifications for efficient updates
+   - Optimize Trie creation process
+   
+2. **Performance Optimization**
+   - Use selective loading to reduce memory usage
+   - Implement efficient file modification tracking
+   - Minimize dictionary reload time
+   - Prevent unnecessary reloads
 
-2. **Text Display Management**
-   - Track current chapter index
-   - Preserve position when toggling original text
-   - Reset position only when loading new files
-
-3. **File Info Display**
-   - Show accurate encoding information
-   - Handle GB2312/GB18030 distinction
-   - Display file size and name translations
+3. **Text Selection Strategy**
+   - Handle Vietnamese word boundaries accurately
+   - Support compound word detection
+   - Improve block mapping for translations
+   - Maintain text case consistency
 
 ### Next Steps
-1. **Performance Optimization**
-   - Cache encoding detection results
-   - Optimize text loading for large files
-   - Improve memory usage
+1. **Dictionary Feature Enhancement**
+   - Implement additional dictionary editing features
+   - Add dictionary import/export functionality
+   - Improve dictionary search capabilities
+   - Add dictionary backup functionality
 
-2. **Error Handling**
-   - Better error messages for encoding issues
-   - Graceful fallback for unsupported encodings
-   - User feedback for file loading issues
+2. **Performance Monitoring**
+   - Monitor dictionary reload performance
+   - Track memory usage during updates
+   - Optimize large dictionary handling
+   - Implement performance metrics
 
-3. **UI Improvements**
-   - Add encoding selection option
-   - Improve file info display
-   - Add loading indicators
+3. **UI Refinements**
+   - Enhance dictionary edit dialog
+   - Improve right-click menu usability
+   - Add dictionary statistics display
+   - Implement dictionary entry validation
 
 ### Current Challenges
 1. **Technical Challenges**

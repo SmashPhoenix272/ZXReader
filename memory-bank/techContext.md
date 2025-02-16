@@ -21,6 +21,7 @@
      - QTextEdit
      - QListWidget
      - QComboBox
+     - QMenu (context menus)
      - Custom widgets
      - State management
 
@@ -28,9 +29,10 @@
    - Custom translation engine
    - Core functionality:
      - Chinese to Sino-Vietnamese translation
-     - Dictionary management
-     - Text processing
-     - Translation mapping
+     - Dictionary management with selective loading
+     - Text processing with compound word support
+     - Translation mapping with block tracking
+     - Vietnamese word boundary detection
 
 ### Dependencies
 
@@ -44,11 +46,13 @@
    - Custom dictionaries
    - Text processing utilities
    - Character conversion tools
+   - File modification tracking
 
 3. **Development Dependencies**
    - Testing frameworks
    - Development tools
    - Debugging utilities
+   - Performance monitoring tools
 
 ## Development Setup
 
@@ -60,6 +64,8 @@ ZXReader/
 │   │   ├── file_handler.py # Enhanced file handling
 │   │   └── ...
 │   ├── gui/                # GUI components
+│   │   ├── dictionary_edit_dialog.py  # Dictionary editing
+│   │   └── ...
 │   ├── QTEngine/          # Translation engine
 │   └── utils/             # Utility functions
 ├── dictionaries/          # External dictionaries
@@ -80,16 +86,19 @@ ZXReader/
    - Panel implementations
    - Window management
    - State preservation
+   - Dictionary editing dialogs
 
 3. **src/QTEngine/**
    - Translation engine
    - Dictionary management
    - Text processing
+   - Performance optimization
 
 4. **dictionaries/**
    - External dictionary files
    - Custom dictionary support
    - Dictionary synchronization
+   - File modification tracking
 
 5. **fonts/**
    - Font resources
@@ -100,10 +109,11 @@ ZXReader/
 
 ### 1. Performance Constraints
 - Memory usage for large text files
-- Dictionary lookup speed requirements
+- Dictionary lookup speed (now near-instant)
 - UI responsiveness standards
 - Translation processing time limits
 - Encoding detection performance
+- Dictionary reload time (10ms debounce)
 
 ### 2. System Requirements
 - Operating system compatibility
@@ -199,11 +209,39 @@ ZXReader/
 - Handle state transitions
 - Ensure consistency
 
-### 5. Translation Engine
-- Optimize dictionary lookups
-- Maintain accurate mappings
-- Handle edge cases
-- Provide fallback mechanisms
+### 5. Dictionary Management
+```python
+class DictionaryManager:
+    def __init__(self):
+        self.debounce_time = 10  # ms
+        self.file_watchers = {}
+        self.last_modified_times = {}
+        
+    def setup_dictionary_editing(self):
+        # Right-click menu for dictionary editing
+        self.context_menu = QMenu()
+        self.edit_action = self.context_menu.addAction("Edit Entry")
+        self.edit_action.triggered.connect(self.show_edit_dialog)
+        
+    def handle_dictionary_update(self, file_path):
+        current_time = os.path.getmtime(file_path)
+        if file_path not in self.last_modified_times or current_time > self.last_modified_times[file_path]:
+            self.last_modified_times[file_path] = current_time
+            self.selective_reload(file_path)
+            
+    def selective_reload(self, file_path):
+        # Only reload modified dictionary
+        dictionary_data = self.load_dictionary(file_path)
+        self.update_trie(dictionary_data, file_path)
+        
+    def update_trie(self, data, source):
+        # Optimize Trie creation for selective reloads
+        if source in self.tries:
+            del self.tries[source]  # Remove old trie
+        self.tries[source] = Trie()
+        for entry in data:
+            self.tries[source].insert(entry)
+```
 
 ## Integration Points
 
@@ -215,15 +253,18 @@ qt_engine_path = os.path.join(current_dir, 'QTEngine')
 sys.path.append(qt_engine_path)
 os.chdir(qt_engine_path)
 
-# Initialize QTEngine
-qt_engine = QTEngine()
+# Initialize QTEngine with optimized dictionary loading
+qt_engine = QTEngine(selective_loading=True)
 ```
 
 ### 2. Dictionary Integration
-- Load external dictionaries
-- Sync custom dictionaries
-- Manage dictionary updates
-- Handle lookup failures
+- Selective dictionary loading
+- File modification tracking
+- Near-instant updates (10ms debounce)
+- Right-click dictionary editing
+- Case-sensitive handling
+- Compound word support
+- Block mapping optimization
 
 ### 3. Font Integration
 - Load custom fonts
@@ -245,23 +286,23 @@ qt_engine = QTEngine()
 - Debugging tools
 - Performance profilers
 - Code analysis tools
-- Encoding detection tools
+- Dictionary validation tools
 
 ## Technical Debt Considerations
 
 ### 1. Current Technical Debt
-- Dictionary loading optimization
-- Translation mapping improvements
-- UI component refactoring
-- Error handling enhancement
-- Encoding detection refinement
+- Dictionary import/export system
+- Advanced search capabilities
+- Dictionary backup solution
+- Entry validation system
+- Statistics tracking implementation
 
 ### 2. Mitigation Strategies
 - Regular code reviews
 - Performance monitoring
 - Technical documentation
 - Systematic refactoring
-- Encoding validation
+- Dictionary validation
 
 ## Security Considerations
 
@@ -276,5 +317,5 @@ qt_engine = QTEngine()
 - Text input sanitization
 - File type verification
 - Character encoding validation
+- Dictionary entry validation
 - Error boundary handling
-- State validation

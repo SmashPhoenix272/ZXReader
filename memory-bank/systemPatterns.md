@@ -36,7 +36,23 @@
 4. **Dictionary System**
    ```mermaid
    flowchart TD
-       DictionaryManager[DictionaryManager] --> QTDictionaries[QT Dictionaries]
+       DictionaryManager[DictionaryManager] --> DictionaryEdit[Dictionary Edit]
+       DictionaryEdit --> RightClickMenu[Right-Click Menu]
+       DictionaryEdit --> EditDialog[Edit Dialog]
+       DictionaryEdit --> CaseModification[Case Modification]
+       
+       DictionaryManager --> Performance[Performance Optimization]
+       Performance --> SelectiveLoading[Selective Loading]
+       Performance --> FileTracking[File Modification Tracking]
+       Performance --> TrieOptimization[Trie Optimization]
+       Performance --> DebouncedUpdates[Debounced Updates]
+       
+       DictionaryManager --> TextHandling[Text Handling]
+       TextHandling --> WordBoundary[Vietnamese Word Boundary]
+       TextHandling --> CompoundWords[Compound Words]
+       TextHandling --> BlockMapping[Block Mapping]
+       
+       DictionaryManager --> QTDictionaries[QT Dictionaries]
        DictionaryManager --> ExternalDictionaries[External Dictionaries]
        DictionaryManager --> CustomDictionaries[Custom Dictionaries]
    ```
@@ -72,6 +88,9 @@
   - Efficient prefix-based lookups
   - Supports longest prefix matching
   - Used in both QTEngine and dictionary lookup
+  - Optimized creation for selective reloads
+  - Reduced debounce time to 10ms
+  - Prevents duplicate reloads
 
 - **Translation Mapping**
   - Bidirectional mapping between original and translated text
@@ -121,9 +140,12 @@
   - Variable font support
 
 - **Dictionary Loading**
-  - Lazy loading of dictionaries
-  - Cache management
+  - Selective dictionary loading
+  - File modification tracking
+  - Optimized Trie creation
+  - Near-instant dictionary updates
   - Custom dictionary synchronization
+  - Smart reload prevention
 
 ## Design Patterns
 
