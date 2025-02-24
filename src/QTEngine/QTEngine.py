@@ -2,6 +2,7 @@ import re
 import os
 import logging
 from typing import Dict, List, Tuple, Optional, Any, Callable
+from functools import lru_cache
 
 from src.QTEngine.models.trie import Trie
 from src.QTEngine.models.chinese_converter import ChineseConverter
@@ -81,9 +82,35 @@ class QTEngine(TranslationEngine):
             self.logger.error(f"Translation failed: {e}")
             raise
 
+    @lru_cache(maxsize=1000)
+    def _translate_with_mapping_cached(self, text: str) -> Tuple[str, TranslationMapping]:
+        """
+        Cached implementation of translation with mapping.
+        
+        Args:
+            text (str): Text to translate
+            
+        Returns:
+            Tuple[str, TranslationMapping]: Translated text and mapping info
+        """
+        # Convert Traditional to Simplified if necessary
+        simplified_text = self.chinese_converter.auto_convert_to_simplified(text)
+        if simplified_text is None:
+            simplified_text = text
+            
+        # Process and return translation with mapping
+        return process_paragraph(
+            simplified_text,
+            self.names2,
+            self.names,
+            self.viet_phrase,
+            self.chinese_phien_am
+        )
+    
     def translate_with_mapping(self, text: str, force_refresh: bool = False) -> Tuple[str, TranslationMapping]:
         """
         Translate Chinese text to Sino-Vietnamese and return mapping information.
+        Uses caching for better performance.
         
         Args:
             text (str): Input Chinese text
@@ -93,23 +120,28 @@ class QTEngine(TranslationEngine):
             Tuple[str, TranslationMapping]: Translated text and mapping information
         """
         try:
-            # First convert Traditional to Simplified if necessary
-            simplified_text = self.chinese_converter.auto_convert_to_simplified(text)
-            if simplified_text is None:
-                simplified_text = text
-
-            # If force_refresh, reload data first
+            # Clear cache and refresh data if forcing refresh
             if force_refresh:
-                self.refresh_data()
-
-            return process_paragraph(
-                simplified_text,
-                self.names2,
-                self.names,
-                self.viet_phrase,
-                self.chinese_phien_am,
-                force_refresh=force_refresh
-            )
+                self._translate_with_mapping_cached.cache_clear()
+                # Ensure data is reloaded before translation
+                self.refresh_data(force_reload=True)
+                
+                # Convert Traditional to Simplified if necessary
+                simplified_text = self.chinese_converter.auto_convert_to_simplified(text)
+                if simplified_text is None:
+                    simplified_text = text
+                
+                # Get fresh translation directly without caching
+                return process_paragraph(
+                    simplified_text,
+                    self.names2,
+                    self.names,
+                    self.viet_phrase,
+                    self.chinese_phien_am
+                )
+            
+            # Use cached translation if not forcing refresh
+            return self._translate_with_mapping_cached(text)
         except Exception as e:
             self.logger.error(f"Translation with mapping failed: {e}")
             raise
@@ -137,54 +169,68 @@ class QTEngine(TranslationEngine):
         
         return True
     
-    def refresh_data(self, specific_file: Optional[str] = None):
+    def refresh_data(self, specific_file: Optional[str] = None, force_reload: bool = False):
         """
         Refresh translation data using the data loader.
         
         Args:
             specific_file (Optional[str]): If provided, only reload this specific file
+            force_reload (bool): Force complete reload of data
         """
         try:
+            # Clear both translation caches
+            if hasattr(self, '_translate_cached'):
+                self._translate_cached.cache_clear()
+            if hasattr(self, '_translate_with_mapping_cached'):
+                self._translate_with_mapping_cached.cache_clear()
+            
             if specific_file:
-                # Only reload the specific dictionary
+                # Only reload the specific dictionary and maintain others
                 filepath = os.path.join(self.data_loader.data_dir, specific_file)
                 if not os.path.exists(filepath):
                     return
-                    
+                
+                # Load with optimized method based on file type
                 if specific_file == 'Names2.txt':
-                    trie = Trie()
-                    data = self.data_loader.load_dictionary(filepath)
-                    for key, value in data.items():
-                        trie.insert(key, value)
-                    self.names2 = trie
+                    self.names2 = self._reload_trie(filepath)
                 elif specific_file == 'Names.txt':
-                    trie = Trie()
-                    data = self.data_loader.load_dictionary(filepath)
-                    for key, value in data.items():
-                        trie.insert(key, value)
-                    self.names = trie
+                    self.names = self._reload_trie(filepath)
                 elif specific_file == 'VietPhrase.txt':
-                    trie = Trie()
-                    data = self.data_loader.load_dictionary(filepath)
-                    for key, value in data.items():
-                        trie.insert(key, value)
-                    self.viet_phrase = trie
+                    self.viet_phrase = self._reload_trie(filepath)
                 elif specific_file == 'ChinesePhienAmWords.txt':
-                    self.data_loader.load_chinese_phien_am(filepath)
-                    self.chinese_phien_am = self.data_loader.chinese_phien_am_data
+                    data = self.data_loader.load_dictionary(filepath)
+                    self.chinese_phien_am.update(data)
+                
                 self.logger.info(f"Translation data refreshed successfully for {specific_file}")
             else:
-                # Full reload
+                # Full reload with optimized loading
+                loaded_data = self.data_loader.load_data()
                 (
-                    self.names2, 
-                    self.names, 
-                    self.viet_phrase, 
-                    self.chinese_phien_am, 
+                    self.names2,
+                    self.names,
+                    self.viet_phrase,
+                    self.chinese_phien_am,
                     self.loading_info
-                ) = self.data_loader.load_data()
-                self.logger.info("Translation data refreshed successfully")
+                ) = loaded_data
+                self.logger.info("All translation data refreshed successfully")
+            
+            # Call parent class's refresh_data method
+            super().refresh_data()
         except Exception as e:
             self.logger.error(f"Data refresh failed: {e}")
+            raise
+                
+    def _reload_trie(self, filepath: str) -> Trie:
+        """Helper method to efficiently reload a Trie structure."""
+        try:
+            trie = Trie()
+            data = self.data_loader.load_dictionary(filepath)
+            # Use batch insert for better performance
+            words = [(key, value) for key, value in data.items()]
+            trie.batch_insert(words)
+            return trie
+        except Exception as e:
+            self.logger.error(f"Failed to reload trie from {filepath}: {e}")
             raise
     
     def get_translation_metadata(self) -> Dict[str, Any]:

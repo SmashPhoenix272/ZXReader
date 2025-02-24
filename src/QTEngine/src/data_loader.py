@@ -25,16 +25,7 @@ class DataValidator:
     
     @staticmethod
     def validate_trie(trie: Trie, min_entries: int = 10) -> bool:
-        """
-        Validate a Trie data structure.
-        
-        Args:
-            trie (Trie): Trie to validate
-            min_entries (int): Minimum number of expected entries
-        
-        Returns:
-            bool: Whether the Trie is valid
-        """
+        """Validate a Trie data structure."""
         if not isinstance(trie, Trie):
             logger.error("Invalid Trie type")
             return False
@@ -47,128 +38,102 @@ class DataValidator:
         return True
     
     @staticmethod
-    def validate_dictionary(data: Dict[str, str], min_entries: int = 10) -> bool:
-        """
-        Validate a dictionary data structure.
-        
-        Args:
-            data (Dict[str, str]): Dictionary to validate
-            min_entries (int): Minimum number of expected entries
-        
-        Returns:
-            bool: Whether the dictionary is valid
-        """
+    def validate_dictionary(data: Dict[str, str], min_entries: int = 0) -> bool:
+        """Validate a dictionary data structure."""
         if not isinstance(data, dict):
             logger.error("Invalid dictionary type")
             return False
         
         if len(data) < min_entries:
-            logger.warning(f"Dictionary has fewer entries than expected: {len(data)}")
-            return False
+            keys = list(data.keys())
+            sample_keys = keys[:5] if keys else []
+            logger.warning(f"Dictionary has fewer entries than expected ({len(data)} < {min_entries}): {sample_keys}")
         
-        return all(isinstance(k, str) and isinstance(v, str) for k, v in data.items())
+        return True
 
 def retry_on_failure(max_retries: int = 3, delay: int = 1):
-    """
-    Decorator to retry a function on failure.
-    
-    Args:
-        max_retries (int): Maximum number of retries
-        delay (int): Delay between retries in seconds
-    """
+    """Decorator that retries a function on failure with DataLoadError."""
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
+            last_error = None
             for attempt in range(max_retries):
                 try:
-                    return func(*args, **kwargs)
-                except Exception as e:
-                    logger.warning(f"Attempt {attempt + 1} failed: {e}")
-                    if attempt == max_retries - 1:
-                        raise
-                    time.sleep(delay * (attempt + 1))
+                    result = func(*args, **kwargs)
+                    return result
+                except DataLoadError as e:
+                    last_error = e
+                    if attempt < max_retries - 1:
+                        logger.warning(f"Loading attempt {attempt + 1} failed: {e}")
+                        time.sleep(delay)
+                        continue
+                    logger.error(f"All {max_retries} loading attempts failed")
+                    raise
+            return result  # Should never reach here due to raise above
         return wrapper
     return decorator
 
-def load_file(file_path: str) -> Dict[str, Any]:
-    """
-    Load file without caching to ensure fresh data.
-    
-    Args:
-        file_path (str): Full path to the file
-    
-    Returns:
-        Dict[str, Any]: Loaded data
-    """
-    entries = {}
-    try:
-        with open(file_path, 'r', encoding=config.DATA_LOADER_CONFIG['encoding']) as f:
-            for line in f:
-                line = line.strip()
-                if not line or line.startswith('#'):
-                    continue
-
-                parts = line.split('=') if '=' in line else line.split('\t')
-                if len(parts) >= 2:
-                    key, value = parts[0], parts[1]
-                    entries[key] = value
-
-    except FileNotFoundError:
-        logger.error(f"File not found: {file_path}")
-        raise DataLoadError(f"File not found: {file_path}")
-    except Exception as e:
-        logger.error(f"Error loading {file_path}: {e}")
-        raise DataLoadError(f"Error loading {file_path}: {e}")
-
-    return entries
-
 class DataLoader:
-    """
-    Advanced data loader with caching, validation, and refresh mechanisms.
-    """
+    """Advanced data loader with caching, validation, and refresh mechanisms."""
     
     def __init__(self, 
                  data_dir: Optional[str] = None, 
                  required_files: Optional[List[str]] = None,
                  refresh_interval: timedelta = timedelta(hours=24)):
-        """
-        Initialize the DataLoader.
-        
-        Args:
-            data_dir (Optional[str]): Custom data directory
-            required_files (Optional[List[str]]): Custom list of required files
-            refresh_interval (timedelta): Interval for automatic data refresh
-        """
-        # Get the absolute path of the QTEngine directory
+        """Initialize the DataLoader."""
         self.qt_engine_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        
-        # Set data directory relative to QTEngine directory if not provided
-        if data_dir is None:
-            data_dir = os.path.join(self.qt_engine_dir, 'data')
-        
-        self.data_dir = data_dir
+        self.data_dir = data_dir or os.path.join(self.qt_engine_dir, 'data')
         self.required_files = required_files or [
             'Names2.txt', 'Names.txt', 'VietPhrase.txt', 'ChinesePhienAmWords.txt'
         ]
         self.refresh_interval = refresh_interval
         self.last_load_time = None
         self.loaded_data = None
-        
+
+    def load_dictionary(self, file_path: str, is_chinese_phien_am: bool = False) -> Dict[str, str]:
+        """Load a dictionary file with proper format handling."""
+        entries = {}
+        try:
+            line_count = 0
+            entry_count = 0
+            with open(file_path, 'r', encoding=config.DATA_LOADER_CONFIG['encoding']) as f:
+                for line in f:
+                    line_count += 1
+                    line = line.strip()
+                    if not line or line.startswith('#'):
+                        continue
+
+                    # All dictionaries use = as separator
+                    if '=' in line:
+                        key, value = line.split('=', 1)
+                    else:
+                        key, *value_parts = line.split('\t')
+                        value = value_parts[0] if value_parts else None
+
+                    key = key.strip()
+                    value = value.strip() if value else None
+                        
+                    if key and value:
+                        entries[key] = value
+                        entry_count += 1
+
+            logger.info(f"Processed {line_count} lines, loaded {entry_count} entries from {os.path.basename(file_path)}")
+            if entry_count == 0:
+                logger.warning(f"No entries were loaded from {os.path.basename(file_path)}")
+            return entries
+
+        except FileNotFoundError:
+            logger.error(f"File not found: {file_path}")
+            raise DataLoadError(f"File not found: {file_path}")
+        except Exception as e:
+            logger.error(f"Error loading {file_path}: {e}")
+            raise DataLoadError(f"Error loading {file_path}: {e}")
+
     @retry_on_failure()
     def load_data(self, specific_file: Optional[str] = None) -> Tuple[Trie, Trie, Trie, Dict[str, str], Dict[str, Any]]:
-        """
-        Load data from various files into Trie structures and dictionaries.
-        
-        Args:
-            specific_file (Optional[str]): If provided, only reload this specific file
-        
-        Returns:
-            Tuple containing loaded data structures and loading information
-        """
+        """Load or reload dictionary data."""
         loading_info: Dict[str, Any] = {'files_loaded': [], 'load_timestamp': datetime.now()}
-        
         try:
-            # Construct full file paths
             file_paths = {
                 'names2': os.path.join(self.data_dir, 'Names2.txt'),
                 'names': os.path.join(self.data_dir, 'Names.txt'),
@@ -176,112 +141,87 @@ class DataLoader:
                 'chinese_phien_am': os.path.join(self.data_dir, 'ChinesePhienAmWords.txt')
             }
             
-            # If we have existing data and only need to reload one file
+            # Verify files exist
+            missing_files = [name for name, path in file_paths.items() if not os.path.exists(path)]
+            if missing_files:
+                raise DataLoadError(f"Missing files: {missing_files} in {self.data_dir}")
+
             if specific_file and self.loaded_data:
                 names2_trie, names_trie, viet_phrase_trie, chinese_phien_am_data, old_info = self.loaded_data
                 
-                # Only reload the specific file
                 if specific_file == 'Names2.txt':
-                    names2_data = {}
+                    names2_data = self.load_dictionary(file_paths['names2'])
                     names2_trie = Trie()
-                    if os.path.exists(file_paths['names2']):
-                        names2_data = load_file(file_paths['names2'])
-                        if DataValidator.validate_dictionary(names2_data, min_entries=0):
-                            for key in names2_data:
-                                names2_trie.insert(key, names2_data[key])
+                    for key, value in names2_data.items():
+                        names2_trie.insert(key, value)
+                        
                 elif specific_file == 'Names.txt':
-                    names_data = load_file(file_paths['names'])
+                    names_data = self.load_dictionary(file_paths['names'])
                     names_trie = Trie()
-                    for key in names_data:
-                        names_trie.insert(key, names_data[key])
+                    for key, value in names_data.items():
+                        names_trie.insert(key, value)
+                        
                 elif specific_file == 'VietPhrase.txt':
-                    viet_phrase_data = load_file(file_paths['viet_phrase'])
+                    viet_phrase_data = self.load_dictionary(file_paths['viet_phrase'])
                     viet_phrase_trie = Trie()
-                    for key in viet_phrase_data:
-                        viet_phrase_trie.insert(key, viet_phrase_data[key])
+                    for key, value in viet_phrase_data.items():
+                        viet_phrase_trie.insert(key, value)
+                        
                 elif specific_file == 'ChinesePhienAmWords.txt':
-                    chinese_phien_am_data = load_file(file_paths['chinese_phien_am'])
+                    chinese_phien_am_data = self.load_dictionary(
+                        file_paths['chinese_phien_am']
+                    )
+                
             else:
                 # Load all data
-                names2_data = {}
                 names2_trie = Trie()
-                if os.path.exists(file_paths['names2']):
-                    names2_data = load_file(file_paths['names2'])
-                    if DataValidator.validate_dictionary(names2_data, min_entries=0):
-                        for key in names2_data:
-                            names2_trie.insert(key, names2_data[key])
-                        if not DataValidator.validate_trie(names2_trie, min_entries=0):
-                            logger.warning("Names2.txt Trie validation failed, ignoring the file")
-                            names2_data = {}
-                            names2_trie = Trie()
-                    else:
-                        logger.warning("Names2.txt data validation failed, ignoring the file")
-                        names2_data = {}
+                names_trie = Trie()
+                viet_phrase_trie = Trie()
                 
-                names_data = load_file(file_paths['names'])
-                viet_phrase_data = load_file(file_paths['viet_phrase'])
-                chinese_phien_am_data = load_file(file_paths['chinese_phien_am'])
-            
-            # Validate loaded data
-            if not all([
-                DataValidator.validate_dictionary(names_data),
-                DataValidator.validate_dictionary(viet_phrase_data),
-                DataValidator.validate_dictionary(chinese_phien_am_data)
-            ]):
-                raise DataLoadError("Data validation failed")
-            
-            # Create Trie structures
-            names_trie = Trie()
-            viet_phrase_trie = Trie()
-            
-            for key in names_data:
-                names_trie.insert(key, names_data[key])
-            for key in viet_phrase_data:
-                viet_phrase_trie.insert(key, viet_phrase_data[key])
-            
-            # Validate Trie structures
-            if not all([
-                DataValidator.validate_trie(names_trie),
-                DataValidator.validate_trie(viet_phrase_trie)
-            ]):
-                raise DataLoadError("Trie validation failed")
-            
+                # Load dictionaries
+                names2_data = self.load_dictionary(file_paths['names2']) if os.path.exists(file_paths['names2']) else {}
+                names_data = self.load_dictionary(file_paths['names'])
+                viet_phrase_data = self.load_dictionary(file_paths['viet_phrase'])
+                chinese_phien_am_data = self.load_dictionary(file_paths['chinese_phien_am'])
+
+                # Populate tries
+                for key, value in names2_data.items():
+                    names2_trie.insert(key, value)
+                for key, value in names_data.items():
+                    names_trie.insert(key, value)
+                for key, value in viet_phrase_data.items():
+                    viet_phrase_trie.insert(key, value)
+
             # Update loading information
-            loading_info['files_loaded'] = [name for name, path in file_paths.items() if os.path.exists(path)]
+            loading_info['files_loaded'] = list(file_paths.keys())
             loading_info['file_sizes'] = {
-                name: os.path.getsize(path) for name, path in file_paths.items() if os.path.exists(path)
+                name: os.path.getsize(path) for name, path in file_paths.items()
             }
-            
-            # Cache the results
+            loading_info['entry_counts'] = {
+                'Names2': names2_trie.count(),
+                'Names': names_trie.count(),
+                'VietPhrase': viet_phrase_trie.count(),
+                'ChinesePhienAm': len(chinese_phien_am_data)
+            }
+
+            logger.info(f"Dictionary entry counts: {loading_info['entry_counts']}")
+
+            # Cache and return results
             self.loaded_data = (
-                names2_trie, 
-                names_trie, 
-                viet_phrase_trie, 
-                chinese_phien_am_data, 
+                names2_trie,
+                names_trie,
+                viet_phrase_trie,
+                chinese_phien_am_data,
                 loading_info
             )
             self.last_load_time = datetime.now()
-            
             return self.loaded_data
-        
-        except Exception as e:
-            logger.error(f"Data loading failed: {e}")
-            raise DataLoadError(f"Comprehensive data loading failed: {e}")
 
-# Maintain backward compatibility with existing code
-def load_data(
-    data_dir: Optional[str] = None, 
-    required_files: Optional[List[str]] = None
-) -> Tuple[Trie, Trie, Trie, Dict[str, str], Dict[str, Any]]:
-    """
-    Backward-compatible load_data function.
-    
-    Args:
-        data_dir (Optional[str]): Custom data directory
-        required_files (Optional[List[str]]): Custom list of required files
-    
-    Returns:
-        Tuple containing loaded data structures and loading information
-    """
+        except Exception as e:
+            logger.error(f"Failed to load dictionaries: {e}")
+            raise DataLoadError(str(e))
+
+def load_data(data_dir: Optional[str] = None, required_files: Optional[List[str]] = None) -> Tuple[Trie, Trie, Trie, Dict[str, str], Dict[str, Any]]:
+    """Backward-compatible function for loading data."""
     loader = DataLoader(data_dir, required_files)
     return loader.load_data()

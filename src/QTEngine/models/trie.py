@@ -101,6 +101,58 @@ class Trie:
                 longest_value = current.value
         return longest_prefix, longest_value
 
+    def remove(self, word: str) -> bool:
+        """
+        Remove a word from the Trie.
+        
+        Args:
+            word (str): Word to remove
+            
+        Returns:
+            bool: True if word was removed, False if not found
+        """
+        def _remove_helper(node: TrieNode, word: str, depth: int) -> bool:
+            if depth == len(word):
+                # Word found, remove it
+                if node.is_end_of_word:
+                    node.is_end_of_word = False
+                    node.value = None
+                    self.word_count -= 1
+                    return True
+                return False
+                
+            char = word[depth]
+            if char not in node.children:
+                return False
+                
+            should_delete = _remove_helper(node.children[char], word, depth + 1)
+            
+            # If child has no other children and is not end of word, remove it
+            child = node.children[char]
+            if should_delete and not child.children and not child.is_end_of_word:
+                del node.children[char]
+                
+            return should_delete
+            
+        return _remove_helper(self.root, word, 0)
+        
+    def find(self, word: str) -> Optional[str]:
+        """
+        Find the value associated with a word.
+        
+        Args:
+            word (str): Word to look up
+            
+        Returns:
+            Optional[str]: Associated value if found, None otherwise
+        """
+        current = self.root
+        for char in word:
+            if char not in current.children:
+                return None
+            current = current.children[char]
+        return current.value if current.is_end_of_word else None
+
     def get_all_words(self) -> List[Tuple[str, str]]:
         """
         Retrieve all words and their values from the Trie.

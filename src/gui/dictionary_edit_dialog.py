@@ -129,8 +129,9 @@ class DictionaryEditDialog(QDialog):
             
             layout.addLayout(case_layout)
             
-            # Apply proper case by default for Names/Names2
-            self.apply_proper_case()
+            # Apply proper case by default only for new entries in Names/Names2
+            if not self.is_edit:
+                self.apply_proper_case()
         
         # Buttons
         button_layout = QHBoxLayout()

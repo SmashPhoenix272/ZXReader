@@ -83,55 +83,85 @@ class TranslationTextEdit(QPlainTextEdit):
         self.selection_in_original = False
         self.last_clicked_segment = None
 
+    def get_selected_text_info(self) -> Optional[Tuple[str, str, bool]]:
+        """Get the selected text and corresponding Chinese text.
+        
+        Returns:
+            Optional[Tuple[str, str, bool]]: (selected_text, chinese_text, is_original)
+            or None if no valid selection
+        """
+        cursor = self.textCursor()
+        if not cursor.hasSelection():
+            return None
+            
+        selected_text = cursor.selectedText().strip()
+        if not selected_text:
+            return None
+            
+        # Get selected segments
+        start_pos = cursor.selectionStart()
+        end_pos = cursor.selectionEnd()
+        selected_segments = []
+        
+        for segment in self.segments:
+            if (segment.start_pos <= end_pos and segment.end_pos >= start_pos):
+                seg_start = max(start_pos, segment.start_pos)
+                seg_end = min(end_pos, segment.end_pos)
+                if seg_end > seg_start:
+                    text = segment.text[
+                        max(0, seg_start - segment.start_pos):
+                        seg_end - segment.start_pos
+                    ].strip()
+                    if text:
+                        selected_segments.append((text, segment))
+        
+        if not selected_segments:
+            return None
+            
+        # Handle original text selection
+        first_segment = selected_segments[0][1]
+        if first_segment.is_original:
+            chinese_text = ''.join(text for text, _ in selected_segments)
+            return (chinese_text, chinese_text, True)
+            
+        # Handle translated text selection
+        viet_text = ' '.join(text for text, _ in selected_segments)
+        viet_text = viet_text.strip()
+        
+        # Find corresponding Chinese text
+        chinese_text = ''
+        for _, segment in selected_segments:
+            if segment.mapping_block:
+                chinese_text += segment.mapping_block.original
+        
+        if chinese_text:
+            return (viet_text, chinese_text, False)
+        
+        return None
+
     def contextMenuEvent(self, event):
         """Handle right-click context menu."""
         menu = QMenu(self)
         
-        # Check for selected text first
-        cursor = self.textCursor()
-        if cursor.hasSelection():
-            selected_text = cursor.selectedText()
-            if selected_text.strip():
-                # Get the segment to check if selection is in original text
-                pos = cursor.selectionStart()
-                segment = self.find_segment_at_position(pos)
-                if segment:
-                    if segment.is_original:
-                        chinese_text = selected_text
-                        hanviet = self.dictionary_manager.convert_to_hanviet(chinese_text)
-                        
-                        # Add dictionary actions for selected text
-                        for dict_name in ["Names", "Names2", "VietPhrase"]:
-                            existing_def = self.dictionary_manager.get_definition(dict_name, chinese_text)
-                            action_text = f"Edit {dict_name}" if existing_def else f"Add to {dict_name}"
-                            action = QAction(action_text, self)
-                            action.triggered.connect(
-                                lambda checked, d=dict_name, c=chinese_text, h=hanviet, e=existing_def:
-                                self.show_dictionary_dialog(d, c, h, e)
-                            )
-                            menu.addAction(action)
-                        
-                        menu.exec_(event.globalPos())
-                        return
-                    elif segment.mapping_block:
-                        # For translated text, try to find the corresponding Chinese text
-                        # by looking up the mapping block
-                        chinese_text = segment.mapping_block.original
-                        hanviet = self.dictionary_manager.convert_to_hanviet(chinese_text)
-                        
-                        # Add dictionary actions for the original Chinese text
-                        for dict_name in ["Names", "Names2", "VietPhrase"]:
-                            existing_def = self.dictionary_manager.get_definition(dict_name, chinese_text)
-                            action_text = f"Edit {dict_name}" if existing_def else f"Add to {dict_name}"
-                            action = QAction(action_text, self)
-                            action.triggered.connect(
-                                lambda checked, d=dict_name, c=chinese_text, h=hanviet, e=existing_def:
-                                self.show_dictionary_dialog(d, c, h, e)
-                            )
-                            menu.addAction(action)
-                        
-                        menu.exec_(event.globalPos())
-                        return
+        # Get selected text info
+        text_info = self.get_selected_text_info()
+        if text_info:
+            selected_text, chinese_text, is_original = text_info
+            hanviet = self.dictionary_manager.convert_to_hanviet(chinese_text)
+            
+            # Add dictionary actions
+            for dict_name in ["Names", "Names2", "VietPhrase"]:
+                existing_def = self.dictionary_manager.get_definition(dict_name, chinese_text)
+                action_text = f"Edit {dict_name}" if existing_def else f"Add to {dict_name}"
+                action = QAction(action_text, self)
+                action.triggered.connect(
+                    lambda checked, d=dict_name, c=chinese_text, h=hanviet, e=existing_def:
+                    self.show_dictionary_dialog(d, c, h, e)
+                )
+                menu.addAction(action)
+            
+            menu.exec_(event.globalPos())
+            return
         
         # Fall back to highlighted block if no text is selected
         cursor = self.cursorForPosition(event.pos())
@@ -674,18 +704,265 @@ class MainTranslationPanel(QWidget):
         Args:
             specific_file (Optional[str]): If provided, only reload this specific dictionary
         """
-        # Get the current text before refreshing
-        current_text = None
-        if self.chapter_manager.chapters:
-            current_text = self.chapter_manager.get_chapter_text(self.current_chapter_index)
+        from PyQt5.QtCore import QTimer
         
-        # Reload only the specific dictionary if provided
+        # Only refresh if we have chapters
+        if not self.chapter_manager.chapters:
+            return
+            
+        # Reload only the specific dictionary
         self.dictionary_panel.dictionary_manager.load_dictionaries(specific_file=specific_file)
         
-        # Force refresh translation with current text
-        if current_text:
-            # Get translation and mapping with force_refresh
-            translated_text = self.translation_manager.translate_text(current_text, force_refresh=True)
+        # Use a timer to delay the update, passing the specific file
+        QTimer.singleShot(100, lambda sf=specific_file: self._delayed_update(sf))
+    
+    def _delayed_update(self, specific_file: Optional[str] = None):
+        """Perform a simple refresh of the translation after dictionary changes."""
+        # Store scroll position
+        scroll_value = self.text_edit.verticalScrollBar().value()
+        
+        # Clear the translation caches and reload only the specific dictionary
+        self.translation_manager.qt_engine.refresh_data(
+            force_reload=True,
+            specific_file=specific_file
+        )
+        
+        # Re-translate the current chapter with fresh data
+        self.set_chapter_text(self.current_chapter_index)
+        
+        # Restore scroll position
+        self.text_edit.verticalScrollBar().setValue(scroll_value)
+
+    def _add_paragraph_segments(self, original_text, translated_text, mapping, start_pos):
+        """Add segments for a paragraph to the text edit with proper formatting."""
+        current_pos = start_pos
+        
+        # Handle original text if showing
+        if self.show_original:
+            for block in mapping.blocks:
+                self.text_edit.add_segment(TextSegment(
+                    block.original,
+                    current_pos,
+                    True,
+                    block
+                ))
+                current_pos += len(block.original)
+            self.text_edit.add_segment(TextSegment("\n", current_pos, True))
+            current_pos += 1
+
+        # Format and combine all translated text
+        trans_text = ' '.join(block.translated for block in mapping.blocks)
+        trans_text = format_translated_text(trans_text)
+        
+        # Capitalize first letter if needed
+        if trans_text and not trans_text[0].isupper() and trans_text[0].isalpha():
+            trans_text = trans_text[0].upper() + trans_text[1:]
             
-            # Update the display
-            self.set_chapter_text(self.current_chapter_index)
+        # Split back into blocks while preserving spacing
+        trans_parts = []
+        current_idx = 0
+        for block in mapping.blocks:
+            block_text = block.translated.strip()
+            if not block_text:
+                trans_parts.append(TextSegment(
+                    "",
+                    current_pos + current_idx,
+                    False,
+                    block
+                ))
+                continue
+            
+            # Find position in formatted text
+            idx = trans_text.lower().find(block_text.lower(), current_idx)
+            if idx >= 0:
+                # Add spacing before block
+                if idx > current_idx:
+                    trans_parts.append(TextSegment(
+                        trans_text[current_idx:idx],
+                        current_pos + current_idx,
+                        False
+                    ))
+                # Add block with proper formatting
+                actual_text = trans_text[idx:idx + len(block_text)]
+                trans_parts.append(TextSegment(
+                    actual_text,
+                    current_pos + idx,
+                    False,
+                    block
+                ))
+                current_idx = idx + len(block_text)
+        
+        # Add remaining spacing
+        if current_idx < len(trans_text):
+            trans_parts.append(TextSegment(
+                trans_text[current_idx:],
+                current_pos + current_idx,
+                False
+            ))
+        
+        # Add all translated segments
+        for segment in trans_parts:
+            self.text_edit.add_segment(segment)
+            current_pos += len(segment.text)
+
+        # Add paragraph break
+        self.text_edit.add_segment(TextSegment("\n\n", current_pos, False))
+    
+    def _split_text_into_chunks(self, text, chunk_size=1000):
+        """Split the text into smaller chunks for processing."""
+        return [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
+    
+    def _process_chunks(self, chunks, index, scroll_value):
+        """Process text chunks incrementally to prevent UI freezing."""
+        from PyQt5.QtCore import QTimer
+        
+        if index < len(chunks):
+            chunk = chunks[index]
+            # Translate the chunk
+            translated_text = self.translation_manager.translate_text(chunk, force_refresh=True)
+            mapping = self.translation_manager.current_mapping
+            
+            # Update the text edit with the translated chunk
+            self._update_text_edit_with_chunk(translated_text, mapping, index == 0)
+            
+            # Schedule the next chunk processing
+            QTimer.singleShot(0, lambda: self._process_chunks(chunks, index + 1, scroll_value))
+        else:
+            # All chunks processed, restore scroll position
+            self.text_edit.verticalScrollBar().setValue(scroll_value)
+    
+    def _update_text_edit_with_chunk(self, translated_text, mapping, is_first_chunk):
+        """Update the text edit with a translated chunk."""
+        if is_first_chunk:
+            self.text_edit.clear_segments()
+        
+        current_pos = sum(len(segment.text) for segment in self.text_edit.segments)
+        
+        if mapping:
+            for block in mapping.blocks:
+                if self.show_original:
+                    self.text_edit.add_segment(TextSegment(
+                        block.original,
+                        current_pos,
+                        True,
+                        block
+                    ))
+                    current_pos += len(block.original)
+                    
+                    self.text_edit.add_segment(TextSegment("\n", current_pos, True))
+                    current_pos += 1
+                
+                self.text_edit.add_segment(TextSegment(
+                    block.translated,
+                    current_pos,
+                    False,
+                    block
+                ))
+                current_pos += len(block.translated)
+        else:
+            # If no mapping is available, add the translated text as a single segment
+            self.text_edit.add_segment(TextSegment(
+                translated_text,
+                current_pos,
+                False,
+                None
+            ))
+            current_pos += len(translated_text)
+        
+        if not is_first_chunk:
+            self.text_edit.add_segment(TextSegment("\n\n", current_pos, False))
+            current_pos += 2
+            
+    def _rebuild_chapter_text(self, text: str, mapping: TranslationMapping, 
+                            old_segments: Optional[Dict[str, TextSegment]] = None):
+        """Rebuild chapter text with optimized segment handling."""
+        current_pos = 0
+        paragraphs = text.splitlines()
+        
+        for i, paragraph in enumerate(paragraphs):
+            if not paragraph.strip():
+                continue
+                
+            if self.show_original:
+                # Add original text
+                for block in mapping.blocks:
+                    # Try to reuse segment formats from old mappings
+                    if old_segments and block.original in old_segments:
+                        old_seg = old_segments[block.original]
+                        self.text_edit.add_segment(TextSegment(
+                            block.original,
+                            current_pos,
+                            True,
+                            block
+                        ))
+                    else:
+                        self.text_edit.add_segment(TextSegment(
+                            block.original,
+                            current_pos,
+                            True,
+                            block
+                        ))
+                    current_pos += len(block.original)
+                
+                self.text_edit.add_segment(TextSegment("\n", current_pos, True))
+                current_pos += 1
+            
+            # Handle translated text efficiently
+            trans_text = ' '.join(block.translated for block in mapping.blocks)
+            trans_text = format_translated_text(trans_text)
+            
+            # Capitalize first letter if needed
+            if trans_text and not trans_text[0].isupper() and trans_text[0].isalpha():
+                trans_text = trans_text[0].upper() + trans_text[1:]
+            
+            # Optimized segment creation
+            trans_parts = []
+            current_idx = 0
+            for block in mapping.blocks:
+                block_text = block.translated.strip()
+                if not block_text:
+                    trans_parts.append(TextSegment(
+                        "",
+                        current_pos + current_idx,
+                        False,
+                        block
+                    ))
+                    continue
+                
+                idx = trans_text.lower().find(block_text.lower(), current_idx)
+                if idx >= 0:
+                    # Add spacing before block
+                    if idx > current_idx:
+                        trans_parts.append(TextSegment(
+                            trans_text[current_idx:idx],
+                            current_pos + current_idx,
+                            False
+                        ))
+                    
+                    # Add block with proper capitalization
+                    actual_text = trans_text[idx:idx + len(block_text)]
+                    trans_parts.append(TextSegment(
+                        actual_text,
+                        current_pos + idx,
+                        False,
+                        block
+                    ))
+                    current_idx = idx + len(block_text)
+            
+            # Add remaining text
+            if current_idx < len(trans_text):
+                trans_parts.append(TextSegment(
+                    trans_text[current_idx:],
+                    current_pos + current_idx,
+                    False
+                ))
+            
+            # Add all segments at once
+            for segment in trans_parts:
+                self.text_edit.add_segment(segment)
+                current_pos += len(segment.text)
+            
+            # Add paragraph break
+            if i < len(paragraphs) - 1:
+                self.text_edit.add_segment(TextSegment("\n\n", current_pos, False))
+                current_pos += 2

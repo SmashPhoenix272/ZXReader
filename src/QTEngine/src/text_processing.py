@@ -126,8 +126,7 @@ def convert_to_sino_vietnamese(
 ) -> Tuple[str, TranslationMapping]:
     """
     Convert Chinese text to Sino-Vietnamese using block-based mapping.
-    Now with improved compound word handling.
-
+    
     Args:
         text (str): The input Chinese text.
         names2 (Trie): Trie containing Names2.txt data.
@@ -135,19 +134,6 @@ def convert_to_sino_vietnamese(
         viet_phrase (Trie): Trie containing VietPhrase.txt data.
         chinese_phien_am (Dict[str, str]): Dictionary containing ChinesePhienAmWords.txt data.
         force_refresh (bool): Force refresh of translation data.
-
-    Returns:
-        Tuple[str, TranslationMapping]: The converted Sino-Vietnamese text and mapping information.
-    """
-    """
-    Convert Chinese text to Sino-Vietnamese using block-based mapping.
-
-    Args:
-        text (str): The input Chinese text.
-        names2 (Trie): Trie containing Names2.txt data.
-        names (Trie): Trie containing Names.txt data.
-        viet_phrase (Trie): Trie containing VietPhrase.txt data.
-        chinese_phien_am (Dict[str, str]): Dictionary containing ChinesePhienAmWords.txt data.
 
     Returns:
         Tuple[str, TranslationMapping]: The converted Sino-Vietnamese text and mapping information.
@@ -351,7 +337,7 @@ def process_paragraph(
                 
         content = line.lstrip()
         if content:
-            converted, line_mapping = convert_to_sino_vietnamese(content, names2, names, viet_phrase, chinese_phien_am)
+            converted, line_mapping = convert_to_sino_vietnamese(content, names2, names, viet_phrase, chinese_phien_am, force_refresh)
             result_lines.append(leading_space + converted)
             
             # Adjust positions for leading space

@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Optional, Any, Tuple
+from typing import Dict, Optional, Any, Tuple, List
+from functools import lru_cache
+from datetime import datetime, timedelta
 import logging
 import os
 
@@ -94,12 +96,56 @@ class TranslationEngine(ABC):
         """
         raise NotImplementedError("Subclasses must implement translation validation")
     
-    def refresh_data(self):
+    def refresh_data(self, force_reload: bool = False, specific_file: Optional[str] = None):
         """
         Optional method to refresh translation data.
         Can be overridden by subclasses to perform custom actions on data reload.
+        
+        Args:
+            force_reload (bool): Whether to force a complete reload of all data
+        
+        Note: This clears all translation caches to ensure fresh results.
         """
-        pass
+        # Clear both translation caches
+        if hasattr(self, '_translate_cached'):
+            self._translate_cached.cache_clear()
+        if hasattr(self, '_translate_with_mapping_cached'):
+            self._translate_with_mapping_cached.cache_clear()
+            
+        # If forcing reload, trigger data loader refresh
+        if force_reload and self.data_loader:
+            if specific_file:
+                self.data = self.data_loader.load_data(specific_file=specific_file)
+            else:
+                self.data = self.data_loader.load_data()
+            
+        logger.info("Translation data and caches refreshed successfully")
+        
+    @lru_cache(maxsize=1000)
+    def _translate_cached(self, text: str) -> str:
+        """
+        Cached translation helper to improve performance.
+        
+        Args:
+            text (str): Text to translate
+            
+        Returns:
+            str: Translated text
+        """
+        return self.translate(text)
+
+    @lru_cache(maxsize=1000)
+    def _translate_with_mapping_cached(self, text: str) -> Tuple[str, Any]:
+        """
+        Cached translation with mapping helper.
+        
+        Args:
+            text (str): Text to translate
+            
+        Returns:
+            Tuple[str, Any]: Tuple of translated text and mapping
+        """
+        raise NotImplementedError("Subclasses must implement _translate_with_mapping_cached")
     
     def get_translation_metadata(self) -> Dict[str, Any]:
         """
