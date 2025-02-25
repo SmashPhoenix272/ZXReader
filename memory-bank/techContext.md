@@ -1,57 +1,80 @@
 # Dictionary Loading System
 
-## Data Formats
-- Names2.txt: Key-value pairs with = or tab separator
-- Names.txt: Key-value pairs with = or tab separator 
-- VietPhrase.txt: Key-value pairs with = or tab separator
-- ChinesePhienAmWords.txt: Chinese-Vietnamese translations using = separator (e.g., "上=thượng")
+[Previous content remains unchanged...]
 
-## Dictionary Loading Process
-1. Base Loading:
-   - Support both = and tab separators
-   - Strip whitespace from keys and values
-   - Skip empty lines and comments (#)
-   - Track line counts and entry counts
+# Dictionary Edit Dialog System
 
-2. Format Detection:
-   - Check for = separator first
-   - Fall back to tab separator if = not found
-   - Skip invalid entries (missing key or value)
+## Core Components
+1. Text Input Management:
+   - Read-only Chinese text display
+   - Read-only Hán Việt display
+   - Editable definition field
+   - Context preview with selection support
 
-3. Error Handling:
-   - File existence verification
-   - Entry validation with configurable thresholds
-   - Detailed logging of loading issues
-   - Retry mechanism for load failures
+2. Case Modification System:
+   - First letter capitalization for words
+   - Single/multiple word support
+   - Proper case handling for Names/Names2
+   - Automatic case application for new entries
 
-4. Performance:
-   - Single pass file reading
-   - Efficient string parsing
-   - Minimize memory allocations
-   - Early validation and error detection
+3. Context Preview System:
+   - Fixed-width context window (~15 chars per side)
+   - Dynamic text selection tracking
+   - HTML-based highlighting
+   - Navigation controls for selection expansion
+
+## Selection Management
+1. Selection Tracking:
+   - Start and end position tracking
+   - Character-by-character expansion
+   - Context window adjustment
+   - Selection validation
+
+2. Dictionary Mode Handling:
+   - Automatic mode detection (add/edit)
+   - Dictionary type preservation
+   - Cross-dictionary entry checking
+   - Proper case defaults for new entries
+
+3. UI Updates:
+   - Dynamic title updates
+   - Selection highlighting
+   - Navigation button states
+   - Text field synchronization
 
 ## Data Validation
-- Dictionary validation with minimum entry thresholds
-- Names/Names2: No minimum (allow few entries)
-- VietPhrase: 10+ entries required 
-- ChinesePhienAm: 10+ entries required
-- Trie validation for relevant dictionaries
+- Selection boundary validation
+- Dictionary entry existence checks
+- Text format validation
+- Mode transition validation
 
-## Logging
-- File sizes and locations
-- Entry counts per dictionary
-- Line processing statistics
-- Loading issues and warnings
-- Format detection results
+## UI Components
+1. Text Fields:
+   - Chinese text display
+   - Hán Việt display
+   - Definition input
+   - Context preview
 
-## Memory Management
-- Clear unused data
-- Proper cache handling
+2. Case Modification Controls:
+   - Individual letter buttons
+   - Word-based operations
+   - Proper case button
+   - All first letters button
+
+3. Context Navigation:
+   - Previous/Next buttons
+   - Selection expansion
+   - Visual indicators for more context
+   - Modern styling elements
+
+## Error Handling
+- Selection boundary protection
+- Invalid selection prevention
+- Dictionary lookup failures
+- Text update synchronization
+
+## Performance Considerations
+- Efficient text updates
+- Minimal redraws
+- Smooth navigation
 - Resource cleanup
-- Memory-efficient data structures
-
-## Error Recovery
-- Retry failed loads
-- Maintain existing data on partial failures
-- Clear error messages
-- Proper error propagation

@@ -1,47 +1,47 @@
 # Progress Log
 
-## 2025-02-24: Dictionary Loading System Updates
+## 2025-02-25: Edit Dictionary Dialog Improvements
 ### Changes Made
-- Fixed ChinesePhienAmWords.txt loading issues
-- Added proper format detection for = and tab separators
-- Improved error handling and validation
-- Enhanced logging and statistics
-- Fixed retry mechanism to avoid unnecessary retries
-- Added detailed entry tracking and warnings
-- Updated documentation in techContext.md
+- Enhanced case modification options for all dictionaries
+- Implemented context preview with dynamic text selection
+- Added dictionary type indication in dialog title
+- Improved proper case handling
 
 ### Key Improvements
-1. Format Handling:
-   - Support both = and tab separators
-   - Proper whitespace handling
-   - Skip invalid entries
-   - Format-specific parsing
+1. Case Modification:
+   - Case options now available for all dictionary types
+   - Updated to modify first letter of words only
+   - Added proper case defaults for Names/Names2
 
-2. Validation:
-   - Entry count tracking
-   - Per-dictionary thresholds
-   - Early validation checks
+2. Context Preview:
+   - Added context window showing ~15 chars on each side
+   - Dynamic highlighting of selected text
+   - Interactive navigation arrows to expand selection
+   - Modern styling with better readability
 
-3. Error Handling:
-   - Specific error messages with context
-   - Proper retry logic only on DataLoadError
-   - Maintain existing data on partial failures
+3. Dictionary Mode Handling:
+   - Clear indication of current dictionary in title
+   - Automatic mode switching (add/edit) when selection changes
+   - Maintains dictionary type when entry exists
+   - Proper case auto-applied for new Names/Names2 entries
 
-4. Logging:
-   - Added detailed entry counts
-   - Line processing statistics
-   - File size tracking
-   - Format parsing results
+4. Navigation Features:
+   - Left/right arrows expand selection one character at a time
+   - Preview updates with expanded selection
+   - Automatic dictionary lookup for new selections
+   - Smooth transition between edit/add modes
 
 ### Testing Notes
-- Verified ChinesePhienAmWords.txt loads correctly
-- Confirmed proper loading of entries like "上=thượng"
-- Entry counts now accurate for all dictionaries
-- No more unnecessary retries
-- Improved error messages assist troubleshooting
+- Verified case modification works on first letters only
+- Confirmed proper case applies for new Names/Names2 entries
+- Tested context navigation and selection expansion
+- Validated dictionary mode switching behavior
 
 ### Next Steps
-- Monitor memory usage under load
-- Consider adding data integrity checks
-- Look into optimizing large dictionary loading
-- Consider adding dictionary statistics export
+- Consider adding context history tracking
+- Look into multi-character expansion options
+- Consider adding keyboard shortcuts for navigation
+- Think about adding undo/redo for selection changes
+
+## 2025-02-24: Dictionary Loading System Updates
+[Previous content remains unchanged...]

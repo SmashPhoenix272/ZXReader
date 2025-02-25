@@ -188,13 +188,19 @@ class TranslationTextEdit(QPlainTextEdit):
     def show_dictionary_dialog(self, dictionary_name: str, chinese_text: str, 
                              hanviet: str, existing_def: Optional[str]):
         """Show dialog for adding/editing dictionary entry."""
+        # Get current chapter text for context
+        current_text = ""
+        if self.chapter_manager.chapters:
+            current_text = self.chapter_manager.get_chapter_text(self.current_chapter_index)
+            
         dialog = DictionaryEditDialog(
             self,
             chinese_text=chinese_text,
             hanviet=hanviet,
             definition=existing_def or hanviet,  # Use hanviet as default definition
             dictionary_type=dictionary_name,
-            is_edit=existing_def is not None
+            is_edit=existing_def is not None,
+            context_text=current_text
         )
         
         # Connect the dialog's dictionary_updated signal to our signal
@@ -451,8 +457,10 @@ class MainTranslationPanel(QWidget):
         self.dictionary_panel = dictionary_panel
         self.current_chapter_index = 0  # Track current chapter
         
-        # Create text edit with dictionary manager from dictionary panel
+        # Create text edit with dictionary manager and chapter manager
         self.text_edit = TranslationTextEdit(self.dictionary_panel.dictionary_manager)
+        self.text_edit.chapter_manager = self.chapter_manager
+        self.text_edit.current_chapter_index = self.current_chapter_index
         self.text_edit.segment_clicked.connect(self.handle_segment_click)
         self.text_edit.selection_lookup.connect(self.handle_selection_lookup)
         self.text_edit.dictionary_updated.connect(self.handle_dictionary_update)
@@ -474,6 +482,7 @@ class MainTranslationPanel(QWidget):
         """Set the text for a chapter."""
         self.text_edit.clear_segments()
         self.current_chapter_index = chapter_index  # Update current chapter index
+        self.text_edit.current_chapter_index = chapter_index  # Update text edit's index too
         
         # Get original text and translate
         original_text = self.chapter_manager.get_chapter_text(chapter_index)
