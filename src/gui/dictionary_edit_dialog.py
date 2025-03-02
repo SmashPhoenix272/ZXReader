@@ -109,10 +109,12 @@ class DictionaryEditDialog(QDialog):
         chinese_layout = QHBoxLayout()
         chinese_label = QLabel("Chinese Text:")
         self.chinese_edit = QLineEdit(self.chinese_text)
-        self.chinese_edit.setReadOnly(True)
         chinese_layout.addWidget(chinese_label)
         chinese_layout.addWidget(self.chinese_edit)
         layout.addLayout(chinese_layout)
+        
+        # Connect Chinese text change handler
+        self.chinese_edit.textChanged.connect(self.on_chinese_text_changed)
         
         # Hán Việt
         hanviet_layout = QHBoxLayout()
@@ -350,6 +352,49 @@ class DictionaryEditDialog(QDialog):
         """Expand selection to include next character."""
         if self.selection_end < len(self.context_text_full):
             self.update_selection(self.selection_start, self.selection_end + 1)
+            
+    def on_chinese_text_changed(self, new_text: str):
+        """Handle changes to Chinese text field."""
+        # Update Hán Việt
+        new_hanviet = self.parent().dictionary_manager.convert_to_hanviet(new_text)
+        self.hanviet_edit.setText(new_hanviet)
+        
+        # Check for existing definitions
+        existing_def = None
+        if self.dictionary_type:
+            existing_def = self.parent().dictionary_manager.get_definition(
+                self.dictionary_type, new_text)
+                
+        # If not found, check other dictionaries
+        if not existing_def:
+            for dict_name in ["Names", "Names2", "VietPhrase"]:
+                if dict_name != self.dictionary_type:
+                    definition = self.parent().dictionary_manager.get_definition(
+                        dict_name, new_text)
+                    if definition:
+                        existing_def = definition
+                        self.dictionary_type = dict_name
+                        break
+        
+        # Update window title and definition
+        self.is_edit = existing_def is not None
+        title = f"Edit {self.dictionary_type}" if self.is_edit else f"Add to {self.dictionary_type}"
+        self.setWindowTitle(title)
+        
+        if existing_def:
+            self.definition_edit.setText(existing_def)
+        else:
+            self.definition_edit.setText(new_hanviet)
+            if self.dictionary_type in ["Names", "Names2"]:
+                self.apply_proper_case()
+                
+        # Update context display
+        if self.context_text_full:
+            # Keep selection length synchronized with text length
+            new_end = self.selection_start + len(new_text)
+            self.selection_end = new_end
+            self.context_text.setText(self.get_context_preview())
+            self.update_nav_buttons()
     
     def get_values(self):
         """Get the dialog values."""
