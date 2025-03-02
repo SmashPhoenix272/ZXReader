@@ -1,8 +1,14 @@
 import os
+import time
+import logging
+from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from src.QTEngine.models.trie import Trie
 from PyQt5.QtWidgets import QFileDialog, QApplication
 import sys
 from typing import Dict, Optional, List, Tuple
+
+logger = logging.getLogger(__name__)
 
 class DictionaryManager:
     # Define the order of dictionaries for display
@@ -10,9 +16,27 @@ class DictionaryManager:
 
     def __init__(self):
         """Initializes the Dictionary Manager."""
+        from src.QTEngine.src.data_loader import DataLoader
+        
+        logger.info("Initializing DictionaryManager")
         self.dictionaries = {}
-        self.qt_engine_dictionaries = {}  # QTEngine's dictionaries (Names, Names2, VietPhrase)
-        self.chinese_phien_am_data = {}  # Dictionary for ChinesePhienAmWords
+        
+        # Get dictionaries from QTEngine's singleton DataLoader
+        data_loader = DataLoader()
+        if data_loader.loaded_data:
+            logger.info("Reusing dictionaries from QTEngine's DataLoader")
+            self.names2_trie, self.names_trie, self.viet_phrase_trie, self.chinese_phien_am_data, _ = data_loader.loaded_data
+            # Map to our dictionary structure
+            self.qt_engine_dictionaries = {
+                'Names2': self.names2_trie,
+                'Names': self.names_trie,
+                'VietPhrase': self.viet_phrase_trie
+            }
+        else:
+            logger.warning("QTEngine dictionaries not loaded, initializing empty")
+            self.qt_engine_dictionaries = {}
+            self.chinese_phien_am_data = {}
+            
         self.load_dictionaries()
 
     def load_dictionaries(self, specific_file: Optional[str] = None):
@@ -22,6 +46,9 @@ class DictionaryManager:
         Args:
             specific_file (Optional[str]): If provided, only reload this specific dictionary
         """
+        self._loading_start_time = time.time()
+        logger.info("Starting dictionary loading process")
+        
         # Get the project root directory
         current_dir = os.path.dirname(os.path.abspath(__file__))
         project_root = os.path.dirname(os.path.dirname(current_dir))
@@ -50,42 +77,53 @@ class DictionaryManager:
                     self.load_chinese_phien_am(chinese_phien_am_path)
                 return
         else:
-            # Load all dictionaries
-            # Load external dictionaries
+            # Load all dictionaries in parallel
             dictionaries_folder = os.path.join(project_root, 'dictionaries')
             if os.path.exists(dictionaries_folder):
+                # Collect dictionary files
+                dictionary_files = []
                 for filename in os.listdir(dictionaries_folder):
                     if filename.endswith('.txt') or filename.endswith('cedict_ts.u8'):
                         filepath = os.path.join(dictionaries_folder, filename)
-                        dictionary_name = filename[:-4] if filename.endswith('.txt') else 'Cedict'  # Remove .txt extension
-                        print(f"Loading dictionary: {dictionary_name} from {filepath}")
-                        self.dictionaries[dictionary_name] = self.load_dictionary(filepath)
-                        print(f"Dictionary {dictionary_name} loaded with {len(self.dictionaries[dictionary_name].get_all_words())} words")
-
-            # Load QTEngine dictionaries
-            qt_engine_data_folder = os.path.join(project_root, 'src', 'QTEngine', 'data')
-            if os.path.exists(qt_engine_data_folder):
-                qt_engine_files = {
-                    'Names': 'Names.txt',
-                    'Names2': 'Names2.txt',
-                    'VietPhrase': 'VietPhrase.txt'
-                }
-                for dict_name, filename in qt_engine_files.items():
-                    filepath = os.path.join(qt_engine_data_folder, filename)
-                    if os.path.exists(filepath):
-                        self.qt_engine_dictionaries[dict_name] = self.load_dictionary(filepath)
+                        dictionary_name = filename[:-4] if filename.endswith('.txt') else 'Cedict'
+                        dictionary_files.append((dictionary_name, filepath))
                 
-                # Load ChinesePhienAmWords dictionary
-                chinese_phien_am_path = os.path.join(qt_engine_data_folder, 'ChinesePhienAmWords.txt')
-                if os.path.exists(chinese_phien_am_path):
-                    self.load_chinese_phien_am(chinese_phien_am_path)
+                # Load dictionaries in parallel
+                parallel_start = time.time()
+                logger.info("Starting parallel dictionary loading")
+                with ThreadPoolExecutor(max_workers=4) as executor:
+                    # Submit all load tasks
+                    load_start = time.time()
+                    future_to_dict = {
+                        executor.submit(self.load_dictionary, filepath): (name, filepath)
+                        for name, filepath in dictionary_files
+                    }
+                    
+                    # Process results as they complete
+                    for future in as_completed(future_to_dict):
+                        name, filepath = future_to_dict[future]
+                        try:
+                            trie = future.result()
+                            self.dictionaries[name] = trie
+                            word_count = len(trie.get_all_words())
+                            logger.info(f"Dictionary {name} loaded with {word_count} words")
+                        except Exception as e:
+                            logger.error(f"Error loading dictionary {name}: {e}")
+                
+                total_load_time = time.time() - parallel_start
+                logger.info(f"All external dictionaries loaded in parallel in {total_load_time:.2f}s")
 
-    def load_dictionary(self, filepath: str) -> Trie:
+            # Skip loading QTEngine dictionaries since we're using the singleton instance
+            if not self.qt_engine_dictionaries:
+                logger.warning("QTEngine dictionaries not available from singleton, skipping")
+
+    def load_dictionary(self, filepath: str, buffer_size: int = 1024*1024) -> Trie:
         """
-        Loads a dictionary from a given file.
+        Loads a dictionary from a given file with optimized buffering and batch processing.
 
         Args:
             filepath (str): The path to the dictionary file.
+            buffer_size (int): Size of read buffer in bytes (default 1MB).
 
         Returns:
             Trie: A Trie object containing the dictionary data.
@@ -94,15 +132,45 @@ class DictionaryManager:
         try:
             if filepath.endswith('cedict_ts.u8'):
                 return self.load_cedict_dictionary(filepath)
+
+            # Pre-allocate lists for batch processing
+            entries = []
+            translation_table = str.maketrans({'\\': '\n', '\t': '    '})
+            
+            # Use buffered reading for better I/O performance
+            with open(filepath, 'r', encoding='utf-8-sig', buffering=buffer_size) as f:
+                # Read file in chunks
+                chunk = f.read(buffer_size)
+                buffer = ""
                 
-            with open(filepath, 'r', encoding='utf-8-sig') as f:  # Handle UTF-8 BOM
-                for line in f:
-                    parts = line.strip().split('=', 1)
-                    if len(parts) == 2:
-                        word, definition = parts
-                        # Handle line breaks in definitions (e.g., ThieuChuu, LacViet)
-                        definition = definition.replace('\\n', '\n').replace('\t', '    ')
-                        trie.insert(word, definition)
+                while chunk:
+                    buffer += chunk
+                    lines = buffer.split('\n')
+                    
+                    # Process all complete lines
+                    for line in lines[:-1]:
+                        if '=' in line:  # Fast check without strip()
+                            word, definition = line.split('=', 1)
+                            if word and definition:  # Valid entry check
+                                # Use translate instead of multiple replaces
+                                definition = definition.translate(translation_table)
+                                entries.append((word.strip(), definition.strip()))
+                    
+                    # Keep the partial last line
+                    buffer = lines[-1]
+                    chunk = f.read(buffer_size)
+                
+                # Process the last line if any
+                if buffer and '=' in buffer:
+                    word, definition = buffer.split('=', 1)
+                    if word and definition:
+                        definition = definition.translate(translation_table)
+                        entries.append((word.strip(), definition.strip()))
+            
+            # Batch insert all entries at once using optimized method
+            if entries:
+                logger.debug(f"Batch inserting {len(entries)} entries from {filepath}")
+                trie.batch_insert(entries)
         except Exception as e:
             print(f"Error loading dictionary from {filepath}: {e}")
         return trie
@@ -118,35 +186,47 @@ class DictionaryManager:
             Trie: A Trie object containing the dictionary data.
         """
         trie = Trie()
+        entries = []
         try:
             with open(filepath, 'r', encoding='utf-8') as f:
                 for line in f:
                     line = line.strip()
-                    if line and not line.startswith('#'):  # Skip comments and empty lines
-                        parts = line.split(' ', 2)  # Split into traditional, simplified, and rest
-                        if len(parts) >= 3:
-                            traditional = parts[0]
-                            simplified = parts[1]
-                            rest = parts[2]
-                            
-                            # Extract pinyin and definition
-                            pinyin_end = rest.find(']')
-                            if pinyin_end != -1:
-                                pinyin = rest[1:pinyin_end]  # Remove brackets
-                                definition = rest[pinyin_end + 2:]  # Skip '] ' to get definition
-                                
-                                # Store raw data for formatting in dictionary panel
-                                entry_data = {
-                                    'traditional': traditional,
-                                    'simplified': simplified,
-                                    'pinyin': pinyin,
-                                    'definition': definition
-                                }
-                                
-                                # Insert both traditional and simplified characters
-                                trie.insert(traditional, str(entry_data))  # Convert dict to string for storage
-                                if simplified != traditional:
-                                    trie.insert(simplified, str(entry_data))
+                    if not line or line.startswith('#'):  # Skip comments and empty lines
+                        continue
+                        
+                    parts = line.split(' ', 2)  # Split into traditional, simplified, and rest
+                    if len(parts) < 3:
+                        continue
+                        
+                    traditional = parts[0]
+                    simplified = parts[1]
+                    rest = parts[2]
+                    
+                    # Extract pinyin and definition
+                    pinyin_end = rest.find(']')
+                    if pinyin_end == -1:
+                        continue
+                        
+                    pinyin = rest[1:pinyin_end]  # Remove brackets
+                    definition = rest[pinyin_end + 2:]  # Skip '] ' to get definition
+                    
+                    # Store raw data for formatting in dictionary panel
+                    entry_data = str({  # Pre-convert to string
+                        'traditional': traditional,
+                        'simplified': simplified,
+                        'pinyin': pinyin,
+                        'definition': definition
+                    })
+                    
+                    # Collect both traditional and simplified entries
+                    entries.append((traditional, entry_data))
+                    if simplified != traditional:
+                        entries.append((simplified, entry_data))
+                
+            # Batch insert all entries at once
+            if entries:
+                logger.debug(f"Batch inserting {len(entries)} entries from CEDICT")
+                trie.batch_insert(entries)
                                     
         except Exception as e:
             print(f"Error loading CC-CEDICT dictionary from {filepath}: {e}")
@@ -166,9 +246,16 @@ class DictionaryManager:
                     if len(parts) == 2:
                         word, phien_am = parts
                         self.chinese_phien_am_data[word] = phien_am
-            print(f"Loaded ChinesePhienAmWords with {len(self.chinese_phien_am_data)} entries")
+            entry_count = len(self.chinese_phien_am_data)
+            logger.info(f"Loaded ChinesePhienAmWords with {entry_count} entries")
         except Exception as e:
-            print(f"Error loading ChinesePhienAmWords from {filepath}: {e}")
+            logger.error(f"Error loading ChinesePhienAmWords from {filepath}: {e}")
+        
+        # Log total loading time at the end of dictionary loading
+        if hasattr(self, '_loading_start_time'):
+            total_time = time.time() - self._loading_start_time
+            logger.info(f"Total dictionary loading completed in {total_time:.2f}s")
+            delattr(self, '_loading_start_time')  # Clean up timing variable
 
     def find_longest_prefix_match(self, text: str, dictionary: Trie) -> Optional[Tuple[str, str]]:
         """

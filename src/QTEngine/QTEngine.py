@@ -22,6 +22,7 @@ from src.QTEngine.src.translation_engine import TranslationEngine
 class QTEngine(TranslationEngine):
     """
     A translation engine for converting Chinese text to Sino-Vietnamese.
+    Implemented as a singleton to prevent multiple instances and data reloading.
     
     Attributes:
         names2 (Trie): Trie for Names2 data
@@ -31,24 +32,45 @@ class QTEngine(TranslationEngine):
         loading_info (Dict[str, Any]): Information about data loading
         chinese_converter (ChineseConverter): Converter for Traditional to Simplified Chinese
     """
+    _instance = None
+    _initialized = False
     
-    def __init__(self, 
-                 data_loader: Optional[DataLoader] = None, 
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+    
+    def __init__(self,
+                 data_loader: Optional[DataLoader] = None,
                  config: Optional[Dict[str, Any]] = None):
         """
         Initialize the QTEngine with optional data loader and configuration.
+        Implements singleton pattern to prevent multiple instances.
         
         Args:
             data_loader (Optional[DataLoader]): Custom data loader
             config (Optional[Dict[str, Any]]): Configuration dictionary
         """
+        # Skip initialization if already done
+        if QTEngine._initialized:
+            return
+            
         super().__init__(data_loader, config)
         
-        # Use provided data loader or create a default one
+        # Configure logging
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("Initializing QTEngine singleton")
+        
+        # Get or reuse DataLoader singleton instance
         self.data_loader = data_loader or DataLoader()
         
-        # Load translation data
-        self.names2, self.names, self.viet_phrase, self.chinese_phien_am, self.loading_info = self.data_loader.load_data()
+        # Load data only once
+        if not hasattr(self, 'names2'):
+            self.logger.info("Loading dictionary data from singleton DataLoader")
+            self.names2, self.names, self.viet_phrase, self.chinese_phien_am, self.loading_info = self.data_loader.loaded_data or self.data_loader.load_data()
+        
+        # Mark as initialized
+        QTEngine._initialized = True
         
         # Store configuration
         self.config = config or {}

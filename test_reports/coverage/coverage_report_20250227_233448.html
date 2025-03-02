@@ -1,0 +1,104 @@
+
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>QTEngine Coverage Report</title>
+            <style>
+            body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+            .component { margin: 20px 0; padding: 20px; border-radius: 5px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .warning { color: #f0ad4e; }
+            .error { color: #d9534f; }
+            .success { color: #5cb85c; }
+            .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 10px 0; }
+            .performance { margin-top: 20px; background: #f8f9fa; padding: 15px; border-radius: 3px; }
+            .summary { background: white; padding: 20px; border-radius: 5px; margin-bottom: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .summary-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 15px 0; }
+            h1, h2 { color: #333; }
+            pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+            .warning-list { background: #fff3cd; padding: 15px; border-radius: 3px; margin: 10px 0; }
+            .error-list { background: #f8d7da; padding: 15px; border-radius: 3px; margin: 10px 0; }
+            .requirements { margin: 15px 0; padding: 15px; background: #e9ecef; border-radius: 3px; }
+            .gap-analysis { margin: 15px 0; padding: 15px; background: #e9ecef; border-radius: 3px; }
+            .gap-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
+            .canvas-wrapper { height: 300px; margin: 15px 0; }
+            .recommendations { background: #d4edda; padding: 15px; border-radius: 3px; }
+            .component-header { display: flex; justify-content: space-between; align-items: center; }
+            .badges { display: flex; gap: 10px; }
+            .badge { padding: 5px 10px; border-radius: 15px; font-size: 0.9em; }
+            .summary-footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd; }
+        </style>
+            
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+            function createTimingHistogram(ctx, data, label) {
+                if (!data || Object.keys(data).length === 0) return;
+                const values = Object.values(data).map(d => d.avg_duration);
+                const bins = Math.min(20, Math.ceil(Math.sqrt(values.length)));
+                const min = Math.min(...values);
+                const max = Math.max(...values);
+                const step = (max - min) / bins;
+                const histogram = new Array(bins).fill(0);
+                
+                values.forEach(v => {
+                    const bin = Math.min(bins - 1, Math.floor((v - min) / step));
+                    histogram[bin]++;
+                });
+                
+                const labels = Array.from({length: bins}, (_, i) => 
+                    `${(min + i * step).toFixed(2)}s - ${(min + (i + 1) * step).toFixed(2)}s`
+                );
+                
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Test Duration Distribution',
+                            data: histogram,
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Number of Tests' }
+                            }
+                        },
+                        plugins: {
+                            title: { display: true, text: label },
+                            tooltip: { mode: 'index', intersect: false }
+                        }
+                    }
+                });
+            }
+            </script>
+        
+        </head>
+        <body>
+            <div class="summary">
+                <h1>Coverage Report</h1>
+                <div class="summary-stats">
+                    <div class="error">
+                        Overall Coverage: 0.0%
+                    </div>
+                    <div>Total Components: 0</div>
+                    <div>Total Tests: 0</div>
+                    <div class="">
+                        Failed Tests: 0
+                    </div>
+                </div>
+            </div>
+            
+            <div class="components">
+                
+            </div>
+        </body>
+        </html>
+        

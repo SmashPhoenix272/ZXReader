@@ -86,7 +86,14 @@ class DictionaryPanel(QWidget):
         """Format LacViet dictionary definition with special styling."""
         lines = definition.split('\n')
         for line in lines:
-            if line.startswith('✚'):
+            # Clean up line and check for ✚ character
+            line = line.strip()
+            if line == 'n':
+                cursor.insertText('\n', self.definition_format)
+            elif '✚' in line:
+                # Remove 'n' before ✚ if present
+                line = line.replace('n✚', '✚')
+                
                 # Extract pinyin and Hán Việt
                 if '[' in line and ']' in line:
                     # Split at the closing bracket
@@ -111,11 +118,20 @@ class DictionaryPanel(QWidget):
                         cursor.insertText("\n")
                     else:
                         cursor.insertText(f" {remaining}\n", self.definition_format)
-            elif '\\t' in line:  # Lines with literal \t
-                # Convert literal \t to actual tab character
-                cursor.insertText(line.replace('\\t', '\t') + '\n', self.definition_format)
             else:
-                cursor.insertText(f"{line}\n", self.definition_format)
+                # Handle 'n' for newline and t{number} for indentation
+                if line.strip() == 'n':
+                    cursor.insertText('\n', self.definition_format)
+                elif line.startswith('t') and len(line) > 1 and line[1].isdigit():
+                    # Keep number after indentation
+                    number = line[1]
+                    text = line[2:].strip()
+                    # Check if text already starts with dot
+                    if text.lstrip().startswith('.'):
+                        text = text.lstrip()[1:].lstrip()  # Remove leading dot and whitespace
+                    cursor.insertText(f"    {number}. {text}\n", self.definition_format)
+                else:
+                    cursor.insertText(f"{line}\n", self.definition_format)
 
     def format_thieuchuu_definition(self, definition: str, cursor: QTextCursor):
         """Format ThieuChuu dictionary definition with special styling."""
@@ -130,11 +146,20 @@ class DictionaryPanel(QWidget):
                         cursor.insertText(f"[{parts[1]} \n", self.pinyin_format)  # Pinyin in italics
                 else:
                     cursor.insertText(f"{line}\n", self.definition_format)
-            elif '\\t' in line:  # Lines with literal \t
-                # Convert literal \t to actual tab character
-                cursor.insertText(line.replace('\\t', '\t') + '\n', self.definition_format)
             else:
-                cursor.insertText(f"{line}\n", self.definition_format)
+                # Handle 'n' for newline and t{number} for indentation
+                if line.strip() == 'n':
+                    cursor.insertText('\n', self.definition_format)
+                elif line.startswith('t') and len(line) > 1 and line[1].isdigit():
+                    # Keep number after indentation
+                    number = line[1]
+                    text = line[2:].strip()
+                    # Check if text already starts with dot
+                    if text.lstrip().startswith('.'):
+                        text = text.lstrip()[1:].lstrip()  # Remove leading dot and whitespace
+                    cursor.insertText(f"    {number}. {text}\n", self.definition_format)
+                else:
+                    cursor.insertText(f"{line}\n", self.definition_format)
 
     def format_babylon_definition(self, definition: str, cursor: QTextCursor):
         """Format Babylon/Cedict dictionary definition with special styling."""

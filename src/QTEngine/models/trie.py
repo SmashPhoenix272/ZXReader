@@ -43,13 +43,43 @@ class Trie:
 
     def batch_insert(self, words: List[Tuple[str, str]]) -> None:
         """
-        Insert multiple words at once.
+        Insert multiple words at once efficiently.
         
         Args:
             words (List[Tuple[str, str]]): List of (word, value) tuples
         """
-        for word, value in words:
-            self.insert(word, value)
+        # Sort words to improve cache locality
+        sorted_words = sorted(words, key=lambda x: x[0])
+        
+        # Pre-allocate common prefixes
+        prefix_cache: Dict[str, TrieNode] = {'': self.root}
+        
+        for word, value in sorted_words:
+            current = self.root
+            prefix = ''
+            
+            # Use cached nodes for common prefixes
+            for i, char in enumerate(word):
+                prefix += char
+                if prefix in prefix_cache:
+                    current = prefix_cache[prefix]
+                    continue
+                    
+                if char not in current.children:
+                    current.children[char] = TrieNode()
+                current = current.children[char]
+                # Cache prefix nodes for reuse
+                if i < len(word) - 1:  # Don't cache leaf nodes
+                    prefix_cache[prefix] = current
+                    
+            current.is_end_of_word = True
+            current.value = value
+            self.word_count += 1
+            
+            # Clear cache periodically to prevent memory growth
+            if self.word_count % 1000 == 0:
+                prefix_cache.clear()
+                prefix_cache[''] = self.root
 
     def contains(self, word: str) -> bool:
         """

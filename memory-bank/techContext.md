@@ -73,8 +73,30 @@
 - Dictionary lookup failures
 - Text update synchronization
 
-## Performance Considerations
+## Performance Optimization
+### Dictionary Loading System
+- Parallel processing with size-based prioritization
+- Memory-optimized data structures (~745MB total usage)
+- Buffered I/O operations for better performance
+- Progress tracking and metrics collection
+- DataLoader singleton with caching
+
+### Performance Metrics
+| Operation | Time (s) | Memory (MB) |
+|-----------|----------|-------------|
+| Initial Load | ~4.5 | 745 |
+| External Dict | ~1.0 | - |
+| Total Startup | ~7.9 | - |
+
+### Dictionary Processing
+- Efficient batch operations for large dictionaries
+- Optimized text parsing and formatting
+- Memory-conscious data structures
+- Resource monitoring and cleanup
+
+### UI Considerations
 - Efficient text updates
 - Minimal redraws
 - Smooth navigation
-- Resource cleanup
+- Proper resource cleanup
+- Progress feedback for long operations

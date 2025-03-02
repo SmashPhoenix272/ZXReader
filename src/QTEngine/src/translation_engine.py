@@ -16,13 +16,17 @@ class TranslationEngine(ABC):
     Defines the core interface for translation functionality.
     """
     
-    def __init__(self, 
-                 data_loader: Optional[DataLoader] = None, 
+    # Class-level watcher to prevent duplicates
+    _shared_watcher = None
+    
+    def __init__(self,
+                 data_loader: Optional[DataLoader] = None,
                  config: Optional[Dict[str, Any]] = None,
                  data_dir: Optional[str] = None,
                  auto_watch: bool = True):
         """
         Initialize the translation engine with optional data watching.
+        Uses a shared file watcher to prevent duplicate notifications.
         
         Args:
             data_loader: Optional custom data loader
@@ -31,29 +35,37 @@ class TranslationEngine(ABC):
             auto_watch: Whether to automatically start file watching
         """
         self.config = config or {}
+        
+        # Get or reuse DataLoader singleton instance
         self.data_loader = data_loader or DataLoader(data_dir=data_dir)
         self.data_dir = data_dir or self.data_loader.data_dir
         
-        # Initial data load
-        self.data = self.data_loader.load_data()
+        # Use cached data from singleton instance if available
+        self.data = self.data_loader.loaded_data or self.data_loader.load_data()
+        logger.info("TranslationEngine using DataLoader singleton instance")
         
-        # Setup file watcher
-        self.data_watcher = None
-        if auto_watch:
-            self.start_data_watching()
+        # Setup shared file watcher
+        if auto_watch and not TranslationEngine._shared_watcher:
+            TranslationEngine._shared_watcher = self.start_data_watching()
+        self.data_watcher = TranslationEngine._shared_watcher
     
     def start_data_watching(self):
         """
         Start watching data files for changes.
+        
+        Returns:
+            DataFileWatcher: The created file watcher instance
         """
         try:
-            self.data_watcher = create_data_watcher(
-                data_dir=self.data_dir, 
+            watcher = create_data_watcher(
+                data_dir=self.data_dir,
                 reload_callback=self._on_data_reload
             )
             logger.info(f"Started watching data files in {self.data_dir}")
+            return watcher
         except Exception as e:
             logger.error(f"Failed to start data watching: {e}")
+            return None
     
     def _on_data_reload(self, new_data: Tuple):
         """
